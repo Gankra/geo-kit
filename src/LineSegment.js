@@ -4,17 +4,17 @@ var gk = (function(gk){
         gk.Line.call(this, ptA, ptB);
     }
 
-    LineSegment.prototype = new Line();
+    LineSegment.prototype = new gk.Line();
 
-    LineSegment.prototype.draw = function(ctx){
-        ctx.save();
-        ctx.strokeStyle = this.getColor();
+    LineSegment.prototype.draw = function(options){
+        this.startRender(options);
+        var ctx = this.getContext(options);
         ctx.beginPath();
         ctx.moveTo(this.ptA.x, this.ptA.y);
         ctx.lineTo(this.ptB.x, this.ptB.y);
         ctx.closePath();
         ctx.stroke();
-        ctx.restore();    
+        this.finishRender(options);   
     }
 
     gk.LineSegment = LineSegment;

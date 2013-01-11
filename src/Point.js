@@ -9,15 +9,15 @@ var gk = (function(gk){
 
     Point.prototype = new gk.Drawable();
 
-    Point.prototype.draw = function(ctx){
-        ctx.save();
-        ctx.fillStyle = this.getColor(ctx);
+    Point.prototype.draw = function(options){
+        this.startRender(options);
+        var ctx = this.getContext(options);
         ctx.strokeStyle = "none";
         ctx.beginPath();
-        canvas.arc(this.x, this.y, POINT_DRAW_RADIUS, 0, Math.PI*2, true);
-        canvas.closePath();
-        canvas.fill();
-        canvas.restore();
+        ctx.arc(this.x, this.y, POINT_DRAW_RADIUS, 0, Math.PI*2, true);
+        ctx.closePath();
+        ctx.fill();
+        this.finishRender(options);
     }
 
     gk.Point = Point;

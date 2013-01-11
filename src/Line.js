@@ -21,20 +21,20 @@ var gk = (function(gk){
         return Math.atan2(this.ptA.y-this.ptB.y,this.ptA.x-this.ptB.x);
     }
 
-    Line.prototype.draw = function(ctx){
+    Line.prototype.draw = function(options){
 
         var angle = this.getAngle();
         var cos = Math.cos(angle);
         var sin = Math.sin(angle);
 
-        ctx.save();
-        ctx.strokeStyle = this.getColor();
+        this.startRender(options);
+        var ctx = this.getContext(options);
         ctx.beginPath();
         ctx.moveTo(this.ptA.x+cos*LINE_DRAW_LENGTH, this.ptA.y+sin*LINE_DRAW_LENGTH);
         ctx.lineTo(this.ptA.x-cos*LINE_DRAW_LENGTH, this.ptA.y-sin*LINE_DRAW_LENGTH);
         ctx.closePath();
         ctx.stroke();
-        ctx.restore();    
+        this.finishRender(options);   
     }
 
     gk.Line = Line;
