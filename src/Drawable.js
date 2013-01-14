@@ -5,6 +5,8 @@ var gk = (function(gk){
     function Drawable(color){
         this.color = color;
     }
+    
+    Drawable.prototype = new gk.Eventable();
 
     Drawable.prototype.getColor = function(){
         return this.color || DEFAULT_COLOR;
@@ -33,7 +35,6 @@ var gk = (function(gk){
     Drawable.prototype.draw = function(options){
         throw "Unimplemented method: Drawable.draw";
     }
-
     
     gk.Drawable = Drawable;
 
