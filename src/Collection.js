@@ -15,6 +15,10 @@ var gk = (function(gk){
         return this.items.length;
     });
     
+    Collection.prototype.get = function(index){
+        return this.items[index];
+    }
+    
     Collection.prototype.draw = function(options){
         for(var i=0; i<items.length; i++){
             this.items[i].draw(options);

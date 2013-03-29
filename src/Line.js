@@ -9,21 +9,21 @@ var gk = (function(gk){
 
     Line.prototype = new gk.Drawable();
 
-    Line.prototype.getSlope = function(){
+    Line.prototype.__defineGetter__("slope", function(){
         return (this.ptB.y - this.ptA.y)/(this.ptB.x - this.ptA.x);
-    }
+    });
 
-    Line.prototype.getYIntercept = function(){
-        return this.ptA.y - this.ptA.x*this.getSlope();
-    }
+    Line.prototype.__defineGetter__("yIntercept", function(){
+        return this.ptA.y - this.ptA.x*this.slope;
+    });
 
-    Line.prototype.getAngle = function(){
+    Line.prototype.__defineGetter__("angle", function(){
         return Math.atan2(this.ptA.y-this.ptB.y,this.ptA.x-this.ptB.x);
-    }
+    });
 
     Line.prototype.draw = function(options){
 
-        var angle = this.getAngle();
+        var angle = this.angle;
         var cos = Math.cos(angle);
         var sin = Math.sin(angle);
 

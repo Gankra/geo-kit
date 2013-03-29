@@ -6,8 +6,9 @@ var gk = (function(gk){
     * of geometric objects that results from the mapping
     */
 
-    function Map(){
-        this.invertible = false;  
+    function Map(name, description){
+        this.name = name;
+        this.description = description;
     }
     
     /**
@@ -22,7 +23,7 @@ var gk = (function(gk){
     }
     
     /**
-    * (abstract) (private) doMap performs the mapping in question
+    * (abstract) (protected) doMap performs the mapping in question
     * 
     * returns the resulting Collection
     */
@@ -31,24 +32,13 @@ var gk = (function(gk){
     }
     
     /**
-    * inverse performs the inverse of the mapping in question, 
-    * and registers relevant metadata
+    * (protected) canMap determines whether this map can be performed on the given collection
+    * By default the result is always "true"
     *
-    * returns the resulting Collection
+    * returns whether this map can be performed on the given collection
     */
-    Map.prototype.inverse = function(collection){
-        var result = this.doInverse(collection);
-        result.registerMapping(collection, this);
-        return result;
-    }
-    
-    /**
-    * (abstract) (optional) (private) doInvert performs the inverse mapping 
-    *
-    * returns a Collection that would map to the input 
-    */
-    Map.prototype.doInverse = function(collection){
-        throw "Unimplemented method: Map.doInverse";
+    Map.prototype.canMap = function(collection){
+        return true;
     }
     
     /**
@@ -62,23 +52,6 @@ var gk = (function(gk){
     */
     Map.prototype.manipulate = function(input, output, inputData){
         output.replaceItems(this.map(input), this);
-    }
-    
-    /**
-    * inverseManipulate takes the input and output of
-    * a map and the changes made to the output, and tries to change the input to
-    * reflect this. By default this is done by re-generating the the input via
-    * Map.invert.
-    * Should be overridden if something better can be done.
-    * 
-    * returns void
-    */
-    Map.prototype.inverseManipulate = function(input, output, outputData){
-        input.replaceItems(this.inverse(output), this);
-    }
-
-    Map.prototype.isInvertible = function(collection){
-        return this.invertible;
     }
     
     gk.Map = Map;
