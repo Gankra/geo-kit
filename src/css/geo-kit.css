@@ -1,7 +1,27 @@
+html, body{
+    height:100%;
+}
+
+#content{
+    dsiplay:block;
+}
+
 #menu{
-    width:30%;
+    width:20%;
+    float:left;
 }
 
 #gk-stages{
-    width:70%;
+    width:80%;
+    background-color:#ddd;
+    float:right;
+    height:100%;
+}
+
+.stage{
+    padding:5px;
+}
+
+.stage-selected{
+    background-color:#aaa;
 }

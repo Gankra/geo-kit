@@ -1,17 +1,25 @@
 var gk = (function(gk){
-
+    
+    var DEFAULT_CANVAS_WIDTH = 650;
+    var DEFAULT_CANVAS_HEIGHT = 500;
+    
     function Stage(){
         this.layers = [new gk.Layer({})];
         
         this.$stage = $("<div>");
-        this.$canvas = $("<canvas>");
+        this.$canvas = $("<canvas class='stage'>");
         this.$menu = $("<div>");
         
         this.canvas = this.$canvas[0];
+        this.canvas.width = DEFAULT_CANVAS_WIDTH;
+        this.canvas.height = DEFAULT_CANVAS_HEIGHT;
         this.ctx = this.canvas.getContext("2d");
         this.currentLayer = this.layers[0];
         
         this.$stage.append(this.$canvas);
+        
+        this.ctx.fillStyle = "#fff";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
     
     Stage.prototype.draw = function(options){
@@ -53,6 +61,14 @@ var gk = (function(gk){
         if(this.currentLayer!=null && !this.currentLayer.locked){
             this.currentLayer.insert(item);
         }
+    }
+    
+    Stage.prototype.select = function(){
+        this.$canvas.addClass("stage-selected");
+    }
+    
+    Stage.prototype.deselect = function(){
+        this.$canvas.removeClass("stage-selected");
     }
     
     gk.Stage = Stage;

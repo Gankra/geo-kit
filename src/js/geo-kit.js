@@ -2,6 +2,10 @@ var gk = (function($, gk){
     
     gk.stages = [];
     gk.currentStage = null;
+    gk.selected = null;
+    gk.mouseLast = {x:0, y:0, down:false};
+    gk.mouse = {x:0, y:0, down:false};
+    gk.keyboard = {};
     
     $(function(){
         gk.$stages = $("#gk-stages");
@@ -10,7 +14,11 @@ var gk = (function($, gk){
     });
     
     gk.setCurrentStage = function(stage){
+        if(gk.currentStage){
+            gk.currentStage.deselect();
+        }
         gk.currentStage = stage;
+        gk.currentStage.select();
         
         gk.$menu.empty();
         gk.$menu.append(gk.currentStage.$menu);    
