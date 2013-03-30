@@ -2,7 +2,7 @@ var gk = (function(gk){
 
     function Collection(args){
         this.items = args.items;
-        gk.Drawable.call(this, args.color);
+        gk.Drawable.call(this);
     }
     
     Collection.prototype = new gk.Drawable();
@@ -20,8 +20,8 @@ var gk = (function(gk){
     }
     
     Collection.prototype.draw = function(options){
-        for(var i=0; i<items.length; i++){
-            this.items[i].draw(options);
+        for(var item in this){
+            item.draw(options);
         }
     }
     
@@ -34,7 +34,14 @@ var gk = (function(gk){
     }
     
     Collection.prototype.registerMapping(parentCollection, parentMap){
-        throw "TODO: implement this method: Collection.registerMapping";
+        //TODO: this method
+        throw "unimplemented method: Collection.registerMapping";
+    }
+    
+    Collection.prototype.__iterator__ = function(){
+        for(var i=0; i<this.items.length; ++i){
+            yield this.items[i];
+        }
     }
     
     gk.Collection = Collection;

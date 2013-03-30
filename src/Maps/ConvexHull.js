@@ -3,8 +3,8 @@ var gk = (function(gk){
     var ConvexHull = new Map("Convex Hull", "Computes the convex hull of a set of points");
     
     ConvexHull.canMap = function(collection){
-        for(var i=0; i<collection.length; ++i){
-            if(!collection.get(i).coords){
+        for(var item in collection){
+            if(!item.coords){
                 return false;
             }
         }
