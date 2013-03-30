@@ -1,7 +1,7 @@
 var gk = (function(gk){
 
     function Collection(args){
-        this.items = args.items;
+        this.items = args.items || [];
         gk.Drawable.call(this);
     }
     
@@ -33,7 +33,7 @@ var gk = (function(gk){
         });
     }
     
-    Collection.prototype.registerMapping(parentCollection, parentMap){
+    Collection.prototype.registerMapping = function(parentCollection, parentMap){
         //TODO: this method
         throw "unimplemented method: Collection.registerMapping";
     }

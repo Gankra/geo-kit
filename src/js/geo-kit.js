@@ -6,7 +6,7 @@ var gk = (function($, gk){
     $(function(){
         gk.$stages = $("#gk-stages");
         gk.$menu = $("#gk-menu");
-        gk.addStage(new Stage());
+        gk.addStage(new gk.Stage());
     });
     
     gk.setCurrentStage = function(stage){
