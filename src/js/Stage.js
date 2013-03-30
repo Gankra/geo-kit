@@ -4,7 +4,7 @@ var gk = (function(gk){
     var DEFAULT_CANVAS_HEIGHT = 500;
     
     function Stage(){
-        this.layers = [new gk.Layer({})];
+        this.layers = [new gk.Layer({})];        
         
         this.$stage = $("<div>");
         this.$canvas = $("<canvas class='stage'>");
@@ -15,6 +15,10 @@ var gk = (function(gk){
         this.canvas.height = DEFAULT_CANVAS_HEIGHT;
         this.ctx = this.canvas.getContext("2d");
         this.currentLayer = this.layers[0];
+        
+        this.scale = 1;
+        this.offsetX = this.canvas.width/2;
+        this.offsetY = this.canvas.height/2;
         
         this.$stage.append(this.$canvas);
         
@@ -69,6 +73,31 @@ var gk = (function(gk){
     
     Stage.prototype.deselect = function(){
         this.$canvas.removeClass("stage-selected");
+    }
+    
+    
+    Stage.prototype.updateMouse = function(event, down){
+        gk.mouseLast = gk.mouse;
+        gk.mouse = this.relMouseCoords(event);   
+        gk.down = down === undefined ? gk.mouseLast.down : down;     
+    }
+    
+    Stage.prototype.relMouseCoords = function(event){
+        var canvas = event.target;
+        var totalOffsetX = 0;
+        var totalOffsetY = 0;
+        var canvasX = 0;
+        var canvasY = 0;
+        var currentElement = canvas;
+
+        do{
+            totalOffsetX += currentElement.offsetLeft;
+            totalOffsetY += currentElement.offsetTop;
+        }while(currentElement = currentElement.offsetParent);
+        
+        canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scale;
+        canvasY = -(event.pageY - totalOffsetY - this.offsetY)/this.scale;
+	    return {x:canvasX, y:canvasY};
     }
     
     gk.Stage = Stage;

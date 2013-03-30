@@ -11,6 +11,29 @@ var gk = (function($, gk){
         gk.$stages = $("#gk-stages");
         gk.$menu = $("#gk-menu");
         gk.addStage(new gk.Stage());
+        
+        var $document = $(document);
+        
+        $document.on("mousedown", ".stage", function(event){
+            var canvas = event.target;
+            for(var i=0; i<gk.stages.length; ++i){
+                var stage = gk.stages[i];
+                if(stage.canvas == event.target){
+                    gk.setCurrentStage(stage);
+                    break;
+                } 
+            }
+            
+            gk.currentStage.updateMouse(event, true);    
+        });
+        
+        $document.on("mousemove", ".stage", function(event){
+            gk.currentStage.updateMouse(event);
+        });
+        
+        $document.on("mouseup", ".stage", function(event){
+            gk.currentStage.updateMouse(event, false);
+        });
     });
     
     gk.setCurrentStage = function(stage){
