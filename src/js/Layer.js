@@ -11,6 +11,25 @@ var gk = (function(gk){
         this.items = args.collection || new gk.Collection({});
     }
     
+    Layer.prototype.insert = function(item){
+        this.items.push(item);
+    }
+    
+    Layer.prototype.getSelectionAt = function(mouse){
+        if(!this.isSelectable()){
+            for(var item in items){
+                if(item.tryToSelect(mouse)){
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+    
+    Layer.prototype.isSelectable = function(){
+        return !this.locked && this.visible;
+    }
+    
     Layer.prototype.draw = function(options){
         this.ctx = options.ctx;
         this.items.draw(this);   

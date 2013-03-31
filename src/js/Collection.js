@@ -11,6 +11,10 @@ var gk = (function(gk){
         return this.items.splice.apply(this.items, arguments);
     }
     
+    Collection.prototype.push = function(){
+        return this.items.push.apply(this.items, arguments);
+    }
+    
     Collection.prototype.__defineGetter__("length", function(){
         return this.items.length;
     });

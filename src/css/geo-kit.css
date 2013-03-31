@@ -19,9 +19,8 @@ html, body{
 }
 
 .stage{
-    padding:5px;
+    margin:5px;
 }
 
 .stage-selected{
-    background-color:#aaa;
 }

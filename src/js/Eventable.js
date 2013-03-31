@@ -2,7 +2,9 @@ var gk = (function(gk){
 
     gk.EVENT_REPLACED = "replaced";
     gk.EVENT_UPDATED = "updated";
-
+    gk.EVENT_DELETED = "deleted";
+    
+    
     function Eventable(){
         this.observers = [];
     }

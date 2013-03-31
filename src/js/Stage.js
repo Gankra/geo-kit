@@ -16,20 +16,30 @@ var gk = (function(gk){
         this.ctx = this.canvas.getContext("2d");
         this.currentLayer = this.layers[0];
         
-        this.scale = 1;
+        this.scaleX = 1;
+        this.scaleY = -1;
         this.offsetX = this.canvas.width/2;
         this.offsetY = this.canvas.height/2;
         
         this.$stage.append(this.$canvas);
         
-        this.ctx.fillStyle = "#fff";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.clearRender();
     }
     
     Stage.prototype.draw = function(options){
+        this.clearRender();
+        this.ctx.save();
+        this.ctx.translate(this.offsetX, this.offsetY);
+        this.ctx.scale(this.scaleX, this.scaleY);
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].draw(this);
         }  
+        this.ctx.restore();
+    }
+    
+    Stage.prototype.clearRender = function(){
+        this.ctx.fillStyle = "#fff";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
     
     Stage.prototype.deleteLayer = function(layer){
@@ -79,7 +89,7 @@ var gk = (function(gk){
     Stage.prototype.updateMouse = function(event, down){
         gk.mouseLast = gk.mouse;
         gk.mouse = this.relMouseCoords(event);   
-        gk.down = down === undefined ? gk.mouseLast.down : down;     
+        gk.mouse.down = down === undefined ? gk.mouseLast.down : down;     
     }
     
     Stage.prototype.relMouseCoords = function(event){
@@ -95,9 +105,13 @@ var gk = (function(gk){
             totalOffsetY += currentElement.offsetTop;
         }while(currentElement = currentElement.offsetParent);
         
-        canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scale;
-        canvasY = -(event.pageY - totalOffsetY - this.offsetY)/this.scale;
+        canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scaleX;
+        canvasY = (event.pageY - totalOffsetY - this.offsetY)/this.scaleY;
 	    return {x:canvasX, y:canvasY};
+    }
+    
+    Stage.prototype.getSelectionAt = function(mouse){
+        return this.currentLayer.getSelectionAt(mouse);
     }
     
     gk.Stage = Stage;

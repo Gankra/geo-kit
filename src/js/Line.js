@@ -6,6 +6,10 @@ var gk = (function(gk){
         this.ptA = ptA;
         this.ptB = ptB;
     }
+    
+    Line.createPrimitive = function(mouse){
+        return new Line(new Point(mouse.x, mouse.y), new Point(mouse.x+0.01, mouse.y));
+    }
 
     Line.prototype = new gk.Drawable();
 
@@ -38,6 +42,8 @@ var gk = (function(gk){
     }
 
     gk.Line = Line;
+
+    gk.registerPrimitive(Line);
 
     return gk;
 })(gk || {});

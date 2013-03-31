@@ -5,8 +5,17 @@ var gk = (function(gk){
     function Point(){
         this.coords = arguments;
     }
+    
+    Point.createPrimitive = function(mouse){
+        return new Point(mouse.x, mouse.y);
+    }
 
-    Point.prototype = new gk.Drawable();
+    Point.prototype = new gk.Drawable();   
+    
+    Point.prototype.updateMouse = function(oldMouse, curMouse){
+        this.x += curMouse.x-oldMouse.x;
+        this.y += curMouse.y-oldMouse.y;
+    }
     
     Point.prototype.__defineGetter__("x", function(){
         return this.coords[0];
@@ -52,6 +61,8 @@ var gk = (function(gk){
     }
 
     gk.Point = Point;
+    
+    gk.registerPrimitive(Point);
 
     return gk;
 })(gk || {});
