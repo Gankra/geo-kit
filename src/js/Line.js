@@ -7,11 +7,17 @@ var gk = (function(gk){
         this.ptB = ptB;
     }
     
+    Line.displayName = "Line";
+    
     Line.createPrimitive = function(mouse){
-        return new Line(new Point(mouse.x, mouse.y), new Point(mouse.x+0.01, mouse.y));
+        return new Line(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
     }
 
     Line.prototype = new gk.Drawable();
+    
+    Line.prototype.updateMouse = function(oldMouse, curMouse){
+        this.ptB.updateMouse(oldMouse, curMouse);
+    }
 
     Line.prototype.__defineGetter__("slope", function(){
         return (this.ptB.y - this.ptA.y)/(this.ptB.x - this.ptA.x);
@@ -26,7 +32,6 @@ var gk = (function(gk){
     });
 
     Line.prototype.draw = function(options){
-
         var angle = this.angle;
         var cos = Math.cos(angle);
         var sin = Math.sin(angle);

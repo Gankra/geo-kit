@@ -3,6 +3,12 @@ var gk = (function(gk){
     function LineSegment(ptA, ptB){
         gk.Line.call(this, ptA, ptB);
     }
+    
+    LineSegment.displayName = "Line Segment";
+    
+    LineSegment.createPrimitive = function(mouse){
+        return new LineSegment(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
+    }
 
     LineSegment.prototype = new gk.Line();
 
@@ -18,6 +24,8 @@ var gk = (function(gk){
     }
 
     gk.LineSegment = LineSegment;
-
+    
+    gk.registerPrimitive(LineSegment);
+    
     return gk;
 })(gk || {});

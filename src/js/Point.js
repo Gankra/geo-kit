@@ -6,6 +6,8 @@ var gk = (function(gk){
         this.coords = arguments;
     }
     
+    Point.displayName = "Point";
+    
     Point.createPrimitive = function(mouse){
         return new Point(mouse.x, mouse.y);
     }

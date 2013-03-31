@@ -19,7 +19,11 @@ var gk = (function($, gk){
     
         gk.$stages = $("#gk-stages");
         gk.$menu = $("#gk-menu");
+        gk.$globalMenu = $("#gk-global-menu");
+        gk.$stageMenu = $("#gk-stage-menu");
         gk.addStage(new gk.Stage());
+        
+        createGlobalMenu();
         
         var $document = $(document);
         
@@ -77,8 +81,8 @@ var gk = (function($, gk){
         gk.currentStage = stage;
         gk.currentStage.select();
         
-        gk.$menu.empty();
-        gk.$menu.append(gk.currentStage.$menu);    
+        gk.$stageMenu.empty();
+        gk.$stageMenu.append(gk.currentStage.$menu);    
     }
     
     gk.addStage = function(stage){
@@ -125,6 +129,18 @@ var gk = (function($, gk){
     
     function clearSelection(){
         gk.selected = {};
+    }
+    
+    function createGlobalMenu(){
+        var $primitiveSelect = $("<select>");
+        for(var index in gk.primitives){
+            $primitiveSelect.append("<option value='"+index+"'>"+gk.primitives[index].displayName+"</option>");    
+        }
+        $primitiveSelect.on("change", function(event){
+            gk.currentPrimitiveClass = gk.primitives[$primitiveSelect.val()];    
+        });
+        
+        gk.$globalMenu.append($primitiveSelect);
     }
 
     return gk;
