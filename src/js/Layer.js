@@ -8,7 +8,7 @@ var gk = (function(gk){
         this.color = args.color;
         this.locked = args.locked;
         this.visible = args.visible;
-        this.items = args.collection || new gk.Collection({});
+        this.items = args.collection || new gk.Collection();
     }
     
     Layer.prototype.insert = function(item){

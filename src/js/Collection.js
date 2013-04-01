@@ -1,6 +1,7 @@
 var gk = (function(gk){
 
     function Collection(args){
+        args = args || {};
         this.items = args.items || [];
         gk.Drawable.call(this);
     }
@@ -11,8 +12,14 @@ var gk = (function(gk){
         return this.items.splice.apply(this.items, arguments);
     }
     
-    Collection.prototype.push = function(){
-        return this.items.push.apply(this.items, arguments);
+    Collection.prototype.add = function(item){
+        return this.items.push(item);
+    }
+    
+    Collection.prototype.addAll = function(collection){
+        for(var item in collection){
+            this.add(item);
+        }    
     }
     
     Collection.prototype.__defineGetter__("length", function(){
@@ -29,12 +36,27 @@ var gk = (function(gk){
         }
     }
     
+    Collection.prototype.tryToSnap = function(mouse, options){
+        for(var item in this){
+            var snap = item.tryToSnap(mouse, options);
+            if(snap){
+                return snap;
+            }
+        }
+        return null;
+    }
+    
+    Collection.prototype.tryToSelect = function(mouse, options){
+        for(var item in this){
+            if(item.tryToSelect(mouse, options)){
+                return true;
+            }
+        }
+        return false;        
+    }
+    
     Collection.prototype.replaceItems = function(items, replacer){
         this.items = items;
-        this.emit({
-            event: gk.EVENT_REPLACED,
-            replacer: replacer
-        });
     }
     
     Collection.prototype.registerMapping = function(parentCollection, parentMap){
