@@ -140,7 +140,7 @@ var gk = (function($, gk){
     }
     
     function createGlobalMenu(){
-        var $primitiveSelect = $("<select>");
+        var $primitiveSelect = $("#primitiveSelect");
         for(var index in gk.primitives){
             $primitiveSelect.append("<option value='"+index+"'>"+gk.primitives[index].displayName+"</option>");    
         }
@@ -148,7 +148,13 @@ var gk = (function($, gk){
             gk.currentPrimitiveClass = gk.primitives[$primitiveSelect.val()];    
         });
         
-        gk.$globalMenu.append($primitiveSelect);
+        $("#snapToPointsCheck").on("change", function(){
+            gk.selectionOptions.snapToPoints = $(this).is(":checked");        
+        }).change();
+        
+        $("#snapToEdgesCheck").on("change", function(){
+            gk.selectionOptions.snapToEdges = $(this).is(":checked");        
+        }).change();
     }
 
     return gk;
