@@ -7,12 +7,14 @@ var gk = (function($, gk){
     
     gk.stages = [];
     gk.currentStage = null;
-    gk.mouseLast = {x:0, y:0, down:false};
-    gk.mouse = {x:0, y:0, down:false};
+    gk.mouseLast = new gk.Point(0,0);
+    gk.mouse = new gk.Point(0,0);
     gk.keyboard = {};
     gk.selected = {};
+    gk.inserting = null;
     gk.currentPrimitiveClass = null;
     gk.mode = gk.MODE_INSERT;
+    gk.selectionOptions = {snapToPoints: true, snapToEdges: true, snapRadius: 10};
     
     $(function(){
         gk.currentPrimitiveClass = gk.primitives[0];
@@ -44,6 +46,7 @@ var gk = (function($, gk){
                 var newPrimitive = gk.currentPrimitiveClass.createPrimitive(gk.mouse);
                 gk.currentStage.insert(newPrimitive);
                 gk.select(newPrimitive);
+                gk.inserting = newPrimitive;
             }
             
             gk.currentStage.draw();
@@ -53,9 +56,13 @@ var gk = (function($, gk){
         $document.on("mousemove", ".stage", function(event){
             gk.currentStage.updateMouse(event);
             if(gk.mouse.down){
-                for(var key in gk.selected){
-                    var item = gk.selected[key];
-                    item.updateMouse(gk.mouseLast, gk.mouse);
+                if(gk.inserting){
+                    gk.inserting.updateMouse(gk.mouseLast, gk.mouse);    
+                }else{
+                    for(var key in gk.selected){
+                        var item = gk.selected[key];
+                        item.updateMouse(gk.mouseLast, gk.mouse);
+                    }
                 }
                 gk.currentStage.draw();
             }
@@ -63,6 +70,7 @@ var gk = (function($, gk){
         
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
+            gk.inserting = null;
         });
         
         $document.on("keydown", function(event){

@@ -4,7 +4,7 @@ var gk = (function(gk){
     var DEFAULT_CANVAS_HEIGHT = 500;
     
     function Stage(){
-        this.layers = [new gk.Layer({})];        
+        this.layers = [new gk.Layer()];        
         
         this.$stage = $("<div>");
         this.$canvas = $("<canvas class='stage'>");
@@ -107,11 +107,17 @@ var gk = (function(gk){
         
         canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scaleX;
         canvasY = (event.pageY - totalOffsetY - this.offsetY)/this.scaleY;
-	    return {x:canvasX, y:canvasY};
+        var pt = new gk.Point(canvasX, canvasY);
+        var snap = this.tryToSnap(pt, gk.selectionOptions);
+	    return snap || pt;
     }
     
-    Stage.prototype.getSelectionAt = function(mouse){
-        return this.currentLayer.getSelectionAt(mouse);
+    Stage.prototype.getSelectionAt = function(mouse, options){
+        return this.currentLayer.getSelectionAt(mouse, options);
+    }
+    
+    Stage.prototype.tryToSnap = function(mouse, options){
+        return this.currentLayer.tryToSnap(mouse, options);
     }
     
     gk.Stage = Stage;

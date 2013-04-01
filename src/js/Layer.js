@@ -15,11 +15,26 @@ var gk = (function(gk){
         this.items.push(item);
     }
     
-    Layer.prototype.getSelectionAt = function(mouse){
-        if(!this.isSelectable()){
-            for(var item in items){
-                if(item.tryToSelect(mouse)){
+    Layer.prototype.getSelectionAt = function(mouse, options){
+        if(this.isSelectable()){
+            for(var item in this.items){
+                if(item.tryToSelect(mouse, options)){
                     return item;
+                }
+            }
+        }
+        return null;
+    }
+    
+    Layer.prototype.tryToSnap = function(mouse, options){
+        if(this.isSelectable()){
+            for(var item in this.items){
+                if(gk.inserting==item){
+                    continue;
+                }
+                var snap = item.tryToSnap(mouse, options);
+                if(snap){
+                    return snap;
                 }
             }
         }

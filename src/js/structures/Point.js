@@ -1,6 +1,8 @@
 var gk = (function(gk){
 
     var POINT_DRAW_RADIUS = 3;
+    var POINT_SELECT_RADIUS = 10;
+    var POINT_SELECT_RADIUS_SQ = POINT_SELECT_RADIUS*POINT_SELECT_RADIUS;
 
     function Point(){
         this.coords = arguments;
@@ -51,6 +53,25 @@ var gk = (function(gk){
         this.coords[3] = val;
     });
     
+    Point.prototype.distanceSquared = function(pt){
+        var distSq = 0;
+        for(var i=0; i<this.coords.length; ++i){
+            var delta = this.coords[i] - pt.coords[i];
+            distSq += delta*delta;    
+        }
+        return distSq;
+    }
+    
+    Point.prototype.distance = function(pt){
+        return Math.sqrt(this.distanceSquared(pt));
+    }
+    
+    Point.prototype.__iterator__ = function(){
+        for(var i=0; i<this.coords.length; ++i){
+            yield this.coords[i];
+        }
+    }
+    
     Point.prototype.draw = function(options){
         this.startRender(options);
         var ctx = this.getContext(options);
@@ -61,7 +82,18 @@ var gk = (function(gk){
         ctx.fill();
         this.finishRender(options);
     }
-
+    
+    Point.prototype.tryToSelect = function(mouse, options){
+        return this.distanceSquared(mouse) <= POINT_SELECT_RADIUS_SQ;
+    }
+    
+    Point.prototype.tryToSnap = function(mouse, options){
+        if(options.snapToPoints && this.distanceSquared(mouse) <= options.snapRadius*options.snapRadius){
+            return this;
+        }
+        return null;
+    }
+    
     gk.Point = Point;
     
     gk.registerPrimitive(Point);
