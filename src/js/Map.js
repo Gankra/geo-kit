@@ -6,8 +6,8 @@ var gk = (function(gk){
     * of geometric objects that results from the mapping
     */
 
-    function Map(name, description){
-        this.name = name;
+    function Map(displayName, description){
+        this.displayName = displayName;
         this.description = description;
     }
     
@@ -55,6 +55,12 @@ var gk = (function(gk){
     }
     
     gk.Map = Map;
+    
+    gk.maps = [];
+    
+    gk.registerMap = function(map){
+        gk.maps.push(map);        
+    }
 
     return gk;
 })(gk || {});

@@ -1,6 +1,6 @@
 var gk = (function(gk){
 
-    var ConvexHull = new Map("Convex Hull", "Computes the convex hull of a set of points");
+    var ConvexHull = new gk.Map("Convex Hull", "Computes the convex hull of a set of points");
     
     ConvexHull.canMap = function(collection){
         for(var item in collection){
@@ -9,7 +9,7 @@ var gk = (function(gk){
             }
         }
         return true;
-    });
+    };
     
     ConvexHull.doMap = function(collection){
         //TODO: implement this method

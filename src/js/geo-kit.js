@@ -13,12 +13,11 @@ var gk = (function($, gk){
     gk.selected = {};
     gk.inserting = null;
     gk.currentPrimitiveClass = null;
+    gk.currentMap = null;
     gk.mode = gk.MODE_INSERT;
     gk.selectionOptions = {snapToPoints: true, snapToEdges: true, snapRadius: 10};
     
-    $(function(){
-        gk.currentPrimitiveClass = gk.primitives[0];
-    
+    $(function(){ 
         gk.$stages = $("#gk-stages");
         gk.$menu = $("#gk-menu");
         gk.$globalMenu = $("#gk-global-menu");
@@ -146,7 +145,7 @@ var gk = (function($, gk){
         }
         $primitiveSelect.on("change", function(event){
             gk.currentPrimitiveClass = gk.primitives[$primitiveSelect.val()];    
-        });
+        }).change();
         
         $("#snapToPointsCheck").on("change", function(){
             gk.selectionOptions.snapToPoints = $(this).is(":checked");        
@@ -154,6 +153,14 @@ var gk = (function($, gk){
         
         $("#snapToEdgesCheck").on("change", function(){
             gk.selectionOptions.snapToEdges = $(this).is(":checked");        
+        }).change();
+        
+        var $mapSelect = $("#mapSelect");
+        for(var index in gk.maps){
+            $mapSelect.append("<option value='"+index+"'>"+gk.maps[index].displayName+"</option>");    
+        }
+        $mapSelect.on("change", function(event){
+            gk.currentMap = gk.maps[$mapSelect.val()];    
         }).change();
     }
 
