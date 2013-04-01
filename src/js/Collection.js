@@ -47,6 +47,9 @@ var gk = (function(gk){
     }
     
     Collection.prototype.tryToSelect = function(mouse, options){
+        if(this.parentCollection){
+            return false;
+        }
         for(var item in this){
             if(item.tryToSelect(mouse, options)){
                 return true;
@@ -62,8 +65,22 @@ var gk = (function(gk){
     }
     
     Collection.prototype.registerMapping = function(parentCollection, parentMap){
-        //TODO: this method
-        throw "unimplemented method: Collection.registerMapping";
+        this.parentCollection = parentCollection;
+        this.parentMap = parentMap;
+        gk.registerListener(this, parentCollection);
+    }
+    
+    Collection.prototype.trigger = function(obj, data){
+        if(this.parentCollection && this.parentMap){
+            this.parentMap.manipulate(this.parentCollection, this, data);
+        }
+    }
+    
+    Collection.prototype.replaceItems = function(collection, src){
+        this.items = collection.items;
+        gk.emit(this, {
+            event: gk.EVENT_REPLACED
+        });
     }
     
     Collection.prototype.__iterator__ = function(){

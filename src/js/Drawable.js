@@ -5,8 +5,6 @@ var gk = (function(gk){
 
     //Constructor//////////////////////////////////////////////////////
     function Drawable(){ }
-    
-    Drawable.prototype = new gk.Eventable();
 
     //Instance Methods/////////////////////////////////////////////////    
     Drawable.prototype.updateMousePrimitive = function(oldMouse, curMouse){
@@ -27,6 +25,10 @@ var gk = (function(gk){
     
     Drawable.prototype.draw = function(options){
         throw "Unimplemented abstract method: Drawable.draw";
+    }
+    
+    Drawable.prototype.trigger = function(obj, data){
+        //do nothing by default
     }
     
     Drawable.prototype.startRender = function(options){

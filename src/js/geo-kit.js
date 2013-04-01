@@ -2,6 +2,7 @@ var gk = (function($, gk){
     
     gk.MODE_INSERT = "insert";
     gk.MODE_SELECT = "select";
+    gk.MODE_MOVE = "move";
     
     gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192};
     
@@ -46,6 +47,12 @@ var gk = (function($, gk){
                 gk.currentStage.insert(newPrimitive);
                 gk.select(newPrimitive);
                 gk.inserting = newPrimitive;
+            }else if(gk.mode == gk.MODE_MOVE){
+                clearSelection();
+                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.selectionOptions);
+                if(selection!=null){
+                    gk.select(selection);
+                }
             }
             
             gk.currentStage.draw();
@@ -57,10 +64,11 @@ var gk = (function($, gk){
             if(gk.mouse.down){
                 if(gk.inserting){
                     gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);    
-                }else{
+                }else if(gk.mode == gk.MODE_MOVE){
                     for(var key in gk.selected){
                         var item = gk.selected[key];
                         item.updateMouse(gk.mouseLast, gk.mouse);
+                        gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
                     }
                 }
                 gk.currentStage.draw();
@@ -162,6 +170,19 @@ var gk = (function($, gk){
         $mapSelect.on("change", function(event){
             gk.currentMap = gk.maps[$mapSelect.val()];    
         }).change();
+    }
+    
+    //temporary bootstraped functionality tester
+    gk.tempTest = function(){
+        var tempCol = new gk.Collection();
+        for(var item in gk.currentStage.currentLayer.items){
+            tempCol.add(item);
+        }
+        gk.currentStage.addLayer();
+        gk.currentStage.setLayer(1);
+        gk.currentStage.insert(gk.currentMap.map(tempCol));
+        gk.currentStage.setLayer(0);
+        gk.mode = gk.MODE_MOVE;
     }
 
     return gk;

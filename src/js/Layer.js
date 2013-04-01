@@ -29,7 +29,7 @@ var gk = (function(gk){
     Layer.prototype.tryToSnap = function(mouse, options){
         if(this.isSelectable()){
             for(var item in this.items){
-                if(gk.inserting==item){
+                if(gk.isSelected(item)){
                     continue;
                 }
                 var snap = item.tryToSnap(mouse, options);

@@ -4,36 +4,37 @@ var gk = (function(gk){
     gk.EVENT_UPDATED = "updated";
     gk.EVENT_DELETED = "deleted";
     
+    gk.listeners = {};
     
-    function Eventable(){
-        this.observers = [];
+    gk.registerListener = function(observer, observed){
+        if(observed instanceof gk.Collection){
+            for(var item in observed){
+                registerListenerInternal(item, observer);
+            }
+        }else{
+            registerListenerInternal(observed, observer);
+        }    
     }
     
-    Eventable.prototype.listen = function(observer){
-        this.observers.push(observer);
+    function registerListenerInternal(observed, observer){
+        if(!gk.listeners[observed]){
+            gk.listeners[observed] = [];    
+        }
+        gk.listeners[observed].push(observer);
     }
-
-    Eventable.prototype.unlisten = function(observer){
-        for(var i=0; i<this.observers.length; i++){
-            if(this.observers[i] == observer){
-                this.observers.splice(i,1);
-                return true;
+    
+    gk.emit = function(observed, data){
+        var observers = gk.listeners[observed];
+        if(observers){
+            for(var i=0; i<observers.length; i++){
+                observers[i].trigger(observed, data);
             }
         }
-        return false;
     }
     
-    Eventable.prototype.emit = function(data){
-        for(var i=0; i<this.observers.length; i++){
-            this.observers[i].trigger(this, data);
-        }
+    gk.getDefaultEvent = function(eventType){
+        return {event: eventType};
     }
-    
-    Eventable.prototype.trigger = function(obj, data){
-        //do nothing by default
-    }
-    
-    gk.Eventable = Eventable;
 
     return gk;
 })(gk || {});

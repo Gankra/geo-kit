@@ -51,7 +51,7 @@ var gk = (function(gk){
     * returns void
     */
     Map.prototype.manipulate = function(input, output, inputData){
-        output.replaceItems(this.map(input), this);
+        output.replaceItems(this.doMap(input), this);
     }
     
     gk.Map = Map;

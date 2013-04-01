@@ -75,11 +75,18 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.addLayer = function(layer, index){
+        if(!layer){
+            layer = new gk.Layer();
+        }
         if(index === undefined){
             this.layers.push(layer);
         }else{
             this.layers.splice(index,0,layer);
         }
+    }
+    
+    Stage.prototype.setLayer = function(index){
+        this.currentLayer = this.layers[index];
     }
     
     Stage.prototype.insert = function(item){
