@@ -9,6 +9,10 @@ var gk = (function(gk){
     Drawable.prototype = new gk.Eventable();
 
     //Instance Methods/////////////////////////////////////////////////    
+    Drawable.prototype.updateMousePrimitive = function(oldMouse, curMouse){
+        throw "Class does not provide a primitive mouse update";
+    }
+    
     Drawable.prototype.updateMouse = function(oldMouse, curMouse){
         throw "Class does not provide a mouse update";
     }

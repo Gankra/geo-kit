@@ -57,7 +57,7 @@ var gk = (function($, gk){
             gk.currentStage.updateMouse(event);
             if(gk.mouse.down){
                 if(gk.inserting){
-                    gk.inserting.updateMouse(gk.mouseLast, gk.mouse);    
+                    gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);    
                 }else{
                     for(var key in gk.selected){
                         var item = gk.selected[key];

@@ -55,8 +55,10 @@ var gk = (function(gk){
         return false;        
     }
     
-    Collection.prototype.replaceItems = function(items, replacer){
-        this.items = items;
+    Collection.prototype.updateMouse = function(oldMouse, curMouse){
+        for(var item in this){
+            item.updateMouse(oldMouse, curMouse); 
+        }
     }
     
     Collection.prototype.registerMapping = function(parentCollection, parentMap){

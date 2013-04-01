@@ -19,7 +19,12 @@ var gk = (function(gk){
 
     Line.prototype = new gk.Drawable();
     
+    Line.prototype.updateMousePrimitive = function(oldMouse, curMouse){
+        this.ptB.updateMousePrimitive(oldMouse, curMouse);
+    }
+    
     Line.prototype.updateMouse = function(oldMouse, curMouse){
+        this.ptA.updateMouse(oldMouse, curMouse);
         this.ptB.updateMouse(oldMouse, curMouse);
     }
 

@@ -16,7 +16,7 @@ var gk = (function(gk){
 
     Point.prototype = new gk.Drawable();   
     
-    Point.prototype.updateMouse = function(oldMouse, curMouse){
+    Point.prototype.updateMouse = Point.prototype.updateMousePrimitive = function(oldMouse, curMouse){
         this.x += curMouse.x-oldMouse.x;
         this.y += curMouse.y-oldMouse.y;
     }
