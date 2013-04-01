@@ -1,4 +1,4 @@
-var gk = (function(gk){
+var gk = (function(gk, _){
     
     var Point = gk.Point;
     var Line = gk.Line;
@@ -30,14 +30,10 @@ var gk = (function(gk){
         this.offsetY = this.canvas.height/2;
         
         this.$stage.append(this.$canvas);
-        
-        var self = this;
-        setInterval(function(){
-            self.draw();
-        },1000/30);
+        this.draw();
     }
     
-    Stage.prototype.draw = function(options){
+    Stage.prototype.draw = _.throttle(function(options){
         this.clearRender();
         this.ctx.save();
         this.ctx.translate(this.offsetX, this.offsetY);
@@ -50,7 +46,7 @@ var gk = (function(gk){
             this.layers[i].draw(this);
         }  
         this.ctx.restore();
-    }
+    }, 1000/30);
     
     Stage.prototype.clearRender = function(){
         this.ctx.fillStyle = "#fff";
@@ -138,4 +134,4 @@ var gk = (function(gk){
     gk.Stage = Stage;
 
     return gk;
-})(gk || {});
+})(gk || {}, _);
