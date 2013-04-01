@@ -1,7 +1,15 @@
 var gk = (function(gk){
     
+    var Point = gk.Point;
+    var Line = gk.Line;
+    
     var DEFAULT_CANVAS_WIDTH = 650;
     var DEFAULT_CANVAS_HEIGHT = 500;
+    var axes = [
+        new Line(new Point(0,0), new Point(0,1)),
+        new Line(new Point(0,0), new Point(1,0))
+    ];
+    var axesOptions = {color: "#bbb"};
     
     function Stage(){
         this.layers = [new gk.Layer()];        
@@ -23,7 +31,10 @@ var gk = (function(gk){
         
         this.$stage.append(this.$canvas);
         
-        this.clearRender();
+        var self = this;
+        setInterval(function(){
+            self.draw();
+        },1000/30);
     }
     
     Stage.prototype.draw = function(options){
@@ -31,6 +42,10 @@ var gk = (function(gk){
         this.ctx.save();
         this.ctx.translate(this.offsetX, this.offsetY);
         this.ctx.scale(this.scaleX, this.scaleY);
+        axesOptions.ctx = this.ctx;
+        for(var i=0; i<axes.length; ++i){
+            axes[i].draw(axesOptions);
+        }
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].draw(this);
         }  

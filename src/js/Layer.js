@@ -12,7 +12,7 @@ var gk = (function(gk){
     }
     
     Layer.prototype.insert = function(item){
-        this.items.push(item);
+        this.items.add(item);
     }
     
     Layer.prototype.getSelectionAt = function(mouse, options){
@@ -46,8 +46,10 @@ var gk = (function(gk){
     }
     
     Layer.prototype.draw = function(options){
-        this.ctx = options.ctx;
-        this.items.draw(this);   
+        if(this.visible){
+            this.ctx = options.ctx;
+            this.items.draw(this);
+        }   
     }
     
     gk.Layer = Layer;

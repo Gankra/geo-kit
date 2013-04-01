@@ -64,7 +64,7 @@ var gk = (function($, gk){
                         item.updateMouse(gk.mouseLast, gk.mouse);
                     }
                 }
-                gk.currentStage.draw();
+                //gk.currentStage.draw();
             }
         });
         
