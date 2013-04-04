@@ -102,7 +102,8 @@ var gk = (function($, gk){
         gk.currentStage.select();
         
         gk.$stageMenu.empty();
-        gk.$stageMenu.append(gk.currentStage.$menu);    
+        gk.$stageMenu.append(gk.currentStage.$menu); 
+           
     }
     
     gk.addStage = function(stage){
@@ -166,12 +167,18 @@ var gk = (function($, gk){
     }
     
     function createGlobalMenu(){
+        var $modeSelect = $("#modeSelect");
+        $modeSelect.on("change", function(event){
+            gk.mode = gk["MODE_"+$modeSelect.val()];
+        }).change();
+        
         var $primitiveSelect = $("#primitiveSelect");
         for(var index in gk.primitives){
             $primitiveSelect.append("<option value='"+index+"'>"+gk.primitives[index].displayName+"</option>");    
         }
         $primitiveSelect.on("change", function(event){
             gk.currentPrimitiveClass = gk.primitives[$primitiveSelect.val()];    
+            $modeSelect.val("INSERT").change();
         }).change();
         
         $("#snapToPointsCheck").on("change", function(){
@@ -201,25 +208,10 @@ var gk = (function($, gk){
             }
         });
         
-        var $modeSelect = $("#modeSelect");
-        $modeSelect.on("change", function(event){
-            gk.mode = gk["MODE_"+$modeSelect.val()];
-        }).change();
+
+        
 
     }
     
-    //temporary bootstraped functionality tester
-    gk.tempTest = function(){
-        var tempCol = new gk.Collection();
-        for(var item in gk.currentStage.currentLayer.items){
-            tempCol.add(item);
-        }
-        gk.currentStage.addLayer();
-        gk.currentStage.setLayer(1);
-        gk.currentStage.insert(gk.currentMap.map(tempCol));
-        gk.currentStage.setLayer(0);
-        gk.mode = gk.MODE_MOVE;
-    }
-
     return gk;
 })($, gk || {});

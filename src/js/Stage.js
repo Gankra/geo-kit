@@ -12,17 +12,21 @@ var gk = (function(gk, _){
     var axesOptions = {color: "#bbb"};
     
     function Stage(){
-        this.layers = [new gk.Layer()];        
+        this.layers = [];        
         
         this.$stage = $("<div>");
         this.$canvas = $("<canvas class='stage'>");
         this.$menu = $("<div>");
+        this.$layers = $("<div id='layers'>");
+        
+        this.$menu.append(this.$layers);
+        
         
         this.canvas = this.$canvas[0];
         this.canvas.width = DEFAULT_CANVAS_WIDTH;
         this.canvas.height = DEFAULT_CANVAS_HEIGHT;
         this.ctx = this.canvas.getContext("2d");
-        this.currentLayer = this.layers[0];
+        this.addLayer();
         
         this.scaleX = 1;
         this.scaleY = -1;
@@ -57,11 +61,12 @@ var gk = (function(gk, _){
         var index;
         if(typeof layer == "number"){
             index = layer;
-            this.layers.splice(layer, 1);
+            layer = this.layers[index];
         }else{
             index = this.layers.indexOf(layer);
-            this.layers.splice(index, 1);
         }
+        this.layers.splice(index, 1);
+        this.removeLayerHTML(layer);
         
         if(currentLayer == layer){
             if(index>0){
@@ -80,9 +85,15 @@ var gk = (function(gk, _){
         }
         if(index === undefined){
             this.layers.push(layer);
+            this.insertLayerHTML(layer, this.layers.length-1);
         }else{
             this.layers.splice(index,0,layer);
+            this.insertLayerHTML(layer, index);
         }
+        if(this.layers.length==1){
+            this.currentLayer = layer;
+        }
+        
     }
     
     Stage.prototype.setLayer = function(index){
@@ -102,7 +113,6 @@ var gk = (function(gk, _){
     Stage.prototype.deselect = function(){
         this.$canvas.removeClass("stage-selected");
     }
-    
     
     Stage.prototype.updateMouse = function(event, down){
         gk.mouseLast = gk.mouse;
@@ -131,7 +141,7 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.getSelectionAt = function(mouse, options){
-        for(var i=0; i<this.layers.length; ++i){
+        for(var i=this.layers.length-1; i>=0; --i){
             var result = this.currentLayer.getSelectionAt(mouse, options);
             if(result){
                 return result;
@@ -142,6 +152,26 @@ var gk = (function(gk, _){
     
     Stage.prototype.tryToSnap = function(mouse, options){
         return this.currentLayer.tryToSnap(mouse, options);
+    }
+    
+    Stage.prototype.insertLayerHTML = function(layer, index){
+        layer.$html = this.getLayerHTML(layer);
+        if(index==0){
+            this.$layers.prepend(layer.$html);
+        }else{
+            layer.$html.insertAfter(this.layers[index-1].$html);
+        }
+    }
+    
+    Stage.prototype.removeLayerHTML = function(layer){
+        layer.$html.remove();        
+    }
+    
+    Stage.prototype.getLayerHTML = function(layer){
+        var $layer = $("<div class='layer'>");
+        $layer.append($("<button class='lock-button'>"));
+        $layer.append($("<button class='visible-button'>"));
+        return $layer;
     }
     
     gk.Stage = Stage;

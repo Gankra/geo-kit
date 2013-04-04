@@ -24,3 +24,11 @@ html, body{
 
 .stage-selected{
 }
+
+.layer{
+    height:30px;
+}
+
+.lock-button, .visible-button{
+    height:20px;
+}
