@@ -12,6 +12,7 @@ var gk = (function($, gk){
     gk.mouse = new gk.Point(0,0);
     gk.keyboard = {};
     gk.selected = {};
+    gk.selection = new gk.Collection();
     gk.inserting = null;
     gk.currentPrimitiveClass = null;
     gk.currentMap = null;
@@ -42,13 +43,16 @@ var gk = (function($, gk){
             gk.currentStage.updateMouse(event, true);
             
             if(gk.mode == gk.MODE_INSERT){
-                clearSelection();
                 var newPrimitive = gk.currentPrimitiveClass.createPrimitive(gk.mouse);
                 gk.currentStage.insert(newPrimitive);
                 gk.select(newPrimitive);
                 gk.inserting = newPrimitive;
             }else if(gk.mode == gk.MODE_MOVE){
-                clearSelection();
+                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.selectionOptions);
+                if(selection!=null){
+                    gk.select(selection);
+                }
+            }else if(gk.mode == gk.MODE_SELECT){
                 var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.selectionOptions);
                 if(selection!=null){
                     gk.select(selection);
@@ -78,13 +82,14 @@ var gk = (function($, gk){
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
             gk.inserting = null;
+            gk.currentStage.draw();
         });
         
         $document.on("keydown", function(event){
             gk.keyboard[event.keyCode] = true;
         });
         
-        $document.on("keydown", function(event){
+        $document.on("keyup", function(event){
             gk.keyboard[event.keyCode] = false;
         });
     });
@@ -136,14 +141,28 @@ var gk = (function($, gk){
     
     function addSelection(item){
         gk.selected[item] = item;
+        gk.selection.add(item);
+        updateSelection();
     }
     
     function removeSelection(item){
         delete gk.selected[item];
+        gk.selection.remove(item);
+        updateSelection();
     }
     
     function clearSelection(){
         gk.selected = {};
+        gk.selection.clear();
+        updateSelection();
+    }
+    
+    function updateSelection(){
+        if(gk.currentMap.canMap(gk.selection)){
+            $("#mapButton").removeAttr("disabled");
+        }else{
+            $("#mapButton").attr("disabled", "disabled");
+        }
     }
     
     function createGlobalMenu(){
@@ -168,8 +187,25 @@ var gk = (function($, gk){
             $mapSelect.append("<option value='"+index+"'>"+gk.maps[index].displayName+"</option>");    
         }
         $mapSelect.on("change", function(event){
-            gk.currentMap = gk.maps[$mapSelect.val()];    
+            gk.currentMap = gk.maps[$mapSelect.val()];  
+            updateSelection();  
         }).change();
+        
+        var $mapButton = $("#mapButton");
+        $mapButton.on("click", function(event){
+            if(gk.currentMap.canMap(gk.selection)){
+                var layer = new gk.Layer();
+                layer.insert(gk.currentMap.map(gk.selection.clone()));
+                gk.currentStage.addLayer(layer);
+                gk.currentStage.draw();
+            }
+        });
+        
+        var $modeSelect = $("#modeSelect");
+        $modeSelect.on("change", function(event){
+            gk.mode = gk["MODE_"+$modeSelect.val()];
+        }).change();
+
     }
     
     //temporary bootstraped functionality tester

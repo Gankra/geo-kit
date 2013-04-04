@@ -15,7 +15,7 @@ var gk = (function(gk){
     LineSegment.prototype = new gk.Line();
     
     LineSegment.prototype.tryToSelect = function(mouse, options){
-        return !!tryToSnap(mouse, LINE_SEGMENT_SELECT_OPTIONS);
+        return !!this.tryToSnap(mouse, LINE_SEGMENT_SELECT_OPTIONS);
     }
     
     LineSegment.prototype.tryToSnap = function(mouse, options){
@@ -49,6 +49,8 @@ var gk = (function(gk){
         ctx.moveTo(this.ptA.x, this.ptA.y);
         ctx.lineTo(this.ptB.x, this.ptB.y);
         ctx.closePath();
+        this.applySelectionStyle(ctx);
+        ctx.lineWidth = 2;
         ctx.stroke();
         this.finishRender(options);   
     }

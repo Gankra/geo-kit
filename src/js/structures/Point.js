@@ -1,6 +1,6 @@
 var gk = (function(gk){
 
-    var POINT_DRAW_RADIUS = 3;
+    var POINT_DRAW_RADIUS = 4;
     var POINT_SELECT_RADIUS = 10;
     var POINT_SELECT_RADIUS_SQ = POINT_SELECT_RADIUS*POINT_SELECT_RADIUS;
 
@@ -75,11 +75,20 @@ var gk = (function(gk){
     Point.prototype.draw = function(options){
         this.startRender(options);
         var ctx = this.getContext(options);
-        ctx.strokeStyle = "none";
+        var selected = gk.isSelected(this);
+        if(selected){
+            ctx.strokeStyle = "#ff0000";
+            ctx.lineWidth = 2;
+        }else{
+            ctx.strokeStyle = "none";
+        }
         ctx.beginPath();
         ctx.arc(this.x, this.y, POINT_DRAW_RADIUS, 0, Math.PI*2, true);
         ctx.closePath();
         ctx.fill();
+        if(selected){
+            ctx.stroke();
+        }
         this.finishRender(options);
     }
     

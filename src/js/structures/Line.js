@@ -51,8 +51,20 @@ var gk = (function(gk){
         ctx.moveTo(this.ptA.x+cos*LINE_DRAW_LENGTH, this.ptA.y+sin*LINE_DRAW_LENGTH);
         ctx.lineTo(this.ptA.x-cos*LINE_DRAW_LENGTH, this.ptA.y-sin*LINE_DRAW_LENGTH);
         ctx.closePath();
+        this.applySelectionStyle(ctx);
+        ctx.lineWidth=2;
         ctx.stroke();
         this.finishRender(options);   
+    }
+    
+    Line.prototype.applySelectionStyle = function(ctx){
+        if(gk.isSelected(this)){
+            ctx.save();
+            ctx.strokeStyle="#ff0000";
+            ctx.lineWidth=4;
+            ctx.stroke();
+            ctx.restore();
+        }
     }
     
     Line.prototype.tryToSelect = function(mouse, options){

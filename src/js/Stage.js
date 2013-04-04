@@ -131,7 +131,13 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.getSelectionAt = function(mouse, options){
-        return this.currentLayer.getSelectionAt(mouse, options);
+        for(var i=0; i<this.layers.length; ++i){
+            var result = this.currentLayer.getSelectionAt(mouse, options);
+            if(result){
+                return result;
+            }
+        }
+        return null;
     }
     
     Stage.prototype.tryToSnap = function(mouse, options){

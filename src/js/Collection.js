@@ -12,6 +12,14 @@ var gk = (function(gk){
         return this.items.splice.apply(this.items, arguments);
     }
     
+    Collection.prototype.remove = function(item){
+        this.items.splice(this.items.indexOf(item), 1);
+    }
+    
+    Collection.prototype.clear = function(){
+        this.items = [];
+    }
+    
     Collection.prototype.add = function(item){
         return this.items.push(item);
     }
@@ -20,6 +28,14 @@ var gk = (function(gk){
         for(var item in collection){
             this.add(item);
         }    
+    }
+    
+    Collection.prototype.clone = function(collection){
+        var clone = new Collection();
+        for(var item in this){
+            clone.add(item);
+        }
+        return clone;
     }
     
     Collection.prototype.__defineGetter__("length", function(){

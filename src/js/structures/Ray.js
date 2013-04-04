@@ -16,7 +16,7 @@ var gk = (function(gk){
     Ray.prototype = new gk.Line();
     
     Ray.prototype.tryToSelect = function(mouse, options){
-        return !!tryToSnap(mouse, RAY_SELECT_OPTIONS);
+        return !!this.tryToSnap(mouse, RAY_SELECT_OPTIONS);
     }
     
     Ray.prototype.tryToSnap = function(mouse, options){
@@ -58,6 +58,8 @@ var gk = (function(gk){
         ctx.moveTo(this.ptA.x, this.ptA.y);
         ctx.lineTo(this.ptA.x-cos*RAY_DRAW_LENGTH, this.ptA.y-sin*RAY_DRAW_LENGTH);
         ctx.closePath();
+        this.applySelectionStyle(ctx);
+        ctx.lineWidth = 2;
         ctx.stroke();
         this.finishRender(options);   
     }

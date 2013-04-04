@@ -31,18 +31,26 @@ var gk = (function(gk){
         var angle = this.angle;
         var cos = Math.cos(angle);
         var sin = Math.sin(angle);
-
+        var selected = gk.isSelected(this);
         this.startRender(options);
         var ctx = this.getContext(options);
         ctx.beginPath();
         ctx.arc(this.ptA.x, this.ptA.y, this.ptA.distance(this.ptB), 0, Math.PI*2);
         ctx.closePath();
+        if(selected){
+            ctx.save();
+            ctx.strokeStyle="#ff0000";
+            ctx.lineWidth=4;
+            ctx.stroke();
+            ctx.restore();
+        }
+        ctx.lineWidth=2;
         ctx.stroke();
         this.finishRender(options);   
     }
     
     Circle.prototype.tryToSelect = function(mouse, options){
-        return Math.abs(this.ptA.distanceSquared(mouse)-this.radiusSquared) <= Circle_SELECT_DISTANCE_SQ;
+        return Math.abs(this.ptA.distanceSquared(mouse)-this.radiusSquared) <= CIRCLE_SELECT_DISTANCE_SQ;
     }
     
     Circle.prototype.tryToSnap = function(mouse, options){
