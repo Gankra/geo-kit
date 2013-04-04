@@ -47,8 +47,7 @@ var gk = (function(gk){
     
     Layer.prototype.draw = function(options){
         if(this.visible){
-            this.ctx = options.ctx;
-            this.items.draw(this);
+            this.items.draw(_.defaults({}, options, this));
         }   
     }
     

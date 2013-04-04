@@ -1,9 +1,5 @@
 var gk = (function(gk){
 
-    var POINT_DRAW_RADIUS = 4;
-    var POINT_SELECT_RADIUS = 10;
-    var POINT_SELECT_RADIUS_SQ = POINT_SELECT_RADIUS*POINT_SELECT_RADIUS;
-
     function Point(){
         this.coords = arguments;
     }
@@ -66,24 +62,18 @@ var gk = (function(gk){
         return Math.sqrt(this.distanceSquared(pt));
     }
     
-    Point.prototype.__iterator__ = function(){
-        for(var i=0; i<this.coords.length; ++i){
-            yield this.coords[i];
-        }
-    }
-    
     Point.prototype.draw = function(options){
         this.startRender(options);
         var ctx = this.getContext(options);
         var selected = gk.isSelected(this);
         if(selected){
-            ctx.strokeStyle = "#ff0000";
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = options.highlightColor;
+            ctx.lineWidth = options.highlightRadius;
         }else{
             ctx.strokeStyle = "none";
         }
         ctx.beginPath();
-        ctx.arc(this.x, this.y, POINT_DRAW_RADIUS, 0, Math.PI*2, true);
+        ctx.arc(this.x, this.y, options.pointRadius, 0, Math.PI*2, true);
         ctx.closePath();
         ctx.fill();
         if(selected){
@@ -93,11 +83,11 @@ var gk = (function(gk){
     }
     
     Point.prototype.tryToSelect = function(mouse, options){
-        return this.distanceSquared(mouse) <= POINT_SELECT_RADIUS_SQ;
+        return this.distanceSquared(mouse) <= options.pointSelectDistance*options.pointSelectDistance;
     }
     
     Point.prototype.tryToSnap = function(mouse, options){
-        if(options.snapToPoints && this.distanceSquared(mouse) <= options.snapRadius*options.snapRadius){
+        if(options.snapToPoints && this.distanceSquared(mouse) <= options.pointSnapDistance*options.pointSnapDistance){
             return this;
         }
         return null;

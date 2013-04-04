@@ -1,8 +1,6 @@
 var gk = (function(gk){
 
     var LINE_DRAW_LENGTH = 1000;
-    var LINE_SELECT_DISTANCE = 10;
-    var LINE_SELECT_DISTANCE_SQ = LINE_SELECT_DISTANCE*LINE_SELECT_DISTANCE;
 
     function Line(ptA, ptB){
         this.ptA = ptA;
@@ -10,8 +8,6 @@ var gk = (function(gk){
     }
     
     Line.displayName = "Line";
-    Line.LINE_SELECT_DISTANCE = LINE_SELECT_DISTANCE;
-    Line.LINE_SELECT_DISTANCE_SQ = LINE_SELECT_DISTANCE_SQ;
     
     Line.createPrimitive = function(mouse){
         return new Line(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
@@ -51,30 +47,19 @@ var gk = (function(gk){
         ctx.moveTo(this.ptA.x+cos*LINE_DRAW_LENGTH, this.ptA.y+sin*LINE_DRAW_LENGTH);
         ctx.lineTo(this.ptA.x-cos*LINE_DRAW_LENGTH, this.ptA.y-sin*LINE_DRAW_LENGTH);
         ctx.closePath();
-        this.applySelectionStyle(ctx);
-        ctx.lineWidth=2;
+        this.applyEdgeSelectionStyle(ctx, options);
         ctx.stroke();
         this.finishRender(options);   
     }
     
-    Line.prototype.applySelectionStyle = function(ctx){
-        if(gk.isSelected(this)){
-            ctx.save();
-            ctx.strokeStyle="#ff0000";
-            ctx.lineWidth=4;
-            ctx.stroke();
-            ctx.restore();
-        }
-    }
-    
     Line.prototype.tryToSelect = function(mouse, options){
-        return this.projectedDistanceSquared(mouse) <= LINE_SELECT_DISTANCE_SQ;
+        return this.projectedDistanceSquared(mouse) <= options.edgeSelectDistance*options.edgeSelectDistance;
     }
     
     Line.prototype.tryToSnap = function(mouse, options){
         if(options.snapToEdges){
             var projection = this.projection(mouse);
-            if(projection.distanceSquared(mouse) <= options.snapRadius*options.snapRadius){
+            if(projection.distanceSquared(mouse) <= options.edgeSnapDistance*options.edgeSnapDistance){
                 return projection;
             }
         }

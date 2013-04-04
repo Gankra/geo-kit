@@ -1,6 +1,6 @@
-var gk = (function(gk){
+var gk = (function(gk, _){
     
-    var LINE_SEGMENT_SELECT_OPTIONS = {snapToPoints: true, snapToEdges:true, snapRadius:gk.Line.LINE_SELECT_DISTANCE};
+    var LINE_SEGMENT_SELECT_OPTIONS = {snapToPoints: true, snapToEdges:true};
     
     function LineSegment(ptA, ptB){
         gk.Line.call(this, ptA, ptB);
@@ -15,7 +15,8 @@ var gk = (function(gk){
     LineSegment.prototype = new gk.Line();
     
     LineSegment.prototype.tryToSelect = function(mouse, options){
-        return !!this.tryToSnap(mouse, LINE_SEGMENT_SELECT_OPTIONS);
+        return !!this.tryToSnap(mouse, 
+            _.defaults(RAY_SELECT_OPTIONS, {edgeSnapDistance: options.edgeSelectDistance, pointSnapDistance: options.pointSelectDistance}));
     }
     
     LineSegment.prototype.tryToSnap = function(mouse, options){
@@ -49,8 +50,7 @@ var gk = (function(gk){
         ctx.moveTo(this.ptA.x, this.ptA.y);
         ctx.lineTo(this.ptB.x, this.ptB.y);
         ctx.closePath();
-        this.applySelectionStyle(ctx);
-        ctx.lineWidth = 2;
+        this.applyEdgeSelectionStyle(ctx, options);
         ctx.stroke();
         this.finishRender(options);   
     }
@@ -60,4 +60,4 @@ var gk = (function(gk){
     gk.registerPrimitive(LineSegment);
     
     return gk;
-})(gk || {});
+})(gk || {}, _);

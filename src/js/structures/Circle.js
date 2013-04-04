@@ -1,16 +1,11 @@
 var gk = (function(gk){
 
-    var CIRCLE_SELECT_DISTANCE = 10;
-    var CIRCLE_SELECT_DISTANCE_SQ = CIRCLE_SELECT_DISTANCE*CIRCLE_SELECT_DISTANCE;
-
     function Circle(ptA, ptB){
         this.ptA = ptA;
         this.ptB = ptB;
     }
     
     Circle.displayName = "Circle";
-    Circle.CIRCLE_SELECT_DISTANCE = CIRCLE_SELECT_DISTANCE;
-    Circle.CIRCLE_SELECT_DISTANCE_SQ = CIRCLE_SELECT_DISTANCE_SQ;
     
     Circle.createPrimitive = function(mouse){
         return new Circle(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
@@ -37,25 +32,18 @@ var gk = (function(gk){
         ctx.beginPath();
         ctx.arc(this.ptA.x, this.ptA.y, this.ptA.distance(this.ptB), 0, Math.PI*2);
         ctx.closePath();
-        if(selected){
-            ctx.save();
-            ctx.strokeStyle="#ff0000";
-            ctx.lineWidth=4;
-            ctx.stroke();
-            ctx.restore();
-        }
-        ctx.lineWidth=2;
+        this.applyEdgeSelectionStyle(ctx, options);
         ctx.stroke();
         this.finishRender(options);   
     }
     
     Circle.prototype.tryToSelect = function(mouse, options){
-        return Math.abs(this.ptA.distanceSquared(mouse)-this.radiusSquared) <= CIRCLE_SELECT_DISTANCE_SQ;
+        return Math.abs(this.ptA.distanceSquared(mouse)-this.radiusSquared) <= options.edgeSelectDistance*options.edgeSelectDistance;
     }
     
     Circle.prototype.tryToSnap = function(mouse, options){
         if(options.snapToEdges){
-            if(Math.abs(this.ptA.distance(mouse)-this.radius) <= options.snapRadius){
+            if(Math.abs(this.ptA.distance(mouse)-this.radius) <= options.edgeSnapRadius){
                 var angle = Math.atan2(mouse.y-this.ptA.y, mouse.x-this.ptA.x);
                 var cos = Math.cos(angle);
                 var sin = Math.sin(angle);

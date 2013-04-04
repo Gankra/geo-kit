@@ -4,6 +4,23 @@ var gk = (function($, gk){
     gk.MODE_SELECT = "select";
     gk.MODE_MOVE = "move";
     
+    gk.options = gk.options || {};
+    gk.options.selection = {
+         snapToPoints: true 
+        ,snapToEdges: true 
+        ,edgeSnapDistance: 10
+        ,pointSnapDistance: 10
+        ,edgeSelectDistance: 10
+        ,pointSelectDistance: 10
+    };
+    gk.options.render = {
+         pointRadius: 3
+        ,lineWidth: 2
+        ,defaultColor: "#000000"
+        ,highlightColor: "#ff0000"   
+        ,highlightRadius: 2     
+    }
+    
     gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192};
     
     gk.stages = [];
@@ -17,7 +34,7 @@ var gk = (function($, gk){
     gk.currentPrimitiveClass = null;
     gk.currentMap = null;
     gk.mode = gk.MODE_INSERT;
-    gk.selectionOptions = {snapToPoints: true, snapToEdges: true, snapRadius: 10};
+    
     
     $(function(){ 
         gk.$stages = $("#gk-stages");
@@ -48,18 +65,18 @@ var gk = (function($, gk){
                 gk.select(newPrimitive);
                 gk.inserting = newPrimitive;
             }else if(gk.mode == gk.MODE_MOVE){
-                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.selectionOptions);
+                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
                 if(selection!=null){
                     gk.select(selection);
                 }
             }else if(gk.mode == gk.MODE_SELECT){
-                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.selectionOptions);
+                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
                 if(selection!=null){
                     gk.select(selection);
                 }
             }
             
-            gk.currentStage.draw();
+            gk.currentStage.draw(gk.options.render);
                 
         });
         
@@ -75,14 +92,14 @@ var gk = (function($, gk){
                         gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
                     }
                 }
-                gk.currentStage.draw();
+                gk.currentStage.draw(gk.options.render);
             }
         });
         
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
             gk.inserting = null;
-            gk.currentStage.draw();
+            gk.currentStage.draw(gk.options.render);
         });
         
         $document.on("keydown", function(event){
@@ -111,7 +128,8 @@ var gk = (function($, gk){
         gk.$stages.append(stage.$stage);
         if(gk.stages.length==1){
             gk.setCurrentStage(gk.stages[0]);
-        }    
+        } 
+        stage.draw(gk.options.render);   
     }
     
     gk.select = function(selection){
@@ -182,11 +200,11 @@ var gk = (function($, gk){
         }).change();
         
         $("#snapToPointsCheck").on("change", function(){
-            gk.selectionOptions.snapToPoints = $(this).is(":checked");        
+            gk.options.selection.snapToPoints = $(this).is(":checked");        
         }).change();
         
         $("#snapToEdgesCheck").on("change", function(){
-            gk.selectionOptions.snapToEdges = $(this).is(":checked");        
+            gk.options.selection.snapToEdges = $(this).is(":checked");        
         }).change();
         
         var $mapSelect = $("#mapSelect");
@@ -204,7 +222,7 @@ var gk = (function($, gk){
                 var layer = new gk.Layer();
                 layer.insert(gk.currentMap.map(gk.selection.clone()));
                 gk.currentStage.addLayer(layer);
-                gk.currentStage.draw();
+                gk.currentStage.draw(gk.options.render);
             }
         });
         

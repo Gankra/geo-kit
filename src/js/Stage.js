@@ -5,11 +5,14 @@ var gk = (function(gk, _){
     
     var DEFAULT_CANVAS_WIDTH = 650;
     var DEFAULT_CANVAS_HEIGHT = 500;
+    var AXES_COLOR = "#bbb";
+    
     var axes = [
         new Line(new Point(0,0), new Point(0,1)),
         new Line(new Point(0,0), new Point(1,0))
     ];
-    var axesOptions = {color: "#bbb"};
+    
+    
     
     function Stage(){
         this.layers = [];        
@@ -34,7 +37,6 @@ var gk = (function(gk, _){
         this.offsetY = this.canvas.height/2;
         
         this.$stage.append(this.$canvas);
-        this.draw();
     }
     
     Stage.prototype.draw = _.throttle(function(options){
@@ -42,13 +44,20 @@ var gk = (function(gk, _){
         this.ctx.save();
         this.ctx.translate(this.offsetX, this.offsetY);
         this.ctx.scale(this.scaleX, this.scaleY);
-        axesOptions.ctx = this.ctx;
+        this.ctx.lineWidth = options.lineWidth;
+        
+        var fullOptions = _.defaults({}, options, {ctx: this.ctx});
+        
+        fullOptions.color = AXES_COLOR;
         for(var i=0; i<axes.length; ++i){
-            axes[i].draw(axesOptions);
+            axes[i].draw(fullOptions);
         }
+        delete fullOptions.color;
+        
         for(var i=0; i<this.layers.length; ++i){
-            this.layers[i].draw(this);
+            this.layers[i].draw(fullOptions);
         }  
+        
         this.ctx.restore();
     }, 1000/30);
     
@@ -136,7 +145,7 @@ var gk = (function(gk, _){
         canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scaleX;
         canvasY = (event.pageY - totalOffsetY - this.offsetY)/this.scaleY;
         var pt = new gk.Point(canvasX, canvasY);
-        var snap = this.tryToSnap(pt, gk.selectionOptions);
+        var snap = this.tryToSnap(pt, gk.options.selection);
 	    return snap || pt;
     }
     

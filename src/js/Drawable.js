@@ -1,6 +1,4 @@
 var gk = (function(gk){
-
-    var DEFAULT_COLOR = "#000000";
     var base_id = 0;
 
     //Constructor//////////////////////////////////////////////////////
@@ -43,6 +41,16 @@ var gk = (function(gk){
         ctx.restore();
     }
     
+    Drawable.prototype.applyEdgeSelectionStyle = function(ctx, options){
+        if(gk.isSelected(this)){
+            ctx.save();
+            ctx.strokeStyle=options.highlightColor;
+            ctx.lineWidth+=options.highlightRadius;
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+    
     Drawable.prototype.getContext = function(options){
         return options.ctx;
     }
@@ -57,7 +65,7 @@ var gk = (function(gk){
     
     //Utility methods//////////////////////////////////////////////////
     function getColor(options){
-        return options.color || DEFAULT_COLOR;    
+        return options.color || options.defaultColor;    
     }
     
     gk.primitives = [];
