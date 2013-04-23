@@ -8,8 +8,8 @@ var gk = (function(gk){
     
     gk.registerListener = function(observer, observed){
         if(observed instanceof gk.Collection){
-            for(var item in observed){
-                registerListenerInternal(item, observer);
+            for(var i=0; i<observed.length; ++i){
+                registerListenerInternal(observed.get(i), observer);
             }
         }else{
             registerListenerInternal(observed, observer);

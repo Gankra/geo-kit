@@ -143,7 +143,8 @@ var gk = (function($, gk){
            clearSelection();
         }
         if(selection.items){
-            for(var item in selection){
+            for(var i=0; i<selection.length; ++i){
+                var item = selection.get(i);
                 if(ctrl && gk.isSelected(item)){
                     removeSelection(item);
                 }else{

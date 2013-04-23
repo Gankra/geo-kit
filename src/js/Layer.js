@@ -17,7 +17,8 @@ var gk = (function(gk){
     
     Layer.prototype.getSelectionAt = function(mouse, options){
         if(this.isSelectable()){
-            for(var item in this.items){
+            for(var i=0; i<this.items.length; ++i){
+                var item = this.items.get(i);
                 if(item.tryToSelect(mouse, options)){
                     return item;
                 }
@@ -28,7 +29,8 @@ var gk = (function(gk){
     
     Layer.prototype.tryToSnap = function(mouse, options){
         if(this.isSelectable()){
-            for(var item in this.items){
+            for(var i=0; i<this.items.length; ++i){
+                var item = this.items.get(i);
                 if(!options.snapSelected && gk.isSelected(item)){
                     continue;
                 }

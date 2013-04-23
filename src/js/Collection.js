@@ -25,16 +25,14 @@ var gk = (function(gk){
     }
     
     Collection.prototype.addAll = function(collection){
-        for(var item in collection){
-            this.add(item);
+        for(var i=0; i<collection.length; ++i){
+            this.add(collection.get(i));
         }    
     }
     
-    Collection.prototype.clone = function(collection){
+    Collection.prototype.clone = function(){
         var clone = new Collection();
-        for(var item in this){
-            clone.add(item);
-        }
+        clone.addAll(this);
         return clone;
     }
     
@@ -47,14 +45,14 @@ var gk = (function(gk){
     }
     
     Collection.prototype.draw = function(options){
-        for(var item in this){
-            item.draw(options);
+        for(var i=0; i<this.length; ++i){
+            this.get(i).draw(options);
         }
     }
     
     Collection.prototype.tryToSnap = function(mouse, options){
-        for(var item in this){
-            var snap = item.tryToSnap(mouse, options);
+        for(var i=0; i<this.length; ++i){
+            var snap = this.get(i).tryToSnap(mouse, options);
             if(snap){
                 return snap;
             }
@@ -66,8 +64,8 @@ var gk = (function(gk){
         if(this.parentCollection){
             return false;
         }
-        for(var item in this){
-            if(item.tryToSelect(mouse, options)){
+        for(var i=0; i<this.length; ++i){
+            if(this.get(i).tryToSelect(mouse, options)){
                 return true;
             }
         }
@@ -75,8 +73,8 @@ var gk = (function(gk){
     }
     
     Collection.prototype.updateMouse = function(oldMouse, curMouse){
-        for(var item in this){
-            item.updateMouse(oldMouse, curMouse); 
+        for(var i=0; i<this.length; ++i){
+            this.get(i).updateMouse(oldMouse, curMouse); 
         }
     }
     
@@ -99,11 +97,12 @@ var gk = (function(gk){
         });
     }
     
+    /* Can't use this outside firefox... sad... 
     Collection.prototype.__iterator__ = function(){
         for(var i=0; i<this.items.length; ++i){
             yield this.items[i];
         }
-    }
+    }*/
     
     gk.Collection = Collection;
 

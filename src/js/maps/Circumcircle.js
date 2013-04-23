@@ -7,8 +7,8 @@ var gk = (function(gk){
         if(collection.length!=3){
             return false;
         }
-        for(var item in collection){
-            if(!item.coords){
+        for(var i=0; i<collection.length; ++i){
+            if(!collection.get(i).coords){
                 return false;
             }
         }
