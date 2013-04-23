@@ -12,6 +12,7 @@ var gk = (function($, gk){
         ,pointSnapDistance: 10
         ,edgeSelectDistance: 10
         ,pointSelectDistance: 10
+        ,snapSelected: true
     };
     gk.options.render = {
          pointRadius: 3
@@ -81,6 +82,9 @@ var gk = (function($, gk){
         });
         
         $document.on("mousemove", ".stage", function(event){
+            if(gk.mouse.down){
+                gk.options.selection.snapSelected = false;
+            }
             gk.currentStage.updateMouse(event);
             if(gk.mouse.down){
                 if(gk.inserting){
@@ -92,14 +96,15 @@ var gk = (function($, gk){
                         gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
                     }
                 }
-                gk.currentStage.draw(gk.options.render);
             }
+            gk.currentStage.draw(gk.options.render);
         });
         
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
             gk.inserting = null;
             gk.currentStage.draw(gk.options.render);
+            gk.options.selection.snapSelected = true;
         });
         
         $document.on("keydown", function(event){

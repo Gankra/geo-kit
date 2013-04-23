@@ -57,9 +57,21 @@ var gk = (function(gk, _){
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].draw(fullOptions);
         }  
+        this.drawCursor(options, gk.mouse);
         
         this.ctx.restore();
     }, 1000/30);
+    
+    Stage.prototype.drawCursor = function(options, mouse){
+        this.ctx.beginPath();
+        this.ctx.moveTo(mouse.x,mouse.y-5);
+        this.ctx.lineTo(mouse.x,mouse.y+5);
+        this.ctx.stroke();
+        this.ctx.moveTo(mouse.x-5,mouse.y);
+        this.ctx.lineTo(mouse.x+5,mouse.y);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
     
     Stage.prototype.clearRender = function(){
         this.ctx.fillStyle = "#fff";
