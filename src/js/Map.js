@@ -53,6 +53,18 @@ var gk = (function(gk){
     Map.prototype.manipulate = function(input, output, inputData){
         output.replaceItems(this.doMap(input), this);
     }
+
+
+    Map.isPoints = function(collection){
+        for(var i=0; i<collection.length; ++i){
+            if(!collection.get(i).coords){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
     
     gk.Map = Map;
     

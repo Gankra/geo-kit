@@ -27,7 +27,7 @@ var gk = (function(gk){
         var observers = gk.listeners[observed];
         if(observers){
             for(var i=0; i<observers.length; i++){
-                observers[i].trigger(observed, data);
+                observers[i].handleEvent(observed, data);
             }
         }
     }

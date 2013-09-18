@@ -13,7 +13,16 @@ var gk = (function(gk){
     }
     
     Collection.prototype.remove = function(item){
-        this.items.splice(this.items.indexOf(item), 1);
+        var index = this.items.indexOf(item);
+        if(index!=-1){
+            var item = this.items[index];
+            this.items.splice(index, 1);
+            gk.emit(item, gk.getDefaultEvent(gk.EVENT_DELETED));
+        }else if(item instanceof Collection){
+            for(var i=0; i<item.length; ++i){
+                this.remove(item.get(i));
+            }
+        }
     }
     
     Collection.prototype.clear = function(){
@@ -28,6 +37,10 @@ var gk = (function(gk){
         for(var i=0; i<collection.length; ++i){
             this.add(collection.get(i));
         }    
+    }
+    
+    Collection.prototype.contains = function(){
+        return this.items.indexOf(item)!=-1;
     }
     
     Collection.prototype.clone = function(){
@@ -84,7 +97,7 @@ var gk = (function(gk){
         gk.registerListener(this, parentCollection);
     }
     
-    Collection.prototype.trigger = function(obj, data){
+    Collection.prototype.handleEvent = function(obj, data){
         if(this.parentCollection && this.parentMap){
             this.parentMap.manipulate(this.parentCollection, this, data);
         }

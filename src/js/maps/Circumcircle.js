@@ -7,12 +7,7 @@ var gk = (function(gk){
         if(collection.length!=3){
             return false;
         }
-        for(var i=0; i<collection.length; ++i){
-            if(!collection.get(i).coords){
-                return false;
-            }
-        }
-        return true;
+        return Map.isPoints(collection);
     };
     
     //Algorithm from wikipedia, see: http://en.wikipedia.org/wiki/Circumscribed_circle#Cartesian_coordinates

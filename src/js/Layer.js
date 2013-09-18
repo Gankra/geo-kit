@@ -15,6 +15,10 @@ var gk = (function(gk){
         this.items.add(item);
     }
     
+    Layer.prototype.remove = function(item){
+        this.items.remove(item);
+    }
+    
     Layer.prototype.getSelectionAt = function(mouse, options){
         if(this.isSelectable()){
             for(var i=0; i<this.items.length; ++i){

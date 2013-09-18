@@ -6,23 +6,23 @@ var gk = (function($, gk){
     
     gk.options = gk.options || {};
     gk.options.selection = {
-         snapToPoints: true 
-        ,snapToEdges: true 
-        ,edgeSnapDistance: 10
-        ,pointSnapDistance: 10
-        ,edgeSelectDistance: 10
-        ,pointSelectDistance: 10
-        ,snapSelected: true
+        snapToPoints: true 
+      , snapToEdges: true 
+      , edgeSnapDistance: 10
+      , pointSnapDistance: 10
+      , edgeSelectDistance: 10
+      , pointSelectDistance: 10
+      , snapSelected: true
     };
     gk.options.render = {
-         pointRadius: 3
-        ,lineWidth: 2
-        ,defaultColor: "#000000"
-        ,highlightColor: "#ff0000"   
-        ,highlightRadius: 2     
+        pointRadius: 3
+      , lineWidth: 2
+      , defaultColor: "#000000"
+      , highlightColor: "#ff0000"   
+      , highlightRadius: 2     
     }
     
-    gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192};
+    gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192,del:46};
     
     gk.stages = [];
     gk.currentStage = null;
@@ -76,9 +76,7 @@ var gk = (function($, gk){
                     gk.select(selection);
                 }
             }
-            
-            gk.currentStage.draw(gk.options.render);
-                
+            redrawCurrentStage();
         });
         
         $document.on("mousemove", ".stage", function(event){
@@ -97,13 +95,13 @@ var gk = (function($, gk){
                     }
                 }
             }
-            gk.currentStage.draw(gk.options.render);
+            redrawCurrentStage();
         });
         
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
             gk.inserting = null;
-            gk.currentStage.draw(gk.options.render);
+            redrawCurrentStage();
             gk.options.selection.snapSelected = true;
         });
         
@@ -113,6 +111,9 @@ var gk = (function($, gk){
         
         $document.on("keyup", function(event){
             gk.keyboard[event.keyCode] = false;
+            if(event.keyCode==gk.Keys.del){
+                deleteSelection();
+            }
         });
     });
     
@@ -190,6 +191,16 @@ var gk = (function($, gk){
         }
     }
     
+    function deleteSelection(){
+        gk.currentStage.remove(gk.selection);
+        clearSelection();
+        redrawCurrentStage();
+    }
+    
+    function redrawCurrentStage(){
+        gk.currentStage.draw(gk.options.render);
+    }
+    
     function createGlobalMenu(){
         var $modeSelect = $("#modeSelect");
         $modeSelect.on("change", function(event){
@@ -228,13 +239,9 @@ var gk = (function($, gk){
                 var layer = new gk.Layer();
                 layer.insert(gk.currentMap.map(gk.selection.clone()));
                 gk.currentStage.addLayer(layer);
-                gk.currentStage.draw(gk.options.render);
+                redrawCurrentStage();
             }
         });
-        
-
-        
-
     }
     
     return gk;

@@ -127,6 +127,12 @@ var gk = (function(gk, _){
         }
     }
     
+    Stage.prototype.remove = function(item){
+        for(var i=0; i<this.layers.length; ++i){
+            this.layers[i].remove(item);
+        }
+    }
+    
     Stage.prototype.select = function(){
         this.$canvas.addClass("stage-selected");
     }
