@@ -91,6 +91,36 @@ var gk = (function(gk){
         return Math.sqrt(this.projectedDistanceSquared(pt));    
     }
 
+    Line.prototype.getEndPoints = function(){
+        return [];
+    }
+
+    Line.prototype.clone = function(deep){
+        if(deep){
+            return new Line(ptA.clone(deep), ptB.clone(deep));
+        }else{
+            return new Line(ptA, ptB);
+        }
+    }
+
+    Line.prototype.intersection = function(line){
+        var thisDiffX = this.ptA.x - this.ptB.x;
+        var thatDiffX = line.ptA.x - line.ptB.x;
+        var thisDiffY = this.ptA.y - this.ptB.y;
+        var thatDiffY = line.ptA.y - line.ptB.y;
+        var denominator = thisDiffX*thatDiffY - thisDiffY*thatDiffX;
+        var thisCross = this.ptA.x*this.ptB.y - this.ptA.y*this.ptB.x; 
+        var thatCross = line.ptA.x*line.ptB.y - line.ptA.y*line.ptB.x;
+        return new Point(
+            (thisCross*thatDiffX - thatCross*thisDiffX)/denominator
+          , (thisCross*thatDiffY - thatCross*thisDiffY)/denominator
+        );
+    }
+
+    Line.prototype.isInBounds = function(pt){
+        return true;
+    }
+
     gk.Line = Line;
 
     gk.registerPrimitive(Line);

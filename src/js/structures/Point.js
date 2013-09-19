@@ -92,6 +92,10 @@ var gk = (function(gk){
         }
         return null;
     }
+
+    Point.prototype.clone = function(deep){
+        return new Point(this.x, this.y);
+    }
     
     gk.Point = Point;
     

@@ -48,6 +48,34 @@ var gk = (function(gk, _){
         return null;
     }
 
+    Ray.prototype.getEndPoints = function(){
+        return [ptA];
+    }
+
+    Ray.prototype.isInBounds = function(pt){
+        throw "TODO: implement this method";
+        var result = true;
+        if(this.ptA.x>this.ptB.x){
+            result = result && pt.x <= ptA.x;
+        }else{
+            result = result && pt.x >= ptA.x;
+        }
+        if(this.ptA.y<this.ptB.y){
+
+        }else{
+
+        }
+        return result;
+    }
+
+    Ray.prototype.clone = function(deep){
+        if(deep){
+            return new Ray(ptA.clone(deep), ptB.clone(deep));
+        }else{
+            return new Ray(ptA, ptB);
+        }
+    }
+
     Ray.prototype.draw = function(options){
         var angle = this.angle;
         var cos = Math.cos(angle);

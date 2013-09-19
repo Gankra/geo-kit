@@ -39,13 +39,19 @@ var gk = (function(gk){
         }    
     }
     
-    Collection.prototype.contains = function(){
+    Collection.prototype.contains = function(item){
         return this.items.indexOf(item)!=-1;
     }
     
-    Collection.prototype.clone = function(){
+    Collection.prototype.clone = function(deep){
         var clone = new Collection();
-        clone.addAll(this);
+        if(deep){
+            for(var i=0; i<this.length; ++i){
+                clone.add(this.get(i).clone(deep));
+            }
+        }else{
+            clone.addAll(this);    
+        }
         return clone;
     }
     

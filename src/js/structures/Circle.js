@@ -53,6 +53,14 @@ var gk = (function(gk){
         }
         return null;
     }
+
+    Circle.prototype.clone = function(deep){
+        if(deep){
+            return new Circle(ptA.clone(deep), ptB.clone(deep));
+        }else{
+            return new Circle(ptA, ptB);
+        }
+    }
     
     Circle.prototype.__defineGetter__("radius", function(){
         return this.ptA.distance(this.ptB);    

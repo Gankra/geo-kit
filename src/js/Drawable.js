@@ -62,6 +62,11 @@ var gk = (function(gk){
     Drawable.prototype.generateNewId = function(){
         return this.id = ++base_id;
     }
+
+    Drawable.prototype.clone = function(){
+        console.warn("unimplemented clone");
+        return this;
+    }
     
     //Utility methods//////////////////////////////////////////////////
     function getColor(options){

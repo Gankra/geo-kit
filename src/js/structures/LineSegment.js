@@ -43,6 +43,22 @@ var gk = (function(gk, _){
         return null;
     }
 
+    LineSegment.prototype.getEndPoints = function(){
+        return [ptA, ptB];
+    }
+
+    LineSegment.prototype.clone = function(deep){
+        if(deep){
+            return new LineSegment(ptA.clone(deep), ptB.clone(deep));
+        }else{
+            return new LineSegment(ptA, ptB);
+        }
+    }
+
+    LineSegment.prototype.isInBounds = function(pt){
+        throw "TODO: implement method";
+    }
+
     LineSegment.prototype.draw = function(options){
         this.startRender(options);
         var ctx = this.getContext(options);
