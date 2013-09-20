@@ -15,26 +15,21 @@
             </div>
         </div>
         <div id="content" class="content">
-            <div id="gk-menu">
-                <div id="gk-global-menu">
-                    <label class="select">
-                        Mode
-                        <select id="modeSelect">
-                            <option value="INSERT">Insert</option>
-                            <option value="SELECT">Select</option>
-                            <option value="MOVE">Move</option>
-                        </select>
-                    </label>
-                    <label class="select">
-                        Place Primitive
-                        <select id="primitiveSelect"></select>
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" checked="true" id="snapToPointsCheck"> Snap to Points
-                    </label>
-                    <label class="checkbox">
-                        <input type="checkbox" checked="true" id="snapToEdgesCheck"> Snap to Edges
-                    </label>
+            <div id="gk-top-menu">
+                <span id="gk-input-menu" class="unique-button-group">
+                    <button class="mode-button" value="SELECT" id="select-mode-button">Select</button>
+                    <button class="mode-button" value="MOVE" id="move-mode-button">Move</button>
+                    <span class="spacer"></span>
+                </span>
+                <span class="spacer"></span>
+                <span>
+                    <button id="snap-to-points-button">Snap to Points</button>
+                    <button id="snap-to-edges-button">Snap to Edges</button>
+                </span>
+                
+            </div>
+            <div id="gk-side-menu">
+                <div id="gk-side-global-menu">
                     <label class="select">
                         Map Type
                         <select id="mapSelect"></select>
@@ -50,9 +45,11 @@
         <script src="libs/js/underscore.min.js"></script>
         <script src="libs/js/bootstrap.min.js"></script>
 
+        <script src="src/js/filters.js"></script>
         <script src="src/js/utils.js"></script>
         
         <script src="src/js/events.js"></script>
+        
         <script src="src/js/structures/Drawable.js"></script>
         
         <script src="src/js/structures/primitives/Point.js"></script>
@@ -66,15 +63,15 @@
         <script src="src/js/structures/collections/List.js"></script>
         <script src="src/js/structures/collections/Graph.js"></script>
 
-        <script src="src/js/ui/Layer.js"></script>
-        <script src="src/js/ui/Stage.js"></script>
-
         <script src="src/js/maps/Map.js"></script>
         <script src="src/js/maps/Circumcircle.js"></script>
         <script src="src/js/maps/ConvexHull.js"></script>
         <script src="src/js/maps/CompleteGraph.js"></script>
+        <script src="src/js/maps/VisibilityGraph.js"></script>
         
-        <script src="src/js/geo-kit.js"></script>
+        <script src="src/js/ui/Layer.js"></script>
+        <script src="src/js/ui/Stage.js"></script>
+        <script src="src/js/ui/geo-kit.js"></script>
 
     </body>
 </html>

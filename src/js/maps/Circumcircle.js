@@ -1,13 +1,15 @@
 var gk = (function(gk){
+    var filters = gk.filters;
+    var Map = gk.Map;
 
-    var Circumcircle = new gk.Map("Circumcircle", "Circumcircle of 3 points");
+    var Circumcircle = new Map("Circumcircle", "Circumcircle of 3 points");
     
     //Only accept a collection of 3 points
     Circumcircle.canMap = function(collection){
         if(collection.length!=3){
             return false;
         }
-        return gk.Map.isPoints(collection);
+        return filters.containsOnly(filters.isPoint)(collection);
     };
     
     //Algorithm from wikipedia, see: http://en.wikipedia.org/wiki/Circumscribed_circle#Cartesian_coordinates

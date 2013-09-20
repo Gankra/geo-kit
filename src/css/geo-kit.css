@@ -6,7 +6,11 @@ html, body{
     dsiplay:block;
 }
 
-#gk-menu{
+#gk-top-menu{
+    width: 100%;
+}
+
+#gk-side-menu{
     width:20%;
     float:left;
 }
@@ -31,4 +35,12 @@ html, body{
 
 .lock-button, .visible-button{
     height:20px;
+}
+
+.spacer::after{
+    content: "|";
+}
+
+.pressed{
+    border-style:inset;    
 }

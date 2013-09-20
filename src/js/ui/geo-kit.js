@@ -203,27 +203,40 @@ var gk = (function($, gk){
     }
     
     function createGlobalMenu(){
-        var $modeSelect = $("#modeSelect");
-        $modeSelect.on("change", function(event){
-            gk.mode = gk["MODE_"+$modeSelect.val()];
-        }).change();
+        var $document = $(document);
+        $document.on("click", ".unique-button-group button", function(event){
+            $(this).parent().children().removeClass("pressed");
+            $(this).addClass("pressed");
+        });
+
+        $document.on("click", ".mode-button", function(event){
+            gk.mode = gk["MODE_"+$(this).val()];
+            return true;
+        });
         
-        var $primitiveSelect = $("#primitiveSelect");
+        var $inputMenu = $("#gk-input-menu");
+        var $firstBtn = null;
         for(var index in gk.primitives){
-            $primitiveSelect.append("<option value='"+index+"'>"+gk.primitives[index].displayName+"</option>");    
+            var $primitiveBtn = $("<button value='"+index+"'>"+gk.primitives[index].displayName+"</button>");
+            $firstBtn = $firstBtn || $primitiveBtn;
+            $inputMenu.append($primitiveBtn);
+            $primitiveBtn.on("click", function(){
+                gk.mode = gk.MODE_INSERT;
+                gk.currentPrimitiveClass = gk.primitives[$(this).val()];    
+            });    
         }
-        $primitiveSelect.on("change", function(event){
-            gk.currentPrimitiveClass = gk.primitives[$primitiveSelect.val()];    
-            $modeSelect.val("INSERT").change();
-        }).change();
+
+        $firstBtn.click();
         
-        $("#snapToPointsCheck").on("change", function(){
-            gk.options.selection.snapToPoints = $(this).is(":checked");        
-        }).change();
+        $("#snap-to-points-button").on("click", function(){
+            $(this).toggleClass("pressed");
+            gk.options.selection.snapToPoints = $(this).is(".pressed");        
+        }).click();
         
-        $("#snapToEdgesCheck").on("change", function(){
-            gk.options.selection.snapToEdges = $(this).is(":checked");        
-        }).change();
+        $("#snap-to-edges-button").on("click", function(){
+            $(this).toggleClass("pressed");
+            gk.options.selection.snapToEdges = $(this).is(".pressed");        
+        }).click();
         
         var $mapSelect = $("#mapSelect");
         for(var index in gk.maps){

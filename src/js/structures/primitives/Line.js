@@ -117,7 +117,7 @@ var gk = (function(gk){
         );
     }
 
-    Line.prototype.isInBounds = function(pt){
+    Line.prototype.hasProjection = function(pt){
         return true;
     }
 

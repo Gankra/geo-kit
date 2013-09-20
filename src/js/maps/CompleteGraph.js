@@ -1,11 +1,13 @@
 var gk = (function(gk){
     var utils = gk.utils;
+    var filters = gk.filters;
     var Graph = gk.Graph;
     var Set = gk.Set;
+    var Map = gk.Map;
 
-    var CompleteGraph = new gk.Map("Complete Graph", "Computes the complete graph of a set of points");
+    var CompleteGraph = new Map("Complete Graph", "Complete graph of a set of points");
     
-    CompleteGraph.canMap = gk.Map.isPoints;
+    CompleteGraph.canMap = filters.containsOnly(filters.isPoint);
     
     CompleteGraph.doMap = function(collection){
         var graph = new Graph(collection.clone(true), new Set());
@@ -13,12 +15,10 @@ var gk = (function(gk){
         var it = graph.vertices.iterator();
         while(it.hasNext()){
             var ptA = it.next();
-            var it2 = graph.vertices.iterator();
+            var it2 = it.clone();
             while(it2.hasNext()){
                 var ptB = it2.next();
-                if(!ptA.equals(ptB)){
-                    graph.addEdge(ptA, ptB);
-                }
+                graph.addEdge(ptA, ptB);
             }
         }
 

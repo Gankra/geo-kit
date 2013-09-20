@@ -1,35 +1,45 @@
 var gk = (function(gk){
     var utils = gk.utils;
-    var VisibilityGraph = new gk.Map("Visibility Graph", "Computes the visibility graph of a set of points and edges");
+    var filters = gk.filters;
+    var Set = gk.Set;
+    var Edge = gk.LineSegment;
+    var Map = gk.Map;
+
+
+    var VisibilityGraph = new Map("Visibility Graph", "Visibility graph of a set of points and edges");
     
-    VisilibilityGraph.canMap = gk.Map.isPoints;
+    VisibilityGraph.canMap = filters.containsOnly(filters.any(filters.isPoint, filters.isLineish));
     
     VisibilityGraph.doMap = function(collection){
-        /*var points = utils.filter(collection, function(item){
+        var points = utils.filter(new Set(collection), function(item){
             return !!item.coords;
         }).clone(true);
 
-        var lines = utils.filter(collection, function(item){
+        var lines = utils.filter(new Set(collection), function(item){
             return !!item.slope;
         });
 
-        var result = new gk.Collection();
+        var result = new gk.Graph();
 
-        for(var i=0; i<lines.length; ++i){
-            var endPoints = lines[i].getEndPoints();
+        var it = lines.iterator();
+        while(it.hasNext()){
+            var endPoints = it.next().getEndPoints();
             for(var j=0; j<endPoints.length; ++j){
                 points.add(endPoints[j]);
             }
         }
 
-        for(var i=0; i<points.length; ++i){
-            var ptA = points.get(i);
-            for(var j=i+1; j<points.length; ++j){
-                var ptB = points.get(j);
-                var edge = new gk.Line(ptA, ptB);
+        var it = points.iterator();
+        while(it.hasNext()){
+            var ptA = it.next();
+            var it2 = it.clone();
+            while(it2.hasNext()){
+                var ptB = it2.next();
+                var edge = new Edge(ptA, ptB);
                 var okay = true;
-                for(var k=0; k<lines.length; ++k){
-                    var obstacle = lines.get(k);
+                var it3 = lines.iterator();
+                while(it3.hasNext()){
+                    var obstacle = it3.next();
                     if(utils.intersects(obstacle, edge)){
                         okay = false;
                         break;
@@ -40,7 +50,7 @@ var gk = (function(gk){
                 }
             }
         }    
-        return result;*/
+        return result;
     }
 
     gk.registerMap(VisibilityGraph);

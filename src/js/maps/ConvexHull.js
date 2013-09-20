@@ -1,8 +1,15 @@
 var gk = (function(gk){
     var utils = gk.utils;
-    var ConvexHull = new gk.Map("Convex Hull", "Computes the convex hull of a set of points");
+    var filters = gk.filters;
+    var Map = gk.Map;
+    var Edge = gk.LineSegment;
+    var Set = gk.Set;
+    var Graph = gk.Graph;
+
+
+    var ConvexHull = new Map("Convex Hull", "Convex hull of a set of points");
     
-    ConvexHull.canMap = gk.Map.isPoints;
+    ConvexHull.canMap = filters.containsOnly(filters.isPoint);
     
     /**
      * Graham's scan
@@ -48,13 +55,13 @@ var gk = (function(gk){
             hull.pop();
         }
 
-        var poly = new gk.Set();
-        poly.add(new gk.LineSegment(hull[hull.length-1], hull[0]));
+        var poly = new Graph();
+        poly.add(new Edge(hull[hull.length-1], hull[0]));
         for(var i=0; i<hull.length-1; ++i){
-            poly.add(new gk.LineSegment(hull[i], hull[i+1]));
+            poly.add(new Edge(hull[i], hull[i+1]));
         }
 
-        return new gk.Graph(poly);
+        return poly;
     }
 
     gk.registerMap(ConvexHull);

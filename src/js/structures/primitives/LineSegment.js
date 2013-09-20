@@ -55,8 +55,9 @@ var gk = (function(gk, _){
         }
     }
 
-    LineSegment.prototype.isInBounds = function(pt){
-        throw "TODO: implement method";
+    LineSegment.prototype.hasProjection = function(pt){
+        return Math.abs(gk.utils.angleOf(ptB, ptA, pt))<=Math.PI/2
+            && Math.abs(gk.utils.angleOf(ptA, ptB, pt))<=Math.PI/2; 
     }
 
     LineSegment.prototype.draw = function(options){

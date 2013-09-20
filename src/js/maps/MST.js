@@ -1,14 +1,15 @@
 var gk = (function(gk){
     var utils = gk.utils;
+    var filters = gk.filters;
     var Graph = gk.Graph;
+    var Map = gk.Map;
 
-    var MST = new gk.Map("MST", "Computes the minimum spanning tree of a graph");
+
+    var MST = new Map("MST", "Minimum spanning tree of a graph");
     
-    CompleteGraph.canMap = function(collection){
-        return !!collection.vertices;
-    };
+    MST.canMap = filters.isGraph;
     
-    CompleteGraph.doMap = function(graph){
+    MST.doMap = function(graph){
         var vetices = graph.vertices.clone;
         var edges = graph.edges.clone();
         var items = utils.sort(edges).items;
@@ -18,7 +19,7 @@ var gk = (function(gk){
         return graph;
     }
 
-    gk.registerMap(CompleteGraph);
+    gk.registerMap(MST);
 
     return gk;
 })(gk || {});

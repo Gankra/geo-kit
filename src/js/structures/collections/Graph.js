@@ -31,7 +31,7 @@ var gk = (function(gk){
     }
     
     Graph.prototype.add = function(item){
-        if(item.coords){
+        if(gk.filters.isPoint(item)){
             this.addVertex(item);
         }else{
             this.addEdge(item);
@@ -103,9 +103,9 @@ var gk = (function(gk){
         });
     }
 
-    Graph.prototype.iterator = function(){
-        var vIt = this.vertices.iterator();
-        var eIt = this.edges.iterator();
+    Graph.prototype.iterator = function(_vIt, _eIt){
+        var vIt = _vIt || this.vertices.iterator();
+        var eIt = _eIt || this.edges.iterator();
         return {
             hasNext: function(){
                 return vIt.hasNext() || eIt.hasNext();
@@ -116,6 +116,9 @@ var gk = (function(gk){
                 }else{
                     return eIt.next();
                 }
+            }
+          , clone: function(){
+                return self.iterator(_vIt, _eIt);
             }
         }
     }

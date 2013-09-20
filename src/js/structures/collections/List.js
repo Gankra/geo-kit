@@ -61,8 +61,8 @@ var gk = (function(gk){
         });
     }
 
-    List.prototype.iterator = function(){
-        var curNode = this.dummy;
+    List.prototype.iterator = function(_curNode){
+        var curNode = _curNode || this.dummy;
         var self = this;
         return {
             next: function(){
@@ -86,6 +86,9 @@ var gk = (function(gk){
                 var newNode = {};
                 newNode.item = item;
                 self._add(curNode, newNode);
+            }
+          , clone: function(){
+                return self.iterator(curNode);
             }
         }
     }

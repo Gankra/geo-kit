@@ -52,20 +52,8 @@ var gk = (function(gk, _){
         return [ptA];
     }
 
-    Ray.prototype.isInBounds = function(pt){
-        throw "TODO: implement this method";
-        var result = true;
-        if(this.ptA.x>this.ptB.x){
-            result = result && pt.x <= ptA.x;
-        }else{
-            result = result && pt.x >= ptA.x;
-        }
-        if(this.ptA.y<this.ptB.y){
-
-        }else{
-
-        }
-        return result;
+    Ray.prototype.hasProjection = function(pt){
+        return Math.abs(gk.utils.angleOf(ptB, ptA, pt))<=Math.PI/2; 
     }
 
     Ray.prototype.clone = function(deep){

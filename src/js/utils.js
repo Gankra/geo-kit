@@ -1,27 +1,33 @@
 var gk = (function(gk){
     var utils = {};
 
+    /**
+     * Determines if the chain (a,b,c) turns left
+     */
     utils.isLeftTurn = function(ptA, ptB, ptC){
         return utils.signedTriangleArea(ptA, ptB, ptC) > 0; 
     }
 
+    /**
+     * Determines if the chain (a,b,c) turns right
+     */
     utils.isRightTurn = function(ptA, ptB, ptC){
         return utils.signedTriangleArea(ptA, ptB, ptC) < 0;
     }
 
     /**
-    * Computes the signed area of the triangle 
-    * defined by the three given points
-    * from: http://mathworld.wolfram.com/TriangleArea.html
-    */  
+     * Computes the signed area of the triangle 
+     * defined by the three given points
+     * from: http://mathworld.wolfram.com/TriangleArea.html
+     */  
     utils.signedTriangleArea = function(ptA, ptB, ptC){
         return (-ptB.x*ptA.y + ptC.x*ptA.y + ptA.x*ptB.y
                 - ptC.x*ptB.y - ptA.x*ptC.y + ptB.x*ptC.y)/2;
     }
 
     /**
-    * Returns the greatest element in the collection according to the comparator
-    */
+     * Returns the greatest element in the collection according to the comparator
+     */
     utils.maximum = function(collection, comparator){
         var best = null;
         var it = collection.iterator();
@@ -41,7 +47,7 @@ var gk = (function(gk){
     }
 
     /**
-     * quicksort
+     * Quicksort's an array in-place (does not create a new array)
      */
     utils.sort = function(array, comparator){
         quicksort(array, 0, array.length);
@@ -51,6 +57,7 @@ var gk = (function(gk){
                 return;
             }
 
+            //TODO: swap a random element to this place?
             var pivot = max-1;
             
             //strategy: choose right-most as pivot
@@ -78,6 +85,9 @@ var gk = (function(gk){
         return array;
     }
 
+    /**
+     * Creates a new instance of the given collection with elements filtered out
+     */
     utils.filter = function(collection, filter){
         var result = collection.emptyInstance();
         var it = collection.iterator();
@@ -90,12 +100,22 @@ var gk = (function(gk){
         return result;
     }
 
+    /**
+     * Determines if two line-like objects (lines, rays, line-segments) intersect
+     */
     utils.intersects = function(line1, line2){
         var pt = line1.intersection(line2);
         if(isFinite(pt.x) && isFinite(pt.y)){
-            return line1.isInBounds(pt) && line2.isInBounds(pt);
+            return line1.hasProjection(pt) && line2.hasProjection(pt);
         }
         return false;
+    }
+
+    /**
+     * Determines the angle formed by the polygonal chain (a,b,c)
+     */
+    utils.angleOf = function(ptA, ptB, ptC){
+        return Math.atan2(ptA.y-ptB.y, ptA.x-ptB.x) - Math.atan2(ptC.y-ptB.y, ptC.x-ptB.x);
     }
 
     gk.utils = utils;

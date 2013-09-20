@@ -43,10 +43,10 @@ var gk = (function(gk){
         });
     }
 
-    Set.prototype.iterator = function(){
-        var index = 0;
+    Set.prototype.iterator = function(_index, _keys){
+        var index = _index || 0;
         var self = this;
-        var keys = Object.keys(this.items);
+        var keys = _keys || Object.keys(this.items);
         return {
             next: function(){
                 return self.items[keys[index++]];
@@ -60,6 +60,9 @@ var gk = (function(gk){
           , hasPrev: function(){
                 return index>0;
             }
+          , clone: function(){
+                return self.iterator(index, keys);
+            }
         }
     }
     
@@ -70,8 +73,8 @@ var gk = (function(gk){
      * StrictSet uses hashCode instead of uid
      */
 
-    function StrictSet(){
-        Set.call(this, args);
+    function StrictSet(collection){
+        Set.call(this, collection);
     }
 
     StrictSet.prototype = new Set();
