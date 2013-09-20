@@ -9,17 +9,19 @@ var gk = (function(gk){
     }
     
     Set.prototype = new gk.Collection();
+
+    Set.prototype.keyName = "uid";
     
     Set.prototype.emptyInstance = function(){
         return new Set();
     }
 
     Set.prototype.remove = function(item){
-        delete this.items[item.hashCode];
+        delete this.items[item[this.keyName]];
     }
     
     Set.prototype.add = function(item){
-        this.items[item.hashCode] = item;
+        this.items[item[this.keyName]] = item;
     }
 
     Set.prototype.clear = function(){
@@ -27,7 +29,7 @@ var gk = (function(gk){
     }
     
     Set.prototype.contains = function(item){
-        return !!this.items[item.hashCode];
+        return !!this.items[item[this.keyName]];
     }
 
     Set.prototype.__defineGetter__("length", function(){
@@ -62,6 +64,21 @@ var gk = (function(gk){
     }
     
     gk.Set = Set;
+
+
+    /**
+     * StrictSet uses hashCode instead of uid
+     */
+
+    function StrictSet(){
+        Set.call(this, args);
+    }
+
+    StrictSet.prototype = new Set();
+
+    StrictSet.prototype.keyName = "hashCode"
+
+    gk.StrictSet = StrictSet;
 
     return gk;
 })(gk || {});
