@@ -12,10 +12,11 @@ var gk = (function(gk){
     
     //Algorithm from wikipedia, see: http://en.wikipedia.org/wiki/Circumscribed_circle#Cartesian_coordinates
     Circumcircle.doMap = function(collection){
-        var result = new gk.Collection();
-        var a = collection.get(0);
-        var b = collection.get(1);
-        var c = collection.get(2);
+        var result = new gk.Set();
+        var it = collection.iterator();
+        var a = it.next();
+        var b = it.next();
+        var c = it.next();
         var D = 2*(a.x*(b.y-c.y) + b.x*(c.y-a.y) + c.x*(a.y-b.y));
         result.add(new gk.Circle(
             new gk.Point(

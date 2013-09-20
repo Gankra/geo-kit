@@ -1,7 +1,6 @@
 var gk = (function(gk){
     var utils = gk.utils;
     var Graph = gk.Graph;
-    var Collection = gk.Collection;
 
     var MST = new gk.Map("MST", "Computes the minimum spanning tree of a graph");
     
@@ -9,16 +8,12 @@ var gk = (function(gk){
         return !!collection.vertices;
     };
     
-    CompleteGraph.doMap = function(collection){
-        var graph = new Graph(collection.clone(true), new Collection());
+    CompleteGraph.doMap = function(graph){
+        var vetices = graph.vertices.clone;
+        var edges = graph.edges.clone();
+        var items = utils.sort(edges).items;
 
-        for(var i=0; i<graph.vertices.length; ++i){
-            var ptA = graph.vertices.get(i);
-            for(var j=i+1; j<graph.vertices.length; ++j){
-                var ptB = graph.vertices.get(j);
-                graph.addEdge(ptA, ptB);
-            }
-        }
+
 
         return graph;
     }

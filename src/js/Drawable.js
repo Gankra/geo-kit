@@ -55,8 +55,20 @@ var gk = (function(gk){
         return options.ctx;
     }
     
-    Drawable.prototype.toString = function(){
+    Drawable.prototype.__defineGetter__("uid", function(){
         return this.id || this.generateNewId();    
+    });
+
+    Drawable.prototype.__defineGetter__("hashCode", function(){
+        return this.uid;
+    });
+
+    Drawable.prototype.toString = function(){
+        return this.hashCode;
+    }
+
+    Drawable.prototype.equals = function(other){
+        return this.hashCode == other.hashCode;
     }
     
     Drawable.prototype.generateNewId = function(){

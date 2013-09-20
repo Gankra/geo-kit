@@ -24,19 +24,19 @@ var gk = (function(gk){
         //sort points by angle to min (CCW)
         var pts = collection.clone(true);
         pts.remove(min);
-        utils.sort(pts, function(a, b){
+        var sortedPts = utils.sort(pts.toArray(), function(a, b){
             return Math.atan2(a.y-min.y, a.x-min.x) - Math.atan2(b.y-min.y, b.x-min.x) ;
         });
         
         //a stupid loop to handle degenerate sized inputs well
         for(var i=0; i<1; ++i){
-            hull.push(pts.get(i));
+            hull.push(sortedPts[i]);
         }
 
         //pop off points until adding the next point would make a left turn
         //then add the next point
         for(var i=1; i<pts.length; ++i){
-            var pt = pts.get(i);
+            var pt = sortedPts[i];
             while(hull.length>2 && utils.isRightTurn(hull[hull.length-2], hull[hull.length-1], pt)){
                 hull.pop();
             }
@@ -48,7 +48,7 @@ var gk = (function(gk){
             hull.pop();
         }
 
-        var poly = new gk.Collection();
+        var poly = new gk.Set();
         poly.add(new gk.LineSegment(hull[hull.length-1], hull[0]));
         for(var i=0; i<hull.length-1; ++i){
             poly.add(new gk.LineSegment(hull[i], hull[i+1]));

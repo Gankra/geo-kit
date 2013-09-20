@@ -5,7 +5,7 @@ var gk = (function(gk){
     VisilibilityGraph.canMap = gk.Map.isPoints;
     
     VisibilityGraph.doMap = function(collection){
-        var points = utils.filter(collection, function(item){
+        /*var points = utils.filter(collection, function(item){
             return !!item.coords;
         }).clone(true);
 
@@ -40,7 +40,7 @@ var gk = (function(gk){
                 }
             }
         }    
-        return result;
+        return result;*/
     }
 
     gk.registerMap(VisibilityGraph);

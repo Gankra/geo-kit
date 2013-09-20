@@ -23,14 +23,15 @@ var gk = (function(gk){
     * Returns the greatest element in the collection according to the comparator
     */
     utils.maximum = function(collection, comparator){
-        if(collection.length==0){
-            return null;
+        var best = null;
+        var it = collection.iterator();
+
+        if(it.hasNext()){
+            best = it.next();
         }
 
-        var best = collection.get(0);
-        
-        for(var i=1; i<collection.length; ++i){
-            var candidate = collection.get(i);
+        while(it.hasNext()){
+            var candidate = it.next();
             if(comparator(candidate, best) > 0){
                 best = candidate;
             }
@@ -42,8 +43,8 @@ var gk = (function(gk){
     /**
      * quicksort
      */
-    utils.sort = function(collection, comparator){
-        quicksort(collection.items, 0, collection.items.length);
+    utils.sort = function(array, comparator){
+        quicksort(array, 0, array.length);
 
         function quicksort(arr, min, max){
             if(max-min <= 1){
@@ -74,16 +75,17 @@ var gk = (function(gk){
             quicksort(arr, min, pivot);
             quicksort(arr, pivot+1, max);
         }
-        return collection;
+        return array;
     }
 
     utils.filter = function(collection, filter){
-        var result = new Collection();
-        for(var i=0; i<collection.length; ++i){
-            var item = collection.get(i);
+        var result = collection.emptyInstance();
+        var it = collection.iterator();
+        while(it.hasNext()){
+            var item = it.next();
             if(filter(item)){
                 result.add(item);
-            }
+            }   
         }
         return result;
     }

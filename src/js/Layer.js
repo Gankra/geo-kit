@@ -8,7 +8,7 @@ var gk = (function(gk){
         this.color = args.color;
         this.locked = args.locked;
         this.visible = args.visible;
-        this.items = args.collection || new gk.Collection();
+        this.items = args.collection || new gk.Set();
     }
     
     Layer.prototype.insert = function(item){
@@ -21,8 +21,9 @@ var gk = (function(gk){
     
     Layer.prototype.getSelectionAt = function(mouse, options){
         if(this.isSelectable()){
-            for(var i=0; i<this.items.length; ++i){
-                var item = this.items.get(i);
+            var it = this.items.iterator();
+            while(it.hasNext()){
+                var item = it.next();
                 if(item.tryToSelect(mouse, options)){
                     return item;
                 }
@@ -33,8 +34,9 @@ var gk = (function(gk){
     
     Layer.prototype.tryToSnap = function(mouse, options){
         if(this.isSelectable()){
-            for(var i=0; i<this.items.length; ++i){
-                var item = this.items.get(i);
+            var it = this.items.iterator();
+            while(it.hasNext()){
+                var item = it.next();
                 if(!options.snapSelected && gk.isSelected(item)){
                     continue;
                 }

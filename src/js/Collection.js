@@ -1,77 +1,82 @@
 var gk = (function(gk){
-
-    function Collection(args){
-        args = args || {};
-        this.items = args.items || [];
-        gk.Drawable.call(this);
+    var abstract = function(){
+        console.warn("Unimplemented abstract method of Collection");
     }
+
+    function Collection(){}
     
     Collection.prototype = new gk.Drawable();
+
+    Collection.prototype.add = abstract;
+    Collection.prototype.remove = abstract;
+    Collection.prototype.iterator = abstract;
+    Collection.prototype.replaceItems = abstract;
+    Collection.prototype.emptyInstance = abstract;
+    Collection.prototype.clear = abstract;
     
-    Collection.prototype.splice = function(){
-        return this.items.splice.apply(this.items, arguments);
+    Collection.prototype.removeAll = function(items){
+        var self = this;
+        items.forEach(function(item){
+            self.remove(item);
+        });
     }
+
+    Collection.prototype.addAll = function(items){
+        var self = this;
+        items.forEach(function(item){
+            self.add(item);
+        });
+    }
+
+    Collection.prototype.forEach = function(fn){
+        var it = this.iterator();
+        while(it.hasNext()){
+            fn(it.next());
+        }
+    }  
     
-    Collection.prototype.remove = function(item){
-        var index = this.items.indexOf(item);
-        if(index!=-1){
-            var item = this.items[index];
-            this.items.splice(index, 1);
-            gk.emit(item, gk.getDefaultEvent(gk.EVENT_DELETED));
-        }else if(item instanceof Collection){
-            for(var i=0; i<item.length; ++i){
-                this.remove(item.get(i));
+    Collection.prototype.draw = function(options){
+        this.forEach(function(item){
+            item.draw(options);
+        });
+    }
+
+    Collection.prototype.contains = function(item){
+        var it = this.iterator();
+        while(it.hasNext()){
+            if(it.next(equals(item))){
+                return true;
             }
         }
+        return false;
     }
-    
-    Collection.prototype.clear = function(){
-        this.items = [];
-    }
-    
-    Collection.prototype.add = function(item){
-        return this.items.push(item);
-    }
-    
-    Collection.prototype.addAll = function(collection){
-        for(var i=0; i<collection.length; ++i){
-            this.add(collection.get(i));
-        }    
-    }
-    
-    Collection.prototype.contains = function(item){
-        return this.items.indexOf(item)!=-1;
-    }
-    
+
     Collection.prototype.clone = function(deep){
-        var clone = new Collection();
+        var clone = this.emptyInstance();
         if(deep){
-            for(var i=0; i<this.length; ++i){
-                clone.add(this.get(i).clone(deep));
-            }
+            this.forEach(function(item){
+                clone.add(item.clone(deep));
+            });
         }else{
             clone.addAll(this);    
         }
         return clone;
     }
-    
-    Collection.prototype.__defineGetter__("length", function(){
-        return this.items.length;
-    });
-    
-    Collection.prototype.get = function(index){
-        return this.items[index];
-    }
-    
-    Collection.prototype.draw = function(options){
-        for(var i=0; i<this.length; ++i){
-            this.get(i).draw(options);
+
+    Collection.prototype.toArray = function(){
+        var result = [];
+        var it = this.iterator();
+        while(it.hasNext()){
+            result.push(it.next());
         }
+        return result;
     }
     
     Collection.prototype.tryToSnap = function(mouse, options){
-        for(var i=0; i<this.length; ++i){
-            var snap = this.get(i).tryToSnap(mouse, options);
+        var it = this.iterator();
+        while(it.hasNext()){
+            var item = it.next();
+            var snap = item.tryToSnap(mouse, options);
             if(snap){
                 return snap;
             }
@@ -83,8 +88,10 @@ var gk = (function(gk){
         if(this.parentCollection){
             return false;
         }
-        for(var i=0; i<this.length; ++i){
-            if(this.get(i).tryToSelect(mouse, options)){
+        var it = this.iterator();
+        while(it.hasNext()){
+            var item = it.next();
+            if(item.tryToSelect(mouse, options)){
                 return true;
             }
         }
@@ -92,9 +99,9 @@ var gk = (function(gk){
     }
     
     Collection.prototype.updateMouse = function(oldMouse, curMouse){
-        for(var i=0; i<this.length; ++i){
-            this.get(i).updateMouse(oldMouse, curMouse); 
-        }
+        this.forEach(function(item){
+            item.updateMouse(oldMouse, curMouse); 
+        });
     }
     
     Collection.prototype.registerMapping = function(parentCollection, parentMap){
@@ -108,21 +115,7 @@ var gk = (function(gk){
             this.parentMap.manipulate(this.parentCollection, this, data);
         }
     }
-    
-    Collection.prototype.replaceItems = function(collection, src){
-        this.items = collection.items;
-        gk.emit(this, {
-            event: gk.EVENT_REPLACED
-        });
-    }
-    
-    /* Can't use this outside firefox... sad... 
-    Collection.prototype.__iterator__ = function(){
-        for(var i=0; i<this.items.length; ++i){
-            yield this.items[i];
-        }
-    }*/
-    
+
     gk.Collection = Collection;
 
     return gk;

@@ -30,7 +30,7 @@ var gk = (function($, gk){
     gk.mouse = new gk.Point(0,0);
     gk.keyboard = {};
     gk.selected = {};
-    gk.selection = new gk.Collection();
+    gk.selection = new gk.Set();
     gk.inserting = null;
     gk.currentPrimitiveClass = null;
     gk.currentMap = null;
@@ -143,9 +143,10 @@ var gk = (function($, gk){
         if(!ctrl){
            clearSelection();
         }
-        if(selection.items){
-            for(var i=0; i<selection.length; ++i){
-                var item = selection.get(i);
+        if(selection.iterator){
+            var it = selection.iterator();
+            while(it.hasNext()){
+                var item = it.next();
                 if(ctrl && gk.isSelected(item)){
                     removeSelection(item);
                 }else{

@@ -1,55 +1,33 @@
 var gk = (function(gk){
     var Edge = gk.LineSegment;
+    var Set = gk.Set;
 
     function Graph(v, e){
+        this.vertices = new Set();
+        this.edges = new Set();
+        var vertices;
+        var edges;
+        if(v){
+            this.addAll(v);
+        }
         if(e){
-            this.vertices = v;
-            this.edges = e;    
-        }else if(v){
-            this.edges = v;
-            this.vertices = new gk.Collection();
-        }else{
-            this.edges = new gk.Collection();
-            this.vertices = new gk.Collection();
-        }
-
-        for(var i=0; i<this.vertices.length; ++i){
-            var vertex = this.vertices.get(i);
-            vertex.edges = vertex.edges || []; 
-        }
-
-        for(var i=0; i<this.edges.length; ++i){
-            var edge = this.edges.get(i);
-            var ptA = edge.ptA;
-            var ptB = edge.ptB;
-
-            ptA.edges.push(edge);
-            ptB.edges.push(edge);
-
-            if(!e){
-                this.vertices.add(ptA);
-                this.vertices.add(ptB);
-            }
+            this.addAll(e);  
         }
     }
 
     Graph.prototype = new gk.Collection();
 
+    Graph.prototype.emptyInstance = function(){
+        return new Graph();
+    }
+
     Graph.prototype.__defineGetter__("length", function(){
         return this.vertices.length + this.edges.length;
     });
 
-    Graph.prototype.get = function(i){
-        if(i>=this.vertices.length){
-            return this.edges.get(i - this.vertices.length);
-        }else{
-            return this.vertices.get(i);
-        }
-    }
-
     Graph.prototype.clear = function(){
-        this.vertices = new gk.Collection();
-        this.edges = new gk.Collection();
+        this.vertices = new Set();
+        this.edges = new Set();
     }
     
     Graph.prototype.add = function(item){
@@ -59,37 +37,31 @@ var gk = (function(gk){
             this.addEdge(item);
         }
     }
-
-    Graph.prototype.splice = function(){
-        throw "TODO: implement Graph.splice";
-    }
     
     Graph.prototype.remove = function(item){
         if(item.coords){
             this.removeVertex(item);
         }else if(item.ptA){
             this.removeEdge(item);
-        }else{
-            for(var i=0; i<item.length; ++i){
-                this.remove(item.get(i));
-            }
         }
     }
     
     Graph.prototype.contains = function(item){
-        return this.vertices.indexOf(item) != -1 && this.edges.indexOf(item) != -1;
+        return this.vertices.contains(item) || this.edges.contains(item);
     }
 
     Graph.prototype.addVertex = function(vertex){
         this.vertices.add(vertex);
+        vertex.edges = vertex.edges || new Set();
     }
 
     Graph.prototype.removeVertex = function(vertex){
         this.vertices.remove(vertex);
-        for(var i=0; i<vertex.edges.length; ++i){
-            var edge = vertex.edges[i];
-            this.edges.remove(edge);
-        }
+        var edges = vertex.edges.toArray();
+        var self = this;
+        edges.forEach(function(edge){
+            self.removeEdge(edge);
+        });
     }
 
     Graph.prototype.addEdge = function(vertexA, vertexB){
@@ -99,17 +71,20 @@ var gk = (function(gk){
         }else{
             edge = vertexA;
         }
+
+        this.addVertex(edge.ptA);
+        this.addVertex(edge.ptB);
+
         this.edges.add(edge);
-        edge.ptA.edges.push(edge);
-        edge.ptB.edges.push(edge);
+
+        edge.ptA.edges.add(edge);
+        edge.ptB.edges.add(edge);
     }
 
     Graph.prototype.removeEdge = function(edge){
         this.edges.remove(edge);
-        var edgesA = edge.ptA.edges;
-        var edgesB = edge.ptB.edges;
-        edgesA.splice(edgesA.indexOf(edge), 1);
-        edgesB.splice(edgesB.indexOf(edge), 1);
+        edge.ptA.edges.remove(edge);
+        edge.ptB.edges.remove(edge);
     }
 
     Graph.prototype.clone = function(deep){
@@ -126,6 +101,23 @@ var gk = (function(gk){
         gk.emit(this, {
             event: gk.EVENT_REPLACED
         });
+    }
+
+    Graph.prototype.iterator = function(){
+        var vIt = this.vertices.iterator();
+        var eIt = this.edges.iterator();
+        return {
+            hasNext: function(){
+                return vIt.hasNext() || eIt.hasNext();
+            }
+          , next: function(){
+                if(vIt.hasNext()){
+                    return vIt.next();
+                }else{
+                    return eIt.next();
+                }
+            }
+        }
     }
 
     gk.Graph = Graph;

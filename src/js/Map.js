@@ -56,15 +56,15 @@ var gk = (function(gk){
 
 
     Map.isPoints = function(collection){
-        for(var i=0; i<collection.length; ++i){
-            if(!collection.get(i).coords){
+        var it = collection.iterator();
+        while(it.hasNext()){
+            if(!it.next().coords){
                 return false;
             }
         }
         return true;
     }
 
-    
     
     gk.Map = Map;
     

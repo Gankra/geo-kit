@@ -7,9 +7,10 @@ var gk = (function(gk){
     gk.listeners = {};
     
     gk.registerListener = function(observer, observed){
-        if(observed instanceof gk.Collection){
-            for(var i=0; i<observed.length; ++i){
-                registerListenerInternal(observed.get(i), observer);
+        if(observed.iterator){
+            var it = observed.iterator();
+            while(it.hasNext()){
+                registerListenerInternal(it.next(), observer);
             }
         }else{
             registerListenerInternal(observed, observer);
