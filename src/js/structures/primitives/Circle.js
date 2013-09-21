@@ -79,6 +79,10 @@ var gk = (function(gk){
         return this.ptA.distanceSquared(this.ptB);
     });
 
+    Circle.prototype.__defineGetter__("hashCode", function(){
+        return this.ptA.hashCode+";"+this.radius;
+    });
+
     gk.Circle = Circle;
 
     gk.registerPrimitive(Circle);

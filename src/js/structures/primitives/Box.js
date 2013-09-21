@@ -137,6 +137,10 @@ var gk = (function(gk){
         return Math.max(this.ptA.y, this.ptB.y);
     });
 
+    Box.prototype.__defineGetter__("hashCode", function(){
+        return this.minX+","+this.minY+","+this.maxX+","+this.maxY;
+    });
+
     gk.Box = Box;
 
     gk.registerPrimitive(Box);

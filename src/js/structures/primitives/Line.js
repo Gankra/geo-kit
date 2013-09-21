@@ -148,6 +148,10 @@ var gk = (function(gk){
         return true;
     }
 
+    Line.prototype.__defineGetter__("hashCode", function(){
+        return this.ptA.hashCode+";"+this.ptB.hashCode;
+    });
+
     gk.Line = Line;
 
     gk.registerPrimitive(Line);

@@ -81,6 +81,10 @@ var gk = (function(gk){
 
     StrictSet.prototype.keyName = "hashCode"
 
+    StrictSet.prototype.getMatch = function(item){
+        return this.items[item[this.keyName]];
+    }
+
     gk.StrictSet = StrictSet;
 
     return gk;

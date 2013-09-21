@@ -29,7 +29,8 @@ var gk = (function($, gk){
     gk.mouseLast = new gk.Point(0,0);
     gk.mouse = new gk.Point(0,0);
     gk.keyboard = {};
-    gk.selected = {};
+    //TODO: find if selected AND selection is still necessary?
+    gk.selected = new gk.Set();
     gk.selection = new gk.Set();
     gk.selectionBox = new gk.Set();
     gk.selectionArea = null;
@@ -92,8 +93,9 @@ var gk = (function($, gk){
                 if(gk.inserting){
                     gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);    
                 }else if(gk.mode == gk.MODE_MOVE){
-                    for(var key in gk.selected){
-                        var item = gk.selected[key];
+                    var it = gk.selected.iterator();
+                    while(it.hasNext()){
+                        var item = it.next();
                         item.updateMouse(gk.mouseLast, gk.mouse);
                         gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
                     }
@@ -183,7 +185,7 @@ var gk = (function($, gk){
     }
     
     gk.isSelected = function(item){
-        return !!gk.selected[item] || gk.selectionBox.contains(item);
+        return gk.selected.contains(item) || gk.selectionBox.contains(item);
     }
 
     function isSelectionDeltaed(){
@@ -191,19 +193,19 @@ var gk = (function($, gk){
     }
     
     function addSelection(item){
-        gk.selected[item] = item;
+        gk.selected.add(item);
         gk.selection.add(item);
         updateSelection();
     }
     
     function removeSelection(item){
-        delete gk.selected[item];
+        gk.selected.remove(item);
         gk.selection.remove(item);
         updateSelection();
     }
     
     function clearSelection(){
-        gk.selected = {};
+        gk.selected.clear();
         gk.selection.clear();
         updateSelection();
     }

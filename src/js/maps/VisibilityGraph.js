@@ -41,8 +41,19 @@ var gk = (function(gk){
                 while(it3.hasNext()){
                     var obstacle = it3.next();
                     if(utils.intersects(obstacle, edge)){
+                        var pts = obstacle.getEndPoints();
                         okay = false;
-                        break;
+                        //allow it if they share endPoints
+                        for(var i=0; i<pts.length; ++i){
+                            var pt = pts[i];
+                            if(ptA.equals(pt) || ptB.equals(pt)){
+                                okay = true;
+                                break;
+                            }
+                        }
+                        if(!okay){
+                            break;
+                        }
                     }
                 }
                 if(okay){

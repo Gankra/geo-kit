@@ -1,10 +1,10 @@
 var gk = (function(gk){
     var Edge = gk.LineSegment;
-    var Set = gk.Set;
+    var StrictSet = gk.StrictSet;
 
     function Graph(v, e){
-        this.vertices = new Set();
-        this.edges = new Set();
+        this.vertices = new StrictSet();
+        this.edges = new StrictSet();
         var vertices;
         var edges;
         if(v){
@@ -26,8 +26,8 @@ var gk = (function(gk){
     });
 
     Graph.prototype.clear = function(){
-        this.vertices = new Set();
-        this.edges = new Set();
+        this.vertices = new StrictSet();
+        this.edges = new StrictSet();
     }
     
     Graph.prototype.add = function(item){
@@ -39,7 +39,7 @@ var gk = (function(gk){
     }
     
     Graph.prototype.remove = function(item){
-        if(item.coords){
+        if(gk.filters.isPoint(item)){
             this.removeVertex(item);
         }else if(item.ptA){
             this.removeEdge(item);
@@ -51,8 +51,10 @@ var gk = (function(gk){
     }
 
     Graph.prototype.addVertex = function(vertex){
-        this.vertices.add(vertex);
-        vertex.edges = vertex.edges || new Set();
+        if(!this.vertices.contains(vertex)){
+            this.vertices.add(vertex);
+            vertex.edges = vertex.edges || new StrictSet();
+        } 
     }
 
     Graph.prototype.removeVertex = function(vertex){
@@ -72,13 +74,17 @@ var gk = (function(gk){
             edge = vertexA;
         }
 
-        this.addVertex(edge.ptA);
-        this.addVertex(edge.ptB);
-
-        this.edges.add(edge);
-
-        edge.ptA.edges.add(edge);
-        edge.ptB.edges.add(edge);
+        if(!this.edges.contains(edge)){
+            this.addVertex(edge.ptA);
+            this.addVertex(edge.ptB);
+            
+            edge.ptA = this.vertices.getMatch(edge.ptA);
+            edge.ptB = this.vertices.getMatch(edge.ptB);
+            
+            this.edges.add(edge);
+            edge.ptA.edges.add(edge);
+            edge.ptB.edges.add(edge);
+        }
     }
 
     Graph.prototype.removeEdge = function(edge){

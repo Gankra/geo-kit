@@ -18,14 +18,14 @@ var gk = (function(gk){
     }
     
     function registerListenerInternal(observed, observer){
-        if(!gk.listeners[observed]){
-            gk.listeners[observed] = [];    
+        if(!gk.listeners[observed.uid]){
+            gk.listeners[observed.uid] = [];    
         }
-        gk.listeners[observed].push(observer);
+        gk.listeners[observed.uid].push(observer);
     }
     
     gk.emit = function(observed, data){
-        var observers = gk.listeners[observed];
+        var observers = gk.listeners[observed.uid];
         if(observers){
             for(var i=0; i<observers.length; i++){
                 observers[i].handleEvent(observed, data);

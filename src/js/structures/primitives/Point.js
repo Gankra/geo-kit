@@ -102,6 +102,10 @@ var gk = (function(gk){
     Point.prototype.clone = function(deep){
         return new Point(this.x, this.y);
     }
+
+    Point.prototype.__defineGetter__("hashCode", function(){
+        return this.x+","+this.y;
+    });
     
     gk.Point = Point;
     
