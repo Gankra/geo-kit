@@ -1,22 +1,25 @@
 var gk = (function(gk, _){
+    var Point = gk.Point;
+    var Line = gk.Line;
+    var utils = gk.utils;
     
     var LINE_SEGMENT_SELECT_OPTIONS = {snapToPoints: true, snapToEdges:true};
     
     function LineSegment(ptA, ptB){
-        gk.Line.call(this, ptA, ptB);
+        Line.call(this, ptA, ptB);
     }
     
     LineSegment.displayName = "Line Segment";
     
     LineSegment.createPrimitive = function(mouse){
-        return new LineSegment(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
+        return new LineSegment(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));
     }
 
-    LineSegment.prototype = new gk.Line();
+    LineSegment.prototype = new Line();
     
     LineSegment.prototype.tryToSelect = function(mouse, options){
         return !!this.tryToSnap(mouse, 
-            _.defaults(RAY_SELECT_OPTIONS, {edgeSnapDistance: options.edgeSelectDistance, pointSnapDistance: options.pointSelectDistance}));
+            _.defaults(LINE_SEGMENT_SELECT_OPTIONS, {edgeSnapDistance: options.edgeSelectDistance, pointSnapDistance: options.pointSelectDistance}));
     }
     
     LineSegment.prototype.tryToSnap = function(mouse, options){
@@ -24,7 +27,7 @@ var gk = (function(gk, _){
         if(snap){
             return snap;
         }
-        snap = gk.Line.prototype.tryToSnap.call(this, mouse, options);
+        snap = Line.prototype.tryToSnap.call(this, mouse, options);
         if(snap){
             var minX = Math.min(this.ptA.x, this.ptB.x);
             var minY = Math.min(this.ptA.y, this.ptB.y);
@@ -44,20 +47,20 @@ var gk = (function(gk, _){
     }
 
     LineSegment.prototype.getEndPoints = function(){
-        return [ptA, ptB];
+        return [this.ptA, this.ptB];
     }
 
     LineSegment.prototype.clone = function(deep){
         if(deep){
-            return new LineSegment(ptA.clone(deep), ptB.clone(deep));
+            return new LineSegment(this.ptA.clone(deep), this.ptB.clone(deep));
         }else{
-            return new LineSegment(ptA, ptB);
+            return new LineSegment(this.ptA, this.ptB);
         }
     }
 
     LineSegment.prototype.hasProjection = function(pt){
-        return Math.abs(gk.utils.angleOf(ptB, ptA, pt))<=Math.PI/2
-            && Math.abs(gk.utils.angleOf(ptA, ptB, pt))<=Math.PI/2; 
+        return Math.abs(utils.angleOf(this.ptB, this.ptA, pt))<=Math.PI/2
+            && Math.abs(utils.angleOf(this.ptA, this.ptB, pt))<=Math.PI/2; 
     }
 
     LineSegment.prototype.draw = function(options){

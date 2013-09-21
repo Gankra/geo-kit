@@ -1,4 +1,6 @@
 var gk = (function(gk){
+    var Point = gk.Point;
+    var Drawable = gk.Drawable;
 
     function Circle(ptA, ptB){
         this.ptA = ptA;
@@ -8,10 +10,10 @@ var gk = (function(gk){
     Circle.displayName = "Circle";
     
     Circle.createPrimitive = function(mouse){
-        return new Circle(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
+        return new Circle(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));
     }
 
-    Circle.prototype = new gk.Drawable();
+    Circle.prototype = new Drawable();
     
     Circle.prototype.updateMousePrimitive = function(oldMouse, curMouse){
         this.ptB.updateMousePrimitive(oldMouse, curMouse);
@@ -40,7 +42,14 @@ var gk = (function(gk){
     Circle.prototype.tryToSelect = function(mouse, options){
         return Math.abs(this.ptA.distanceSquared(mouse)-this.radiusSquared) <= options.edgeSelectDistance*options.edgeSelectDistance;
     }
-    
+
+    Circle.prototype.tryToSelectFromBox = function(box, options){ 
+        //TODO: make this smarter?   
+        if(this.ptA.tryToSelectFromBox(box, options)){
+            return true;
+        }
+        return false;
+    }
     Circle.prototype.tryToSnap = function(mouse, options){
         if(options.snapToEdges){
             if(Math.abs(this.ptA.distance(mouse)-this.radius) <= options.edgeSnapRadius){
@@ -48,7 +57,7 @@ var gk = (function(gk){
                 var cos = Math.cos(angle);
                 var sin = Math.sin(angle);
                 var radius = this.radius;
-                return new gk.Point(this.ptA.x+cos*radius, this.ptA.y+sin*radius);
+                return new Point(this.ptA.x+cos*radius, this.ptA.y+sin*radius);
             }
         }
         return null;

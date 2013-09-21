@@ -2,6 +2,8 @@ var gk = (function(gk, _){
     
     var Point = gk.Point;
     var Line = gk.Line;
+    var Layer = gk.Layer;
+    var Set = gk.Set;
     
     var DEFAULT_CANVAS_WIDTH = 650;
     var DEFAULT_CANVAS_HEIGHT = 500;
@@ -57,7 +59,8 @@ var gk = (function(gk, _){
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].draw(fullOptions);
         }  
-        this.drawCursor(options, gk.mouse);
+        this.drawCursor(fullOptions, gk.mouse);
+        this.drawSelectionArea(fullOptions, gk.selectionArea);
         
         this.ctx.restore();
     }, 1000/30);
@@ -71,6 +74,12 @@ var gk = (function(gk, _){
         this.ctx.lineTo(mouse.x+5,mouse.y);
         this.ctx.stroke();
         this.ctx.closePath();
+    }
+
+    Stage.prototype.drawSelectionArea = function(options, selectionArea){
+        if(selectionArea){
+            selectionArea.draw(options);
+        }
     }
     
     Stage.prototype.clearRender = function(){
@@ -102,7 +111,7 @@ var gk = (function(gk, _){
     
     Stage.prototype.addLayer = function(layer, index){
         if(!layer){
-            layer = new gk.Layer();
+            layer = new Layer();
         }
         if(index === undefined){
             this.layers.push(layer);
@@ -162,7 +171,7 @@ var gk = (function(gk, _){
         
         canvasX = (event.pageX - totalOffsetX - this.offsetX)/this.scaleX;
         canvasY = (event.pageY - totalOffsetY - this.offsetY)/this.scaleY;
-        var pt = new gk.Point(canvasX, canvasY);
+        var pt = new Point(canvasX, canvasY);
         var snap = this.tryToSnap(pt, gk.options.selection);
 	    return snap || pt;
     }
@@ -175,6 +184,14 @@ var gk = (function(gk, _){
             }
         }
         return null;
+    }
+
+    Stage.prototype.getSelectionInBox = function(box, options){
+        var set = new Set();
+        for(var i=this.layers.length-1; i>=0; --i){
+            set.addAll(this.currentLayer.getSelectionInBox(box, options));
+        }
+        return set;
     }
     
     Stage.prototype.tryToSnap = function(mouse, options){
@@ -196,8 +213,8 @@ var gk = (function(gk, _){
     
     Stage.prototype.getLayerHTML = function(layer){
         var $layer = $("<div class='layer'>");
-        $layer.append($("<button class='lock-button'>"));
-        $layer.append($("<button class='visible-button'>"));
+        $layer.append($("<button class='lock-button pressable icon-lock' title='Lock Layer'></button>"));
+        $layer.append($("<button class='visible-button pressable icon-eye-open' title='Hide Layer'></button>"));
         return $layer;
     }
     

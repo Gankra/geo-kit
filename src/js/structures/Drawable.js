@@ -16,6 +16,10 @@ var gk = (function(gk){
     Drawable.prototype.tryToSelect = function(mouse, options){
         throw "Unimplemented abstract method: Drawable.tryToSelect";
     }
+
+    Drawable.prototype.tryToSelectFromBox = function(box, options){
+        throw "Unimplented abstract method: Drawable.tryToSelectFromBox";
+    }
     
     Drawable.prototype.tryToSnap = function(mouse, options){
         throw "Unimplemented abstract method: Drawable.tryToSnap";

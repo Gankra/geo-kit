@@ -1,4 +1,5 @@
 var gk = (function(gk){
+    var Drawable = gk.Drawable;
 
     function Point(){
         this.coords = arguments;
@@ -10,7 +11,7 @@ var gk = (function(gk){
         return new Point(mouse.x, mouse.y);
     }
 
-    Point.prototype = new gk.Drawable();   
+    Point.prototype = new Drawable();   
     
     Point.prototype.updateMouse = Point.prototype.updateMousePrimitive = function(oldMouse, curMouse){
         this.x += curMouse.x-oldMouse.x;
@@ -84,6 +85,11 @@ var gk = (function(gk){
     
     Point.prototype.tryToSelect = function(mouse, options){
         return this.distanceSquared(mouse) <= options.pointSelectDistance*options.pointSelectDistance;
+    }
+
+    Point.prototype.tryToSelectFromBox = function(box, options){
+        return this.x >= box.minX && this.x <= box.maxX
+            && this.y >= box.minY && this.y <= box.maxY;
     }
     
     Point.prototype.tryToSnap = function(mouse, options){

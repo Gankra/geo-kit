@@ -19,7 +19,7 @@ var gk = (function($, gk){
       , lineWidth: 2
       , defaultColor: "#000000"
       , highlightColor: "#ff0000"   
-      , highlightRadius: 2     
+      , highlightRadius: 2   
     }
     
     gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192,del:46};
@@ -31,6 +31,8 @@ var gk = (function($, gk){
     gk.keyboard = {};
     gk.selected = {};
     gk.selection = new gk.Set();
+    gk.selectionBox = new gk.Set();
+    gk.selectionArea = null;
     gk.inserting = null;
     gk.currentPrimitiveClass = null;
     gk.currentMap = null;
@@ -74,6 +76,8 @@ var gk = (function($, gk){
                 var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
                 if(selection!=null){
                     gk.select(selection);
+                }else if(!isSelectionDeltaed()){
+                    clearSelection();
                 }
             }
             redrawCurrentStage();
@@ -93,6 +97,12 @@ var gk = (function($, gk){
                         item.updateMouse(gk.mouseLast, gk.mouse);
                         gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
                     }
+                }else if(gk.mode == gk.MODE_SELECT){
+                    if(!gk.selectionArea){
+                        gk.selectionArea = gk.Box.createPrimitive(gk.mouseLast, gk.mouse);
+                    }
+                    gk.selectionArea.updateMousePrimitive(gk.mouseLast, gk.mouse);
+                    gk.selectionBox = gk.currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
                 }
             }
             redrawCurrentStage();
@@ -101,6 +111,9 @@ var gk = (function($, gk){
         $document.on("mouseup", ".stage", function(event){
             gk.currentStage.updateMouse(event, false);
             gk.inserting = null;
+            gk.selectionArea = null;
+            gk.selectBox(gk.selectionBox);
+            gk.selectionBox.clear();
             redrawCurrentStage();
             gk.options.selection.snapSelected = true;
         });
@@ -139,7 +152,7 @@ var gk = (function($, gk){
     }
     
     gk.select = function(selection){
-        var ctrl = gk.keyboard[gk.Keys.ctrl];
+        var ctrl = isSelectionDeltaed();
         if(!ctrl){
            clearSelection();
         }
@@ -161,9 +174,20 @@ var gk = (function($, gk){
             }
         }
     }
+
+    gk.selectBox = function(set){
+        var it = set.iterator();
+        while(it.hasNext()){
+            addSelection(it.next());
+        }
+    }
     
     gk.isSelected = function(item){
-        return !!gk.selected[item];
+        return !!gk.selected[item] || gk.selectionBox.contains(item);
+    }
+
+    function isSelectionDeltaed(){
+        return gk.keyboard[gk.Keys.ctrl] || gk.keyboard[gk.Keys.shift];
     }
     
     function addSelection(item){
@@ -213,6 +237,10 @@ var gk = (function($, gk){
             gk.mode = gk["MODE_"+$(this).val()];
             return true;
         });
+
+        $document.on("click", ".pressable", function(event){
+            $(this).toggleClass("pressed");
+        });
         
         var $inputMenu = $("#gk-input-menu");
         var $firstBtn = null;
@@ -229,12 +257,10 @@ var gk = (function($, gk){
         $firstBtn.click();
         
         $("#snap-to-points-button").on("click", function(){
-            $(this).toggleClass("pressed");
             gk.options.selection.snapToPoints = $(this).is(".pressed");        
         }).click();
         
         $("#snap-to-edges-button").on("click", function(){
-            $(this).toggleClass("pressed");
             gk.options.selection.snapToEdges = $(this).is(".pressed");        
         }).click();
         

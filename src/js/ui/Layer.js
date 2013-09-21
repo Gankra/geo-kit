@@ -1,4 +1,5 @@
 var gk = (function(gk){
+    var Set = gk.Set;
 
     function Layer(args){
         args = args || {
@@ -8,7 +9,8 @@ var gk = (function(gk){
         this.color = args.color;
         this.locked = args.locked;
         this.visible = args.visible;
-        this.items = args.collection || new gk.Set();
+        this.linked = args.linked;
+        this.items = args.collection || new Set();
     }
     
     Layer.prototype.insert = function(item){
@@ -30,6 +32,20 @@ var gk = (function(gk){
             }
         }
         return null;
+    }
+
+    Layer.prototype.getSelectionInBox = function(box, options){
+        var set = new Set();
+        if(this.isSelectable()){
+            var it = this.items.iterator();
+            while(it.hasNext()){
+                var item = it.next();
+                if(item.tryToSelectFromBox(box, options)){
+                    set.add(item);
+                }
+            }
+        }
+        return set;
     }
     
     Layer.prototype.tryToSnap = function(mouse, options){

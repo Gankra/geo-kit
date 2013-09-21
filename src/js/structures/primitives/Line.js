@@ -1,4 +1,7 @@
 var gk = (function(gk){
+    var Point = gk.Point;
+    var Drawable = gk.Drawable;
+    var utils = gk.utils;
 
     var LINE_DRAW_LENGTH = 1000;
 
@@ -10,10 +13,10 @@ var gk = (function(gk){
     Line.displayName = "Line";
     
     Line.createPrimitive = function(mouse){
-        return new Line(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
+        return new Line(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));
     }
 
-    Line.prototype = new gk.Drawable();
+    Line.prototype = new Drawable();
     
     Line.prototype.updateMousePrimitive = function(oldMouse, curMouse){
         this.ptB.updateMousePrimitive(oldMouse, curMouse);
@@ -55,6 +58,30 @@ var gk = (function(gk){
     Line.prototype.tryToSelect = function(mouse, options){
         return this.projectedDistanceSquared(mouse) <= options.edgeSelectDistance*options.edgeSelectDistance;
     }
+
+    Line.prototype.tryToSelectFromBox = function(box, options){
+        //TODO: move a lot of this logic into box impl
+        
+        var segs = box.edges;
+
+        var inBox = false;
+        for(var i=0; i<segs.length; ++i){
+            if(utils.intersects(this, segs[i])){
+                inBox = true;
+                break;
+            }
+        }
+
+        if(!inBox){
+            var endPoints = this.getEndPoints();
+            inBox = endPoints.length > 0;
+            for(var i=0; i<endPoints.length; ++i){
+                inBox = inBox && endPoints[i].tryToSelectFromBox(box, options);
+            }
+        }
+
+        return inBox;
+    }
     
     Line.prototype.tryToSnap = function(mouse, options){
         if(options.snapToEdges){
@@ -80,7 +107,7 @@ var gk = (function(gk){
 		dy/=len;
 	
 		var projScale = px*dx+py*dy;
-		return new gk.Point(dx*projScale+this.ptA.x, dy*projScale+this.ptA.y);
+		return new Point(dx*projScale+this.ptA.x, dy*projScale+this.ptA.y);
     }
     
     Line.prototype.projectedDistanceSquared = function(pt){

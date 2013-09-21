@@ -1,19 +1,22 @@
 var gk = (function(gk, _){
+    var Line = gk.Line;
+    var Point = gk.Point;
+    var utils = gk.utils;
 
     var RAY_DRAW_LENGTH = 1000;
     var RAY_SELECT_OPTIONS = {snapToPoints: true, snapToEdges:true};
 
     function Ray(ptA, ptB){
-        gk.Line.call(this, ptA, ptB);
+        Line.call(this, ptA, ptB);
     }
     
     Ray.displayName = "Ray";
     
     Ray.createPrimitive = function(mouse){
-        return new Ray(new gk.Point(mouse.x, mouse.y), new gk.Point(mouse.x, mouse.y));
+        return new Ray(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));
     }
 
-    Ray.prototype = new gk.Line();
+    Ray.prototype = new Line();
     
     Ray.prototype.tryToSelect = function(mouse, options){
         return !!this.tryToSnap(mouse, 
@@ -25,7 +28,7 @@ var gk = (function(gk, _){
         if(snap){
             return snap;
         }
-        snap = gk.Line.prototype.tryToSnap.call(this, mouse, options);
+        snap = Line.prototype.tryToSnap.call(this, mouse, options);
         if(snap){ 
             var result = true;
             if(Math.abs(this.slope)>1){
@@ -49,18 +52,18 @@ var gk = (function(gk, _){
     }
 
     Ray.prototype.getEndPoints = function(){
-        return [ptA];
+        return [this.ptA];
     }
 
     Ray.prototype.hasProjection = function(pt){
-        return Math.abs(gk.utils.angleOf(ptB, ptA, pt))<=Math.PI/2; 
+        return Math.abs(utils.angleOf(this.ptB, this.ptA, pt))<=Math.PI/2; 
     }
 
     Ray.prototype.clone = function(deep){
         if(deep){
-            return new Ray(ptA.clone(deep), ptB.clone(deep));
+            return new Ray(this.ptA.clone(deep), this.ptB.clone(deep));
         }else{
-            return new Ray(ptA, ptB);
+            return new Ray(this.ptA, this.ptB);
         }
     }
 
