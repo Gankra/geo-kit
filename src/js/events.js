@@ -9,6 +9,7 @@ var gk = (function(gk){
     gk.registerListener = function(observer, observed){
         if(observed.iterator){
             var it = observed.iterator();
+            registerListenerInternal(observed, observer);
             while(it.hasNext()){
                 registerListenerInternal(it.next(), observer);
             }

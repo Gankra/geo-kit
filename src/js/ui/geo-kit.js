@@ -20,6 +20,11 @@ var gk = (function($, gk){
       , defaultColor: "#000000"
       , highlightColor: "#ff0000"   
       , highlightRadius: 2   
+      , fadeLayers: false
+      , layerFadeRate: 5
+    }
+    gk.options.misc = {
+        insertLayersAbove: false
     }
     
     gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192,del:46};
@@ -29,16 +34,18 @@ var gk = (function($, gk){
     gk.mouseLast = new gk.Point(0,0);
     gk.mouse = new gk.Point(0,0);
     gk.keyboard = {};
-    //TODO: find if selected AND selection is still necessary?
-    gk.selected = new gk.Set();
+
     gk.selection = new gk.Set();
     gk.selectionBox = new gk.Set();
     gk.selectionArea = null;
+    gk.canManipulateSelection = true;
+    gk.canManipulateSelectionBox = true;
     gk.inserting = null;
     gk.currentPrimitiveClass = null;
     gk.currentMap = null;
     gk.mode = gk.MODE_INSERT;
     
+    gk.selection.transient = true;
     
     $(function(){ 
         gk.$stages = $("#gk-stages");
@@ -71,12 +78,12 @@ var gk = (function($, gk){
             }else if(gk.mode == gk.MODE_MOVE){
                 var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
                 if(selection!=null){
-                    gk.select(selection);
+                    gk.select(selection.item, selection.linked);
                 }
             }else if(gk.mode == gk.MODE_SELECT){
                 var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
                 if(selection!=null){
-                    gk.select(selection);
+                    gk.select(selection.item, selection.linked);
                 }else if(!isSelectionDeltaed()){
                     clearSelection();
                 }
@@ -91,9 +98,10 @@ var gk = (function($, gk){
             gk.currentStage.updateMouse(event);
             if(gk.mouse.down){
                 if(gk.inserting){
-                    gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);    
-                }else if(gk.mode == gk.MODE_MOVE){
-                    var it = gk.selected.iterator();
+                    gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);
+                    gk.emit(gk.inserting, gk.getDefaultEvent(gk.EVENT_UPDATED)); 
+                }else if(gk.mode == gk.MODE_MOVE && gk.canManipulateSelection){
+                    var it = gk.selection.iterator();
                     while(it.hasNext()){
                         var item = it.next();
                         item.updateMouse(gk.mouseLast, gk.mouse);
@@ -104,7 +112,9 @@ var gk = (function($, gk){
                         gk.selectionArea = gk.Box.createPrimitive(gk.mouseLast, gk.mouse);
                     }
                     gk.selectionArea.updateMousePrimitive(gk.mouseLast, gk.mouse);
-                    gk.selectionBox = gk.currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
+                    var selection = gk.currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
+                    gk.canManipulateSelectionBox = !selection.linked;
+                    gk.selectionBox = selection.items;
                 }
             }
             redrawCurrentStage();
@@ -158,12 +168,10 @@ var gk = (function($, gk){
         stage.draw(gk.options.render);   
     }
     
-    gk.select = function(selection){
-        var ctrl = isSelectionDeltaed();
-        if(!ctrl){
-           clearSelection();
-        }
+    gk.select = function(selection, disallowManipulation){  
         if(selection.iterator){
+            gk.selection = selection;
+            /*
             var it = selection.iterator();
             while(it.hasNext()){
                 var item = it.next();
@@ -172,25 +180,35 @@ var gk = (function($, gk){
                 }else{
                     addSelection(item);
                 }
-            }    
+            }  */  
         }else{
+            var ctrl = isSelectionDeltaed();
+            if(!ctrl || !gk.selection.transient){
+               clearSelection();
+            }
             if(ctrl && gk.isSelected(selection)){
                 removeSelection(selection);
             }else{
                 addSelection(selection);
             }
         }
+        if(disallowManipulation){
+            gk.canManipulateSelection = false;
+        }
     }
 
     gk.selectBox = function(set){
         var it = set.iterator();
+        if(!gk.canManipulateSelectionBox){
+            gk.canManipulateSelection = false;
+        }
         while(it.hasNext()){
             addSelection(it.next());
         }
     }
     
     gk.isSelected = function(item){
-        return gk.selected.contains(item) || gk.selectionBox.contains(item);
+        return gk.selection.contains(item) || gk.selectionBox.contains(item);
     }
 
     function isSelectionDeltaed(){
@@ -198,20 +216,23 @@ var gk = (function($, gk){
     }
     
     function addSelection(item){
-        gk.selected.add(item);
         gk.selection.add(item);
         updateSelection();
     }
     
     function removeSelection(item){
-        gk.selected.remove(item);
         gk.selection.remove(item);
         updateSelection();
     }
     
     function clearSelection(){
-        gk.selected.clear();
-        gk.selection.clear();
+        gk.canManipulateSelection = true;
+        if(gk.selection.transient){
+            gk.selection.clear();
+        }else{
+            gk.selection = new gk.Set();
+            gk.selection.transient = true;
+        }
         updateSelection();
     }
     
@@ -224,7 +245,7 @@ var gk = (function($, gk){
     }
     
     function deleteSelection(){
-        gk.currentStage.remove(gk.selection);
+        gk.currentStage.removeAll(gk.selection);
         clearSelection();
         redrawCurrentStage();
     }
@@ -283,11 +304,17 @@ var gk = (function($, gk){
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
             if(gk.currentMap.canMap(gk.selection)){
+                var result;
+                if(gk.selection.transient){
+                    result = gk.currentMap.map(gk.selection.clone())
+                }else{
+                    result = gk.currentMap.map(gk.selection);
+                }
                 var layer = new gk.Layer({
                     name: gk.currentMap.displayName
                   , linked: true
+                  , collection: result
                 });
-                layer.insert(gk.currentMap.map(gk.selection.clone()));
                 gk.currentStage.addLayer(layer);
                 gk.currentStage.selectLayer(layer);
                 redrawCurrentStage();

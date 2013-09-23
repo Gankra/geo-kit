@@ -125,6 +125,7 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.addLayer = function(layer, index){
+        //TODO: implement gk.options.insertLayerAbove
         if(!layer){
             layer = new Layer();
         }
@@ -150,6 +151,7 @@ var gk = (function(gk, _){
         this.selectedLayers = [];
         this.selectedLayers.push(layer);
         this.setLayer(this.layers.indexOf(layer));
+        gk.select(layer.items, layer.linked);
     }
     
     Stage.prototype.setLayer = function(index){
@@ -167,6 +169,12 @@ var gk = (function(gk, _){
     Stage.prototype.remove = function(item){
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].remove(item);
+        }
+    }
+
+    Stage.prototype.removeAll = function(item){
+        for(var i=0; i<this.layers.length; ++i){
+            this.layers[i].removeAll(item);
         }
     }
     
@@ -216,10 +224,16 @@ var gk = (function(gk, _){
 
     Stage.prototype.getSelectionInBox = function(box, options){
         var set = new Set();
+        var linked = false;
         for(var i=this.layers.length-1; i>=0; --i){
-            set.addAll(this.currentLayer.getSelectionInBox(box, options));
+            var result = this.currentLayer.getSelectionInBox(box, options);
+            set.addAll(result.items);
+            linked = linked || result.linked;
         }
-        return set;
+        return {
+            items: set
+          , linked: linked
+        };
     }
     
     Stage.prototype.tryToSnap = function(mouse, options){
@@ -242,9 +256,9 @@ var gk = (function(gk, _){
     Stage.prototype.getLayerHTML = function(layer){
         var self = this;
         var $layer = $("<div class='layer'>");
-        var $linkBtn = $("<button class='link-button icon-link' title='Unlink Layer'></button>");
-        var $lockBtn = $("<button class='lock-button pressable "+(layer.locked?"pressed":"")+" icon-lock' title='Lock Layer'></button>");
-        var $visibleBtn = $("<button class='visible-button pressable "+(layer.visible?"pressed":"")+" icon-eye-open' title='Hide Layer'></button>");
+        var $linkBtn = $("<button class='link-button glyphicon glyphicon-link' title='Unlink Layer'></button>");
+        var $lockBtn = $("<button class='lock-button pressable "+(layer.locked?"pressed":"")+" glyphicon glyphicon-lock' title='Lock Layer'></button>");
+        var $visibleBtn = $("<button class='visible-button pressable "+(layer.visible?"pressed":"")+" glyphicon glyphicon-eye-open' title='Hide Layer'></button>");
         var $label = $("<span class='layer-name'>"+layer.name+"</span>");
 
         $layer.on("click", function(event){
@@ -255,7 +269,7 @@ var gk = (function(gk, _){
         $linkBtn.on("click", function(){
             layer.unlink();
 
-            linkBtn.remove();
+            $linkBtn.remove();
         });
 
         $lockBtn.on("click", function(){

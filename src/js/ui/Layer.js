@@ -28,6 +28,10 @@ var gk = (function(gk){
     Layer.prototype.remove = function(item){
         this.items.remove(item);
     }
+
+    Layer.prototype.removeAll = function(items){
+        this.items.removeAll(items);
+    }
     
     Layer.prototype.getSelectionAt = function(mouse, options){
         if(this.isSelectable()){
@@ -35,7 +39,10 @@ var gk = (function(gk){
             while(it.hasNext()){
                 var item = it.next();
                 if(item.tryToSelect(mouse, options)){
-                    return item;
+                    return {
+                        item: item
+                      , linked: this.linked
+                    }
                 }
             }
         }
@@ -53,7 +60,10 @@ var gk = (function(gk){
                 }
             }
         }
-        return set;
+        return {
+            items: set
+          , linked: this.linked
+        };
     }
     
     Layer.prototype.tryToSnap = function(mouse, options){
@@ -78,6 +88,9 @@ var gk = (function(gk){
     }
     
     Layer.prototype.draw = function(options){
+        if(options.fadeLayers){
+            //TODO: implement layer fading
+        }
         if(this.visible){
             this.items.draw(_.defaults({}, options, this));
         }   
@@ -92,9 +105,8 @@ var gk = (function(gk){
     }
 
     Layer.prototype.unlink = function(){
-        this.items.forEach(function(item){
-            item.unregisterMapping();
-        });
+        this.linked = false;
+        this.items.unregisterMapping();
     }
     
     gk.Layer = Layer;
