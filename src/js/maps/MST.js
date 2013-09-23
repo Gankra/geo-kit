@@ -3,20 +3,34 @@ var gk = (function(gk){
     var filters = gk.filters;
     var Graph = gk.Graph;
     var Map = gk.Map;
+    var DisjointSets = gk.DisjointSets;
 
 
-    var MST = new Map("MST", "Minimum spanning tree of a graph");
+    var MST = new Map("MST", "Minimum spanning tree of a graph or set of points");
     
-    MST.canMap = filters.isGraph;
+    MST.canMap = filters.any(filters.isGraph, filters.containsOnly(filters.isPoint));
     
     MST.doMap = function(graph){
-        var vetices = graph.vertices.clone;
+        if(!graph.vertices){
+            graph = gk.getMap("Complete Graph").doMap(graph);
+        }
+        var vertices = graph.vertices.clone();
         var edges = graph.edges.clone();
-        var items = utils.sort(edges).items;
+        var sortedEdges = utils.sort(edges.toArray(), function(a, b){
+            return a.length-b.length;
+        });
+        var forest = new DisjointSets(vertices);
+        var result = new Graph();
 
+        for(var i=0; i<sortedEdges.length; ++i){
+            var edge = sortedEdges[i];
+            if(!forest.doShareSet(edge.ptA, edge.ptB)){
+                forest.union(edge.ptA, edge.ptB);
+                result.add(edge.clone(true));
+            }
+        }
 
-
-        return graph;
+        return result;
     }
 
     gk.registerMap(MST);

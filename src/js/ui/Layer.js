@@ -1,15 +1,20 @@
 var gk = (function(gk){
     var Set = gk.Set;
 
+    var DEFAULT_COLORS = ["#000000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
+    var defaultColorCounter = 0;
+    var layerNumberCounter = 1;
+
     function Layer(args){
         args = args || {
             locked: false
             ,visible: true
         };
-        this.color = args.color;
+        this.color = args.color || DEFAULT_COLORS[(defaultColorCounter++)%DEFAULT_COLORS.length];
         this.locked = args.locked;
         this.visible = args.visible;
         this.linked = args.linked;
+        this.name = args.name || "Layer"+(layerNumberCounter++);
         this.items = args.collection || new Set();
     }
     

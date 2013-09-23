@@ -75,6 +75,10 @@ var gk = (function(gk, _){
         this.finishRender(options);   
     }
 
+    LineSegment.prototype.__defineGetter__("length", function(){
+        return this.ptA.distance(this.ptB);
+    });
+
     gk.LineSegment = LineSegment;
     
     gk.registerPrimitive(LineSegment);

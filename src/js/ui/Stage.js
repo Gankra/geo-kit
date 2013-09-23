@@ -17,15 +17,31 @@ var gk = (function(gk, _){
     
     
     function Stage(){
-        this.layers = [];        
+        var self = this;
+        this.layers = [];
+        this.selectedLayers = [];        
         
         this.$stage = $("<div>");
         this.$canvas = $("<canvas class='stage'>");
         this.$menu = $("<div>");
+        this.$addLayerBtn = $("<button id='add-layer' title='Add Layer'>Add Layer</button>");
+        this.$deleteLayerBtn = $("<button id='remove-layer' title='Delete Layer'>Delete Layer</button>");
         this.$layers = $("<div id='layers'>");
         
+        this.$menu.append(this.$addLayerBtn);
+        this.$menu.append(this.$deleteLayerBtn);
         this.$menu.append(this.$layers);
         
+        this.$addLayerBtn.on("click", function(){
+            console.log("wha");
+            self.addLayer();
+            return false;
+        });
+
+        this.$deleteLayerBtn.on("click", function(){
+            self.deleteSelectedLayers();
+            return false;
+        })
         
         this.canvas = this.$canvas[0];
         this.canvas.width = DEFAULT_CANVAS_WIDTH;
@@ -104,7 +120,7 @@ var gk = (function(gk, _){
             }else if(this.layers.length>0){
                 this.currentLayer = this.layers[0];        
             }else{
-                this.currentLayer = null;
+                this.addLayer();
             }
         }
     }
@@ -121,13 +137,26 @@ var gk = (function(gk, _){
             this.insertLayerHTML(layer, index);
         }
         if(this.layers.length==1){
-            this.currentLayer = layer;
+            this.setLayer(0);
         }
-        
+    }
+
+    Stage.prototype.deleteSelectedLayers = function(){
+        for(var i=0; i<this.selectedLayers.length; ++i){
+            this.deleteLayer(this.selectedLayers[i]);
+        }
+    }
+
+    Stage.prototype.selectLayer = function(layer){
+        this.selectedLayers = [];
+        this.selectedLayers.push(layer);
+        this.setLayer(this.layers.indexOf(layer));
     }
     
     Stage.prototype.setLayer = function(index){
         this.currentLayer = this.layers[index];
+        $(".layer").removeClass("current");
+        this.currentLayer.$html.addClass("current");
     }
     
     Stage.prototype.insert = function(item){
@@ -212,9 +241,19 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.getLayerHTML = function(layer){
+        var self = this;
         var $layer = $("<div class='layer'>");
-        $layer.append($("<button class='lock-button pressable icon-lock' title='Lock Layer'></button>"));
-        $layer.append($("<button class='visible-button pressable icon-eye-open' title='Hide Layer'></button>"));
+        var $lockBtn = $("<button class='lock-button pressable icon-lock' title='Lock Layer'></button>");
+        var $visibleBtn = $("<button class='visible-button pressable icon-eye-open' title='Hide Layer'></button>");
+        var $label = $("<span class='layer-name'>"+layer.name+"</span>");
+
+        $layer.on("click", function(){
+            self.selectLayer(layer);
+        });
+
+        $layer.append($lockBtn);
+        $layer.append($visibleBtn);
+        $layer.append($label);
         return $layer;
     }
     

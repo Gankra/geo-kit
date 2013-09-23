@@ -62,5 +62,15 @@ var gk = (function(gk){
         gk.maps.push(map);        
     }
 
+    gk.getMap = function(mapName){
+        for(var i=0; i<gk.maps.length; ++i){
+            var map = gk.maps[i];
+            if(map.displayName == mapName){
+                return map;
+            }
+        }
+        return null;
+    }
+
     return gk;
 })(gk || {});

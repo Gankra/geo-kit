@@ -72,6 +72,8 @@ var gk = (function(gk){
     filters.isCircle = filters.hasKey("radius");
     filters.isCollection = filters.hasKey("iterator");
     filters.isGraph = filters.hasKey("vertices");
+    filters.yes = function(){ return true; };
+    filters.no = function(){ return false; };
 
     gk.filters = filters;
 

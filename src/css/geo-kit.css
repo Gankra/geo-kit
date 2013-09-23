@@ -30,11 +30,29 @@ html, body{
 }
 
 .layer{
-    height:30px;
+    height: 30px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    background: #EEE;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.layer.current{
+    background: #CCC;
+}
+
+.layer.selected{
+    background: #4444CC;
+}
+
+.layer-name{
+    float:right;
+    text-overflow: ellipsis;
 }
 
 .lock-button, .visible-button{
-    height:20px;
+    height: 20px;
 }
 
 .spacer::after{

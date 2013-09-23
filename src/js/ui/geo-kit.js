@@ -259,11 +259,11 @@ var gk = (function($, gk){
         $firstBtn.click();
         
         $("#snap-to-points-button").on("click", function(){
-            gk.options.selection.snapToPoints = $(this).is(".pressed");        
+            gk.options.selection.snapToPoints = !$(this).is(".pressed");        
         }).click();
         
         $("#snap-to-edges-button").on("click", function(){
-            gk.options.selection.snapToEdges = $(this).is(".pressed");        
+            gk.options.selection.snapToEdges = !$(this).is(".pressed");        
         }).click();
         
         var $mapSelect = $("#mapSelect");

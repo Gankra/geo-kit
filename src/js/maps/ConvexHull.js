@@ -4,6 +4,7 @@ var gk = (function(gk){
     var Map = gk.Map;
     var Edge = gk.LineSegment;
     var Set = gk.Set;
+    var StrictSet = gk.StrictSet;
     var Graph = gk.Graph;
 
 
@@ -29,7 +30,7 @@ var gk = (function(gk){
         hull.push(min);
 
         //sort points by angle to min (CCW)
-        var pts = collection.clone(true);
+        var pts = new StrictSet(collection.clone(true));
         pts.remove(min);
         var sortedPts = utils.sort(pts.toArray(), function(a, b){
             return Math.atan2(a.y-min.y, a.x-min.x) - Math.atan2(b.y-min.y, b.x-min.x) ;
