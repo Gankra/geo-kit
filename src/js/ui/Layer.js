@@ -6,15 +6,18 @@ var gk = (function(gk){
     var layerNumberCounter = 1;
 
     function Layer(args){
-        args = args || {
+        args = args || {};
+        args = _.defaults(args, {
             locked: false
-            ,visible: true
-        };
+          , visible: true
+          , linked: false
+        });
         this.color = args.color || DEFAULT_COLORS[(defaultColorCounter++)%DEFAULT_COLORS.length];
         this.locked = args.locked;
         this.visible = args.visible;
         this.linked = args.linked;
-        this.name = args.name || "Layer"+(layerNumberCounter++);
+        this.id = layerNumberCounter++;
+        this.name = (args.name || "Layer")+this.id;
         this.items = args.collection || new Set();
     }
     
@@ -78,6 +81,20 @@ var gk = (function(gk){
         if(this.visible){
             this.items.draw(_.defaults({}, options, this));
         }   
+    }
+
+    Layer.prototype.toggleLock = function(){
+        this.locked = !this.locked;
+    }
+
+    Layer.prototype.toggleVisible = function(){
+        this.visible = !this.visible;
+    }
+
+    Layer.prototype.unlink = function(){
+        this.items.forEach(function(item){
+            item.unregisterMapping();
+        });
     }
     
     gk.Layer = Layer;

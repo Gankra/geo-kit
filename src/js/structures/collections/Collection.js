@@ -109,6 +109,14 @@ var gk = (function(gk){
         this.parentMap = parentMap;
         gk.registerListener(this, parentCollection);
     }
+
+    Collection.prototype.unregisterMapping = function(){
+        if(!this.parentCollection) return;
+        
+        gk.unregisterListener(this, this.parentCollection);
+        delete this.parentCollection;
+        delete this.parentMap;
+    }
     
     Collection.prototype.handleEvent = function(obj, data){
         if(this.parentCollection && this.parentMap){

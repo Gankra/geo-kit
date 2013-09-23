@@ -33,7 +33,6 @@ var gk = (function(gk, _){
         this.$menu.append(this.$layers);
         
         this.$addLayerBtn.on("click", function(){
-            console.log("wha");
             self.addLayer();
             return false;
         });
@@ -41,7 +40,7 @@ var gk = (function(gk, _){
         this.$deleteLayerBtn.on("click", function(){
             self.deleteSelectedLayers();
             return false;
-        })
+        });
         
         this.canvas = this.$canvas[0];
         this.canvas.width = DEFAULT_CANVAS_WIDTH;
@@ -114,7 +113,7 @@ var gk = (function(gk, _){
         this.layers.splice(index, 1);
         this.removeLayerHTML(layer);
         
-        if(currentLayer == layer){
+        if(this.currentLayer == layer){
             if(index>0){
                 this.currentLayer = this.layers[index-1];
             }else if(this.layers.length>0){
@@ -186,7 +185,7 @@ var gk = (function(gk, _){
     }
     
     Stage.prototype.relMouseCoords = function(event){
-        var canvas = event.target;
+        var canvas = this.canvas;
         var totalOffsetX = 0;
         var totalOffsetY = 0;
         var canvasX = 0;
@@ -243,14 +242,33 @@ var gk = (function(gk, _){
     Stage.prototype.getLayerHTML = function(layer){
         var self = this;
         var $layer = $("<div class='layer'>");
-        var $lockBtn = $("<button class='lock-button pressable icon-lock' title='Lock Layer'></button>");
-        var $visibleBtn = $("<button class='visible-button pressable icon-eye-open' title='Hide Layer'></button>");
+        var $linkBtn = $("<button class='link-button icon-link' title='Unlink Layer'></button>");
+        var $lockBtn = $("<button class='lock-button pressable "+(layer.locked?"pressed":"")+" icon-lock' title='Lock Layer'></button>");
+        var $visibleBtn = $("<button class='visible-button pressable "+(layer.visible?"pressed":"")+" icon-eye-open' title='Hide Layer'></button>");
         var $label = $("<span class='layer-name'>"+layer.name+"</span>");
 
-        $layer.on("click", function(){
+        $layer.on("click", function(event){
+            if(event.target.nodeName == "BUTTON") return;
             self.selectLayer(layer);
         });
 
+        $linkBtn.on("click", function(){
+            layer.unlink();
+
+            linkBtn.remove();
+        });
+
+        $lockBtn.on("click", function(){
+            layer.toggleLock();
+        });
+
+        $visibleBtn.on("click", function(){
+            layer.toggleVisible();
+        })
+
+        if(layer.linked){
+            $layer.append($linkBtn);
+        }
         $layer.append($lockBtn);
         $layer.append($visibleBtn);
         $layer.append($label);

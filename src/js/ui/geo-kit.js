@@ -84,7 +84,7 @@ var gk = (function($, gk){
             redrawCurrentStage();
         });
         
-        $document.on("mousemove", ".stage", function(event){
+        $document.on("mousemove", function(event){
             if(gk.mouse.down){
                 gk.options.selection.snapSelected = false;
             }
@@ -133,9 +133,14 @@ var gk = (function($, gk){
     });
     
     gk.setCurrentStage = function(stage){
+        if(stage == gk.currentStage){
+            return;
+        }
+
         if(gk.currentStage){
             gk.currentStage.deselect();
         }
+
         gk.currentStage = stage;
         gk.currentStage.select();
         
@@ -278,9 +283,13 @@ var gk = (function($, gk){
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
             if(gk.currentMap.canMap(gk.selection)){
-                var layer = new gk.Layer();
+                var layer = new gk.Layer({
+                    name: gk.currentMap.displayName
+                  , linked: true
+                });
                 layer.insert(gk.currentMap.map(gk.selection.clone()));
                 gk.currentStage.addLayer(layer);
+                gk.currentStage.selectLayer(layer);
                 redrawCurrentStage();
             }
         });

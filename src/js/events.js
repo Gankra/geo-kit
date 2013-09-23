@@ -16,12 +16,33 @@ var gk = (function(gk){
             registerListenerInternal(observed, observer);
         }    
     }
+
+    gk.unregisterListener = function(observer, observed){
+        if(observed.iterator){
+            var it = observed.iterator();
+            while(it.hasNext()){
+                unregisterListenerInternal(it.next(), observer);
+            }
+        }else{
+            unregisterListenerInternal(observed, observer);
+        } 
+    }
     
     function registerListenerInternal(observed, observer){
         if(!gk.listeners[observed.uid]){
             gk.listeners[observed.uid] = [];    
         }
         gk.listeners[observed.uid].push(observer);
+    }
+
+    function unregisterListenerInternal(observed, observer){
+        var listeners = gk.listeners[observed.uid];
+        if(listeners){
+            listeners.splice(listeners.indexOf(observer), 1);
+            if(listeners.length==0){
+                delete gk.listeners[observed.uid];
+            }
+        }
     }
     
     gk.emit = function(observed, data){
