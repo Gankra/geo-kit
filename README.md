@@ -1,13 +1,44 @@
-GeoKit
-=======
+<h2>What is GeoKit?</h2>
+<p>
+GeoKit is a graphical tool for sketching out ideas in Computational Geometry. You're provided with a canvas and the ability to insert various geometric primitives over which you can apply several algorithms.
+</p>
+<p>
+You can quickly draw some obstacles, compute their visibility graph, and take the minimum spanning tree of that graph. Then drag around the original obstacles to visualize how the constructed graphs change accordingly. This is great for gaining an intuition on how different structures relate. 
+</p>
+<p>
+GeoKit takes inspiration form Ipe and KSEG and tries to bring their ideas to general geometric algorithms.
+</p>
 
-A collection of algorithms and tools for geometric problem solving in HTML5
+<h2>What isn't GeoKit?</h2>
+<p>There are <i>many</i> things GeoKit <i>isn't</i>.</p>
 
-Copyright (c) 2013, Alexis Beingessner
-All rights reserved.
+<h3>GeoKit is not optimal</h3>
+<p>
+GeoKit was not designed to by a high-performance system for benchmarking algorithms or powering enterprise systems. It's designed to make sketching out ideas on small inputs easier. While we don't purposefully implement the worst possible algorithm, we tend to lean towards the algorithms that are easiest to write and maintain.
+</p>
+<p>
+For instance, as of this writing we compute the MST of a set of points by simply computing their complete graph and then computing the MST of that. This is obviously wasteful, but also easy to write and verify the correctness of. Especially since we're dealing with exceptionally small inputs, where random constants will dominate any assymptotic performance. The only thing we really strive to obtain is <i>correctness</i> in out algorithms.
+</p>
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+<h3>GeoKit is not correct</h3>
+<p>
+Being able to construct an entity in GeoKit in no way functions as a proof of its existence. Internally we work with double-precision floating point numbers. Anyone who has worked with floats for a while knows that this means that computations can be very error-prone. In particular, compounded FP operations tend to diverge from the real result. While we try to not store the results of many actual equations, they do feature prominently in various algorithmic decisions, such as determining if lines intersect or if an angle is reflex. As such we make no guarantees that our outputs are 100% correct, particularly on degenerate or near-degenerate inputs.
+</p>
 
-Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+<h3>GeoKit is not done</h3>
+<p>GeoKit has plenty left to get done. The GUI, in particular, is still lacking key features, and the set of algorithms provided is quite small. If you agree, please consider contributing! 
+</p>
+
+<h3>GeoKit is not Ipe</h3>
+<p>
+If you want pretty vector diagrams, just use <a href="http://ipe7.sourceforge.net/" title="Ipe">Ipe</a>. 
+</p>
+
+<h2>How do I contribute?</h2>
+<p>
+GeoKit is <a href="https://github.com/Gankro/geo-kit">hosted on Github</a> and licensed under the BSD 2-clause license. Basically this means you can fork it off and do whatever with it. The GUI code is a bit harsh as it's mostly a pile of organic jQuery hacks, but the actual algorithms and structures seem to be pretty alright (if sparsely documented). Feel free to contact me if you want any features added or want to help out. Just forking it or submiting an issue on Github would be the easiest.
+</p>
+
+<p>
+Hosting your instance is very easy, as GeoKit has no build step (this may change as the number of files increases) or uncommitted dependencies. Just <a href="https://github.com/Gankro/Sburb/archive/master.zip">download the latest blob</a> and drop it into any directory that will serve the static files. You can even run it from your local file system by just opening the index.html in your favourite (modern) browser.
+</p>
