@@ -31,6 +31,7 @@ var gk = (function(gk){
         curNode.next.prev = curNode.prev.next;
         curNode.prev.next = curNode.next.prev;
         --this.length;
+        this.registerRemoval(curNode.item);
     }
     
     List.prototype.add = function(item){
@@ -46,19 +47,17 @@ var gk = (function(gk){
         newNode.next = curNode;
         curNode.prev = newNode;
         ++this.length;
+        this.registerAddition(curNode.item);
     }
 
-    List.prototype.clear = function(){
+    List.prototype._clear = function(){
         this.dummy.next = this.dummy.prev = this.dummy;
         this.length = 0;
     }
     
-    List.prototype.replaceItems = function(collection, src){
+    List.prototype._replaceItems = function(collection, src){
         this.dummy = collection.dummy;
         this.length = collection.length;
-        gk.emit(this, {
-            event: gk.EVENT_REPLACED
-        });
     }
 
     List.prototype.iterator = function(_curNode){
@@ -94,6 +93,7 @@ var gk = (function(gk){
     }
     
     gk.List = List;
+    gk.LinkedList = List;
 
     return gk;
 })(gk || {});

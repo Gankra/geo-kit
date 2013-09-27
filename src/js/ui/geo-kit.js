@@ -273,7 +273,13 @@ var gk = (function($, gk){
         var $inputMenu = $("#gk-input-menu");
         var $firstBtn = null;
         for(var index in gk.primitives){
-            var $primitiveBtn = $("<button value='"+index+"'>"+gk.primitives[index].displayName+"</button>");
+            var primitive = gk.primitives[index];
+            var $primitiveBtn = $("<button " 
+              + "value='"+index+"' "
+              + "class='icon-button' "
+              + "data-icon='"+primitive.icon+"' "
+              + "title='"+primitive.displayName+"' "
+              + ">");
             $firstBtn = $firstBtn || $primitiveBtn;
             $inputMenu.append($primitiveBtn);
             $primitiveBtn.on("click", function(){
@@ -306,7 +312,9 @@ var gk = (function($, gk){
             if(gk.currentMap.canMap(gk.selection)){
                 var result;
                 if(gk.selection.transient){
-                    result = gk.currentMap.map(gk.selection.clone())
+                    var selectionClone = gk.selection.clone();
+                    selectionClone.transient = true;
+                    result = gk.currentMap.map(selectionClone);
                 }else{
                     result = gk.currentMap.map(gk.selection);
                 }
@@ -320,6 +328,10 @@ var gk = (function($, gk){
                 redrawCurrentStage();
             }
         });
+
+        $(".icon-button").each(function(index, btn){
+            btn.style["background-image"] =  "url(src/img/icon-"+btn.dataset.icon+".svg)";
+        })
     }
     
     return gk;

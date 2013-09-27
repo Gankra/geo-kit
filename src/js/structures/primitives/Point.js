@@ -6,6 +6,7 @@ var gk = (function(gk){
     }
     
     Point.displayName = "Point";
+    Point.icon = "point";
     
     Point.createPrimitive = function(mouse){
         return new Point(mouse.x, mouse.y);

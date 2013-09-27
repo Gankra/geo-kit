@@ -8,10 +8,13 @@ var gk = (function(gk){
     
     gk.registerListener = function(observer, observed){
         if(observed.iterator){
-            var it = observed.iterator();
-            registerListenerInternal(observed, observer);
-            while(it.hasNext()){
-                registerListenerInternal(it.next(), observer);
+            if(observed.transient){
+                var it = observed.iterator();
+                while(it.hasNext()){
+                    registerListenerInternal(it.next(), observer);
+                }
+            }else{
+               registerListenerInternal(observed, observer); 
             }
         }else{
             registerListenerInternal(observed, observer);
@@ -24,6 +27,7 @@ var gk = (function(gk){
             while(it.hasNext()){
                 unregisterListenerInternal(it.next(), observer);
             }
+            unregisterListenerInternal(observed, observer);
         }else{
             unregisterListenerInternal(observed, observer);
         } 

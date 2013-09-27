@@ -11,6 +11,7 @@ var gk = (function(gk, _){
     }
     
     Ray.displayName = "Ray";
+    Ray.icon = "ray";
     
     Ray.createPrimitive = function(mouse){
         return new Ray(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));

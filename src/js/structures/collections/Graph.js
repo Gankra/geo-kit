@@ -25,7 +25,7 @@ var gk = (function(gk){
         return this.vertices.length + this.edges.length;
     });
 
-    Graph.prototype.clear = function(){
+    Graph.prototype._clear = function(){
         this.vertices = new StrictSet();
         this.edges = new StrictSet();
     }
@@ -54,6 +54,7 @@ var gk = (function(gk){
         if(!this.vertices.contains(vertex)){
             this.vertices.add(vertex);
             vertex.edges = vertex.edges || new StrictSet();
+            this._registerAddition(vertex);
         } 
     }
 
@@ -64,6 +65,7 @@ var gk = (function(gk){
         edges.forEach(function(edge){
             self.removeEdge(edge);
         });
+        this._registerRemoval(vertex);
     }
 
     Graph.prototype.addEdge = function(vertexA, vertexB){
@@ -84,6 +86,7 @@ var gk = (function(gk){
             this.edges.add(edge);
             edge.ptA.edges.add(edge);
             edge.ptB.edges.add(edge);
+            this._registerAddition(edge);
         }
     }
 
@@ -91,6 +94,8 @@ var gk = (function(gk){
         this.edges.remove(edge);
         edge.ptA.edges.remove(edge);
         edge.ptB.edges.remove(edge);
+        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        this._registerRemoval(edge);
     }
 
     Graph.prototype.clone = function(deep){
@@ -101,12 +106,9 @@ var gk = (function(gk){
         }
     }
 
-    Graph.prototype.replaceItems = function(graph, src){
+    Graph.prototype._replaceItems = function(graph, src){
         this.vertices = graph.vertices;
         this.edges = graph.edges;
-        gk.emit(this, {
-            event: gk.EVENT_REPLACED
-        });
     }
 
     Graph.prototype.iterator = function(_vIt, _eIt){

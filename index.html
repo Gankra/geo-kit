@@ -18,15 +18,18 @@
         </div>
         <div id="content" class="content">
             <div id="gk-top-menu">
-                <span id="gk-input-menu" class="unique-button-group">
-                    <button class="mode-button" value="SELECT" id="select-mode-button">Select</button>
-                    <button class="mode-button" value="MOVE" id="move-mode-button">Move</button>
-                    <span class="spacer"></span>
-                </span>
-                <span class="spacer"></span>
                 <span>
-                    <button id="snap-to-points-button" class="pressable">Snap to Points</button>
-                    <button id="snap-to-edges-button" class="pressable">Snap to Edges</button>
+                    <button id="snap-to-points-button" data-icon="snap-points" class="pressable icon-button" title="Snap to Points"></button>
+                    <button id="snap-to-edges-button" data-icon="snap-edges" class="pressable icon-button" title="Snap to Edges"></button>
+                </span>
+                <span class="spacer"> </span>
+                <span id="gk-input-menu" class="unique-button-group">
+                    <button class="icon-button mode-button" data-icon="select" value="SELECT" id="select-mode-button" title="Select"></button>
+                    <button class="icon-button mode-button" data-icon="move" value="MOVE" id="move-mode-button" title="Move"></button>
+                    <span class="spacer"> </span>
+                </span>
+                <span class="spacer"> </span>
+                <span id="quick-map-menu">
                 </span>
                 
             </div>

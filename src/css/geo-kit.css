@@ -4,6 +4,7 @@ html, body{
 
 #content{
     dsiplay:block;
+    height: 80%;
 }
 
 #gk-top-menu{
@@ -44,6 +45,12 @@ html, body{
     line-height: 1.5em;
 }
 
+.icon-button{
+    width: 4rem;
+    height: 4rem;
+    background-size: 100%;
+}
+
 .readable{
     max-width: 55em;
     margin-left: auto;
@@ -76,8 +83,8 @@ html, body{
     height: 20px;
 }
 
-.spacer::after{
-    content: "|";
+.spacer:before{
+    content: "\00a0"; /* non-breaking space */
 }
 
 .pressed{

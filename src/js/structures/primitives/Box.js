@@ -9,6 +9,7 @@ var gk = (function(gk){
     }
     
     Box.displayName = "Box";
+    Box.icon = "box";
     
     Box.createPrimitive = function(mouse){
         return new Box(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));

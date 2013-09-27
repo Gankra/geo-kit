@@ -35,8 +35,8 @@ var gk = (function(gk){
     }
 
     DisjointSets.prototype.union = function(item1, item2){
-        var set1 = this.getSetNode(item1);
-        var set2 = this.getSetNode(item2);
+        var set1 = this._getSetNode(item1);
+        var set2 = this._getSetNode(item2);
 
         if(set1.setId == set2.setId){
             return;
@@ -55,7 +55,7 @@ var gk = (function(gk){
         larger.length += smaller.length;
     }
 
-    DisjointSets.prototype.getSetNode = function(item){
+    DisjointSets.prototype._getSetNode = function(item){
         var parent = this.items[item[this.keyName]];
         var path = [];
 
@@ -75,7 +75,7 @@ var gk = (function(gk){
     }
 
     DisjointSets.prototype.doShareSet = function(item1, item2){
-        return this.getSetNode(item1).setId == this.getSetNode(item2).setId;
+        return this._getSetNode(item1).setId == this._getSetNode(item2).setId;
     }
 
     gk.DisjointSets = DisjointSets;

@@ -10,6 +10,7 @@ var gk = (function(gk, _){
     }
     
     LineSegment.displayName = "Line Segment";
+    LineSegment.icon = "edge";
     
     LineSegment.createPrimitive = function(mouse){
         return new LineSegment(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));

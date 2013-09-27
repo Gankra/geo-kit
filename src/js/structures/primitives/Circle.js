@@ -8,6 +8,7 @@ var gk = (function(gk){
     }
     
     Circle.displayName = "Circle";
+    Circle.icon = "circle";
     
     Circle.createPrimitive = function(mouse){
         return new Circle(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));

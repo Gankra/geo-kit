@@ -18,17 +18,16 @@ var gk = (function(gk){
 
     Set.prototype.remove = function(item){
         delete this.items[item[this.keyName]];
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        this._registerRemoval(item);
     }
     
     Set.prototype.add = function(item){
         this.items[item[this.keyName]] = item;
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        this._registerAddition(item);
     }
 
-    Set.prototype.clear = function(){
+    Set.prototype._clear = function(){
         this.items = {};
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
     }
     
     Set.prototype.contains = function(item){
@@ -39,9 +38,8 @@ var gk = (function(gk){
         return Object.keys(this.items).length;
     });
     
-    Set.prototype.replaceItems = function(collection, src){
+    Set.prototype._replaceItems = function(collection){
         this.items = collection.items;
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_REPLACED));
     }
 
     Set.prototype.iterator = function(_index, _keys){

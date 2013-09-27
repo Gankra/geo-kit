@@ -22,14 +22,17 @@ var gk = (function(gk){
     }
     
     Layer.prototype.insert = function(item){
+        if(this.linked) return;
         this.items.add(item);
     }
     
     Layer.prototype.remove = function(item){
+        if(this.linked) return;
         this.items.remove(item);
     }
 
     Layer.prototype.removeAll = function(items){
+        if(this.linked) return;
         this.items.removeAll(items);
     }
     

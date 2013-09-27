@@ -11,6 +11,7 @@ var gk = (function(gk){
     }
     
     Line.displayName = "Line";
+    Line.icon = "line";
     
     Line.createPrimitive = function(mouse){
         return new Line(new Point(mouse.x, mouse.y), new Point(mouse.x, mouse.y));

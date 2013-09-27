@@ -6,7 +6,7 @@ var gk = (function(gk, _){
     var Set = gk.Set;
     
     var DEFAULT_CANVAS_WIDTH = 650;
-    var DEFAULT_CANVAS_HEIGHT = 500;
+    var DEFAULT_CANVAS_HEIGHT = 450;
     var AXES_COLOR = "#bbb";
     
     var axes = [
@@ -280,11 +280,12 @@ var gk = (function(gk, _){
             layer.toggleVisible();
         })
 
+        
+        $layer.append($lockBtn);
+        $layer.append($visibleBtn);
         if(layer.linked){
             $layer.append($linkBtn);
         }
-        $layer.append($lockBtn);
-        $layer.append($visibleBtn);
         $layer.append($label);
         return $layer;
     }
