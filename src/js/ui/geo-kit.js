@@ -88,6 +88,7 @@ var gk = (function($, gk){
                     clearSelection();
                 }
             }
+            $(".layer.selected").removeClass("selected");
             redrawCurrentStage();
         });
         

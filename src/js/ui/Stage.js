@@ -152,6 +152,7 @@ var gk = (function(gk, _){
         this.selectedLayers.push(layer);
         this.setLayer(this.layers.indexOf(layer));
         gk.select(layer.items, layer.linked);
+        this.currentLayer.$html.addClass("selected");
     }
     
     Stage.prototype.setLayer = function(index){
