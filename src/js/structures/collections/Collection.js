@@ -15,16 +15,19 @@ var gk = (function(gk){
     Collection.prototype._clear = abstract;
 
     Collection.prototype._registerAddition = function(item){
+        if(!this.handlingChildEvents) return;
         gk.registerListener(this, item);
         gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
     }
 
     Collection.prototype._registerRemoval = function(item){
+        if(!this.handlingChildEvents) return;
         gk.unregisterListener(this, item);
         gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
     }
     
     Collection.prototype._registerAdditions = function(items){
+        if(!this.handlingChildEvents) return;
         var self = this;
         items.forEach(function(item){
             gk.registerListener(self, item);
@@ -33,6 +36,7 @@ var gk = (function(gk){
     }
 
     Collection.prototype._registerRemovals = function(items){
+        if(!this.handlingChildEvents) return;
         var self = this;
         items.forEach(function(item){
             gk.unregisterListener(self, item);
@@ -162,6 +166,24 @@ var gk = (function(gk){
         }else{
             gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
         }
+    }
+
+    Collection.prototype.handleChildEvents = function(){
+        if(this.handlingChildEvents) return;
+        var self = this;
+        this.forEach(function(item){
+            gk.registerListener(self, item);
+        });
+        this.handlingChildEvents = true;
+    }
+
+    Collection.prototype.ignoreChildEvents = function(){
+        if(!this.handlingChildEvents) return;
+        var self = this;
+        this.forEach(function(item){
+            gk.unregisterListener(self, item);
+        });
+        this.handlingChildEvents = false;
     }
 
     gk.Collection = Collection;

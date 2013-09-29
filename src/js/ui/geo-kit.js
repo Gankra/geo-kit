@@ -314,7 +314,7 @@ var gk = (function($, gk){
                 var result;
                 if(gk.selection.transient){
                     var selectionClone = gk.selection.clone();
-                    selectionClone.transient = true;
+                    selectionClone.handleChildEvents();
                     result = gk.currentMap.map(selectionClone);
                 }else{
                     result = gk.currentMap.map(gk.selection);

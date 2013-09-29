@@ -19,6 +19,9 @@ var gk = (function(gk){
         this.id = layerNumberCounter++;
         this.name = (args.name || "Layer")+this.id;
         this.items = args.collection || new Set();
+        if(!this.linked){
+            this.items.handleChildEvents();
+        }
     }
     
     Layer.prototype.insert = function(item){
@@ -110,6 +113,7 @@ var gk = (function(gk){
     Layer.prototype.unlink = function(){
         this.linked = false;
         this.items.unregisterMapping();
+        this.items.handleChildEvents();
     }
     
     gk.Layer = Layer;

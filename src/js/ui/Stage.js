@@ -110,6 +110,8 @@ var gk = (function(gk, _){
         }else{
             index = this.layers.indexOf(layer);
         }
+        var layer = this.layers[index];
+        layer.items.ignoreChildEvents();
         this.layers.splice(index, 1);
         this.removeLayerHTML(layer);
         

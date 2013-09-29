@@ -66,7 +66,7 @@ var gk = (function(gk){
     }
     
     gk.Set = Set;
-
+    gk.HashSet = Set;
 
     /**
      * StrictSet uses hashCode instead of uid
@@ -85,6 +85,7 @@ var gk = (function(gk){
     }
 
     gk.StrictSet = StrictSet;
+    gk.StrictHashSet = StrictSet;
 
     return gk;
 })(gk || {});
