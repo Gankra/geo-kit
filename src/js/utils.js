@@ -105,6 +105,13 @@ var gk = (function(gk){
      */
     utils.intersects = function(line1, line2){
         var pt = line1.intersection(line2);
+        return utils.isIntersection(line1, line2, pt);
+    }
+
+    /**
+     * Determines if the given intersection point is plausible
+     */
+    utils.isIntersection = function(line1, line2, pt){
         if(isFinite(pt.x) && isFinite(pt.y)){
             return line1.hasProjection(pt) && line2.hasProjection(pt);
         }

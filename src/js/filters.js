@@ -67,6 +67,37 @@ var gk = (function(gk){
         }
     }
 
+    filters.containsAny = function(filter){
+        return function(collection){
+            var it = collection.iterator();
+            while(it.hasNext()){
+                var item = it.next();
+                if(filter(item)){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    filters.lengthEquals = function(n){
+        return function(collection){
+            return collection.length == n;
+        }
+    }
+
+    filters.lengthLessThan = function(n){
+        return function(collection){
+            return collection.length < n;
+        }
+    }
+
+    filters.lengthGreaterThan = function(n){
+        return function(collection){
+            return collection.length > n;
+        }
+    }
+
     filters.isPoint = filters.hasKey("coords");
     filters.isLineish = filters.hasKey("slope");
     filters.isCircle = filters.hasKey("radius");
