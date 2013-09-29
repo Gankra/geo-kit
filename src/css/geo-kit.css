@@ -64,6 +64,13 @@ html, body{
     background: #EEE;
     padding-left: 0.5em;
     padding-right: 0.5em;
+    text-overflow: ellipsis;
+    text-align: right;
+    overflow: hidden;
+}
+
+.layer button{
+    float:left;
 }
 
 .layer.current{
@@ -72,11 +79,6 @@ html, body{
 
 .layer.selected{
     background: #77BBFF;
-}
-
-.layer-name{
-    float:right;
-    text-overflow: ellipsis;
 }
 
 .lock-button, .visible-button{
