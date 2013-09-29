@@ -10,7 +10,6 @@ var gk = (function(gk){
         if(observed.iterator){
             if(observed.transient){
                 var it = observed.iterator();
-                console.log("registering listener on transient");
                 while(it.hasNext()){
                     registerListenerInternal(it.next(), observer);
                 }
@@ -35,7 +34,6 @@ var gk = (function(gk){
     }
     
     function registerListenerInternal(observed, observer){
-        console.log(observed, observer);
         if(!gk.listeners[observed.uid]){
             gk.listeners[observed.uid] = [];    
         }
@@ -53,7 +51,6 @@ var gk = (function(gk){
     }
     
     gk.emit = function(observed, data){
-        console.log("emiting", observed, data);
         var observers = gk.listeners[observed.uid];
         if(observers){
             for(var i=0; i<observers.length; i++){

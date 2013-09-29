@@ -1,9 +1,9 @@
 var gk = (function(gk){
 
     function List(collection){
-        this.dummy = {};
-        this.dummy.next = this.dummy;
-        this.dummy.prev = this.dummy;
+        this._dummy = {};
+        this._dummy.next = this._dummy;
+        this._dummy.prev = this._dummy;
         this.length = 0;
 
         if(collection){
@@ -18,8 +18,8 @@ var gk = (function(gk){
     }
     
     List.prototype.remove = function(item){
-        var curNode = this.dummy;
-        while(curNode.next != this.dummy){
+        var curNode = this._dummy;
+        while(curNode.next != this._dummy){
             if(curNode.item.equals(item)){
                 this._remove(node);
                 return;
@@ -31,11 +31,11 @@ var gk = (function(gk){
         curNode.next.prev = curNode.prev.next;
         curNode.prev.next = curNode.next.prev;
         --this.length;
-        this.registerRemoval(curNode.item);
+        this._registerRemoval(curNode.item);
     }
     
     List.prototype.add = function(item){
-        var curNode = this.dummy;
+        var curNode = this._dummy;
         var newNode = {};
         newNode.item = item;
         this._add(curNode, newNode);
@@ -47,21 +47,35 @@ var gk = (function(gk){
         newNode.next = curNode;
         curNode.prev = newNode;
         ++this.length;
-        this.registerAddition(curNode.item);
+        this._registerAddition(curNode.item);
+    }
+
+    List.prototype.push = List.prototype.add;
+
+    List.prototype.pop = function(){
+        if(this.length == 0) return;
+        this._dummy.prev = this._dummy.prev.prev;
+        this._dummy.prev.next = this._dummy;
+        --this.length;
+    }
+
+    List.prototype._lastNode = function(){
+        if(this.length == 0) return null;
+        return this._dummy.prev;
     }
 
     List.prototype._clear = function(){
-        this.dummy.next = this.dummy.prev = this.dummy;
+        this._dummy.next = this._dummy.prev = this._dummy;
         this.length = 0;
     }
     
     List.prototype._replaceItems = function(collection, src){
-        this.dummy = collection.dummy;
+        this._dummy = collection.dummy;
         this.length = collection.length;
     }
 
     List.prototype.iterator = function(_curNode){
-        var curNode = _curNode || this.dummy;
+        var curNode = _curNode || this._dummy;
         var self = this;
         return {
             next: function(){
@@ -69,14 +83,14 @@ var gk = (function(gk){
                 return curNode.item;
             }
           , hasNext: function(){
-                curNode.next != this.dummy;
+                return curNode.next != self._dummy;
             }
           , prev: function(){
                 curNode = curNode.prev;
                 return curNode.item;
             }
           , hasPrev: function(){
-                curNode.prev != this.dummy;
+                return curNode.prev != self._dummy;
             }
           , remove: function(){
                 self._remove(curNode);

@@ -1,4 +1,10 @@
 var gk = (function($, gk){
+    var Set = gk.Set;
+    var LinkedHashSet = gk.LinkedHashSet;
+    var Point = gk.Point;
+    var Box = gk.Box;
+    var Stage = gk.Stage;
+    var Layer = gk.Layer;
     
     gk.MODE_INSERT = "insert";
     gk.MODE_SELECT = "select";
@@ -31,12 +37,12 @@ var gk = (function($, gk){
     
     gk.stages = [];
     gk.currentStage = null;
-    gk.mouseLast = new gk.Point(0,0);
-    gk.mouse = new gk.Point(0,0);
+    gk.mouseLast = new Point(0,0);
+    gk.mouse = new Point(0,0);
     gk.keyboard = {};
 
-    gk.selection = new gk.Set();
-    gk.selectionBox = new gk.Set();
+    gk.selection = new LinkedHashSet();
+    gk.selectionBox = new Set();
     gk.selectionArea = null;
     gk.canManipulateSelection = true;
     gk.canManipulateSelectionBox = true;
@@ -52,7 +58,7 @@ var gk = (function($, gk){
         gk.$menu = $("#gk-menu");
         gk.$globalMenu = $("#gk-global-menu");
         gk.$stageMenu = $("#gk-stage-menu");
-        gk.addStage(new gk.Stage());
+        gk.addStage(new Stage());
         
         createGlobalMenu();
         
@@ -110,7 +116,7 @@ var gk = (function($, gk){
                     }
                 }else if(gk.mode == gk.MODE_SELECT){
                     if(!gk.selectionArea){
-                        gk.selectionArea = gk.Box.createPrimitive(gk.mouseLast, gk.mouse);
+                        gk.selectionArea = Box.createPrimitive(gk.mouseLast, gk.mouse);
                     }
                     gk.selectionArea.updateMousePrimitive(gk.mouseLast, gk.mouse);
                     var selection = gk.currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
@@ -231,7 +237,7 @@ var gk = (function($, gk){
         if(gk.selection.transient){
             gk.selection.clear();
         }else{
-            gk.selection = new gk.Set();
+            gk.selection = new LinkedHashSet();
             gk.selection.transient = true;
         }
         updateSelection();
@@ -319,7 +325,7 @@ var gk = (function($, gk){
                 }else{
                     result = gk.currentMap.map(gk.selection);
                 }
-                var layer = new gk.Layer({
+                var layer = new Layer({
                     name: gk.currentMap.displayName
                   , linked: true
                   , collection: result
