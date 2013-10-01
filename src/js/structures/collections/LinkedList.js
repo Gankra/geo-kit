@@ -16,30 +16,22 @@ var gk = (function(gk){
     List.prototype.emptyInstance = function(){
         return new List();
     }
-    
-    List.prototype.remove = function(item){
-        var curNode = this._dummy;
-        while(curNode.next != this._dummy){
-            if(curNode.item.equals(item)){
-                this._remove(node);
-                return;
-            }
-        }
-    }
 
-    List.prototype._remove = function(curNode){
-        curNode.next.prev = curNode.prev.next;
-        curNode.prev.next = curNode.next.prev;
-        --this.length;
-        this._registerRemoval(curNode.item);
-    }
-    
-    List.prototype.add = function(item){
+    List.prototype.pushBack = function(item){
         var curNode = this._dummy;
         var newNode = {};
         newNode.item = item;
         this._add(curNode, newNode);
     }
+
+    List.prototype.pushFront = function(item){
+        var curNode = this._dummy.next;
+        var newNode = {};
+        newNode.item = item;
+        this._add(curNode, newNode);
+    }
+
+    List.prototype.add = List.prototype.pushBack;
 
     List.prototype._add = function(curNode, newNode){
         newNode.prev = curNode.prev;
@@ -50,13 +42,41 @@ var gk = (function(gk){
         this._registerAddition(curNode.item);
     }
 
-    List.prototype.push = List.prototype.add;
+    List.prototype.popBack = function(){
+        return this._remove(this._dummy.prev);
+    }
 
-    List.prototype.pop = function(){
-        if(this.length == 0) return;
-        this._dummy.prev = this._dummy.prev.prev;
-        this._dummy.prev.next = this._dummy;
+    List.prototype.popFront = function(){
+        return this._remove(this._dummy.prev);
+    }
+    
+    List.prototype.remove = function(item){
+        var curNode = this._dummy;
+        while(curNode.next != this._dummy){
+            if(curNode.item.equals(item)){
+                this._remove(node);
+                return item;
+            }
+        }
+    }
+
+    List.prototype._remove = function(curNode){
+        if(curNode == this._dummy) return null;
+        curNode.next.prev = curNode.prev.next;
+        curNode.prev.next = curNode.next.prev;
         --this.length;
+        this._registerRemoval(curNode.item);
+        return curNode.item;
+    }
+
+    List.prototype.front = function(){
+        if(this.length == 0) return null;
+        return this._dummy.next.item;
+    }
+
+    List.prototype.back = function(){
+        if(this.length == 0) return null;
+        return this._dummy.prev.item;
     }
 
     List.prototype._lastNode = function(){
@@ -105,9 +125,40 @@ var gk = (function(gk){
             }
         }
     }
-    
+
+
+
+    // Stack is a functional subset of Deque
+    var Stack = function(collection){
+        List.call(this, collection);
+    }
+
+    Stack.prototype = new List();
+
+    Stack.prototype.push = List.prototype.pushBack;
+    Stack.prototype.pop = List.prototype.popBack;
+    Stack.prototype.peek = List.prototype.back;
+    Stack.prototype.add = Stack.prototype.push;
+
+
+
+    //Queue is a functional subset of Deque
+    var Queue = function(collection){
+        List.call(this, collection);
+    }
+
+    Queue.prototype = new List();
+
+    Queue.prototype.push = List.prototype.pushFront;
+    Queue.prototype.pop = List.prototype.popBack;
+    Queue.prototype.peek = List.prototype.back;
+    Queue.prototype.add = Queue.prototype.push;
+
     gk.List = List;
     gk.LinkedList = List;
+    gk.Deque = List;
+    gk.Stack = Stack;
+    gk.Queue = Queue;
 
     return gk;
 })(gk || {});
