@@ -1,3 +1,4 @@
+//This file is a disgusting monolithic mess. Must consider a better way to do GUI
 var gk = (function($, gk){
     var Set = gk.Set;
     var LinkedHashSet = gk.LinkedHashSet;
