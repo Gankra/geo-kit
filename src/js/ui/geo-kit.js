@@ -6,11 +6,12 @@ var gk = (function($, gk){
     var Box = gk.Box;
     var Stage = gk.Stage;
     var Layer = gk.Layer;
+    var input = gk.input;
     
-    gk.MODE_INSERT = "insert";
-    gk.MODE_SELECT = "select";
-    gk.MODE_MOVE = "move";
-    
+    var MODE_INSERT = "insert";
+    var MODE_SELECT = "select";
+    var MODE_MOVE = "move";
+
     gk.options = gk.options || {};
     gk.options.selection = {
         snapToPoints: true 
@@ -33,24 +34,19 @@ var gk = (function($, gk){
     gk.options.misc = {
         insertLayersAbove: false
     }
-    
-    gk.Keys = {backspace:8,tab:9,enter:13,shift:16,ctrl:17,alt:18,escape:27,space:32,left:37,up:38,right:39,down:40,w:87,a:65,s:83,d:68,tilde:192,del:46};
-    
-    gk.stages = [];
-    gk.currentStage = null;
-    gk.mouseLast = new Point(0,0);
-    gk.mouse = new Point(0,0);
-    gk.keyboard = {};
+
+    var stages = [];
+    var currentStage = null;
 
     gk.selection = new LinkedHashSet();
     gk.selectionBox = new Set();
     gk.selectionArea = null;
-    gk.canManipulateSelection = true;
-    gk.canManipulateSelectionBox = true;
-    gk.inserting = null;
-    gk.currentPrimitiveClass = null;
-    gk.currentMap = null;
-    gk.mode = gk.MODE_INSERT;
+    var canManipulateSelection = true;
+    var canManipulateSelectionBox = true;
+    var inserting = null;
+    var currentPrimitiveClass = null;
+    var currentMap = null;
+    var mode = MODE_INSERT;
     
     gk.selection.transient = true;
     
@@ -66,71 +62,33 @@ var gk = (function($, gk){
         var $document = $(document);
         
         $document.on("mousedown", ".stage", function(event){
-            var canvas = event.target;
-            for(var i=0; i<gk.stages.length; ++i){
-                var stage = gk.stages[i];
-                if(stage.canvas == event.target){
-                    gk.setCurrentStage(stage);
-                    break;
-                } 
-            }
+            selectCurrentStage(event.target);
             
-            gk.currentStage.updateMouse(event, true);
+            input.updateMouse(currentStage.relMouseCoords(event), true);
             
-            if(gk.mode == gk.MODE_INSERT){
-                var newPrimitive = gk.currentPrimitiveClass.createPrimitive(gk.mouse);
-                gk.currentStage.insert(newPrimitive);
-                gk.select(newPrimitive);
-                gk.inserting = newPrimitive;
-            }else if(gk.mode == gk.MODE_MOVE){
-                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
-                if(selection!=null){
-                    gk.select(selection.item, selection.linked);
-                }
-            }else if(gk.mode == gk.MODE_SELECT){
-                var selection = gk.currentStage.getSelectionAt(gk.mouse, gk.options.selection);
-                if(selection!=null){
-                    gk.select(selection.item, selection.linked);
-                }else if(!isSelectionDeltaed()){
-                    clearSelection();
-                }
-            }
+            getModeHandler().mousedown(event);
+
             $(".layer.selected").removeClass("selected");
             redrawCurrentStage();
         });
         
         $document.on("mousemove", function(event){
-            if(gk.mouse.down){
+            if(input.mouse.down){
                 gk.options.selection.snapSelected = false;
             }
-            gk.currentStage.updateMouse(event);
-            if(gk.mouse.down){
-                if(gk.inserting){
-                    gk.inserting.updateMousePrimitive(gk.mouseLast, gk.mouse);
-                    gk.emit(gk.inserting, gk.getDefaultEvent(gk.EVENT_UPDATED)); 
-                }else if(gk.mode == gk.MODE_MOVE && gk.canManipulateSelection){
-                    var it = gk.selection.iterator();
-                    while(it.hasNext()){
-                        var item = it.next();
-                        item.updateMouse(gk.mouseLast, gk.mouse);
-                        gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
-                    }
-                }else if(gk.mode == gk.MODE_SELECT){
-                    if(!gk.selectionArea){
-                        gk.selectionArea = Box.createPrimitive(gk.mouseLast, gk.mouse);
-                    }
-                    gk.selectionArea.updateMousePrimitive(gk.mouseLast, gk.mouse);
-                    var selection = gk.currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
-                    gk.canManipulateSelectionBox = !selection.linked;
-                    gk.selectionBox = selection.items;
-                }
+
+            input.updateMouse(currentStage.relMouseCoords(event));
+
+            if(input.mouse.down){
+                getModeHandler().mousedrag();
             }
+
             redrawCurrentStage();
         });
         
         $document.on("mouseup", ".stage", function(event){
-            gk.currentStage.updateMouse(event, false);
-            gk.inserting = null;
+            input.updateMouse(currentStage.relMouseCoords(event), false);
+            inserting = null;
             gk.selectionArea = null;
             gk.selectBox(gk.selectionBox);
             gk.selectionBox.clear();
@@ -139,39 +97,108 @@ var gk = (function($, gk){
         });
         
         $document.on("keydown", function(event){
-            gk.keyboard[event.keyCode] = true;
+            input.registerKey(event.keyCode);
         });
         
         $document.on("keyup", function(event){
-            gk.keyboard[event.keyCode] = false;
-            if(event.keyCode==gk.Keys.del){
+            input.unregisterKey(event.keyCode);
+            if(event.keyCode==input.KEYS.del){
                 deleteSelection();
             }
         });
     });
+
+    function selectCurrentStage(canvasEl){
+        for(var i=0; i<stages.length; ++i){
+            var stage = stages[i];
+            if(stage.canvas == canvasEl){
+                gk.setCurrentStage(stage);
+                break;
+            } 
+        }
+    }
+
+    function setMode(newMode){
+        mode = newMode;
+    }
+
+    function getModeHandler(){
+        return modes[mode];
+    }
+
+    var modes = {};
+    modes[MODE_INSERT] = {
+        mousedown: function(){
+            var newPrimitive = currentPrimitiveClass.createPrimitive(input.mouse);
+            currentStage.insert(newPrimitive);
+            gk.select(newPrimitive);
+            inserting = newPrimitive;
+        }
+      , mousedrag: function(){
+            inserting.updateMousePrimitive(input.mouseLast, input.mouse);
+            gk.emit(inserting, gk.getDefaultEvent(gk.EVENT_UPDATED)); 
+        }
+    }
+    modes[MODE_MOVE] = {
+        mousedown: function(){
+            var selection = currentStage.getSelectionAt(input.mouse, gk.options.selection);
+            if(selection!=null){
+                gk.select(selection.item, selection.linked);
+            }
+        }
+      , mousedrag: function(){
+            if(!canManipulateSelection) return;
+
+            var it = gk.selection.iterator();
+            while(it.hasNext()){
+                var item = it.next();
+                item.updateMouse(input.mouseLast, input.mouse);
+                gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
+            }
+        }
+    }
+    modes[MODE_SELECT] = {
+        mousedown: function(){
+            var selection = currentStage.getSelectionAt(input.mouse, gk.options.selection);
+            if(selection!=null){
+                gk.select(selection.item, selection.linked);
+            }else if(!isSelectionDeltaed()){
+                clearSelection();
+            }
+        }
+      , mousedrag: function(){
+            if(!gk.selectionArea){
+                gk.selectionArea = Box.createPrimitive(input.mouseLast, input.mouse);
+            }
+            gk.selectionArea.updateMousePrimitive(input.mouseLast, input.mouse);
+            var newSelectionBox = currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
+            canManipulateSelectionBox = !newSelectionBox.linked;
+            gk.selectionBox = newSelectionBox.items;
+        }
+    }
     
     gk.setCurrentStage = function(stage){
-        if(stage == gk.currentStage){
+        if(stage == currentStage){
             return;
         }
 
-        if(gk.currentStage){
-            gk.currentStage.deselect();
+        if(currentStage){
+            currentStage.deselect();
         }
 
-        gk.currentStage = stage;
-        gk.currentStage.select();
+        currentStage = stage;
+        currentStage.select();
         
         gk.$stageMenu.empty();
-        gk.$stageMenu.append(gk.currentStage.$menu); 
+        gk.$stageMenu.append(currentStage.$menu); 
            
     }
     
     gk.addStage = function(stage){
-        gk.stages.push(stage);
+        stages.push(stage);
         gk.$stages.append(stage.$stage);
-        if(gk.stages.length==1){
-            gk.setCurrentStage(gk.stages[0]);
+        if(stages.length==1){
+            gk.setCurrentStage(stages[0]);
         } 
         stage.draw(gk.options.render);   
     }
@@ -179,16 +206,6 @@ var gk = (function($, gk){
     gk.select = function(selection, disallowManipulation){  
         if(selection.iterator){
             gk.selection = selection;
-            /*
-            var it = selection.iterator();
-            while(it.hasNext()){
-                var item = it.next();
-                if(ctrl && gk.isSelected(item)){
-                    removeSelection(item);
-                }else{
-                    addSelection(item);
-                }
-            }  */  
         }else{
             var ctrl = isSelectionDeltaed();
             if(!ctrl || !gk.selection.transient){
@@ -201,14 +218,14 @@ var gk = (function($, gk){
             }
         }
         if(disallowManipulation){
-            gk.canManipulateSelection = false;
+            canManipulateSelection = false;
         }
     }
 
     gk.selectBox = function(set){
         var it = set.iterator();
-        if(!gk.canManipulateSelectionBox){
-            gk.canManipulateSelection = false;
+        if(!canManipulateSelectionBox){
+            canManipulateSelection = false;
         }
         while(it.hasNext()){
             addSelection(it.next());
@@ -220,7 +237,7 @@ var gk = (function($, gk){
     }
 
     function isSelectionDeltaed(){
-        return gk.keyboard[gk.Keys.ctrl] || gk.keyboard[gk.Keys.shift];
+        return input.isMultiSelecting();
     }
     
     function addSelection(item){
@@ -234,7 +251,7 @@ var gk = (function($, gk){
     }
     
     function clearSelection(){
-        gk.canManipulateSelection = true;
+        canManipulateSelection = true;
         if(gk.selection.transient){
             gk.selection.clear();
         }else{
@@ -245,7 +262,7 @@ var gk = (function($, gk){
     }
     
     function updateSelection(){
-        if(gk.currentMap.canMap(gk.selection)){
+        if(currentMap.canMap(gk.selection)){
             $("#mapButton").removeAttr("disabled");
         }else{
             $("#mapButton").attr("disabled", "disabled");
@@ -253,13 +270,13 @@ var gk = (function($, gk){
     }
     
     function deleteSelection(){
-        gk.currentStage.removeAll(gk.selection);
+        currentStage.removeAll(gk.selection);
         clearSelection();
         redrawCurrentStage();
     }
     
     function redrawCurrentStage(){
-        gk.currentStage.draw(gk.options.render);
+        currentStage.draw(gk.options.render);
     }
     
     function createGlobalMenu(){
@@ -270,7 +287,7 @@ var gk = (function($, gk){
         });
 
         $document.on("click", ".mode-button", function(event){
-            gk.mode = gk["MODE_"+$(this).val()];
+            setMode($(this).val());
             return true;
         });
 
@@ -291,8 +308,8 @@ var gk = (function($, gk){
             $firstBtn = $firstBtn || $primitiveBtn;
             $inputMenu.append($primitiveBtn);
             $primitiveBtn.on("click", function(){
-                gk.mode = gk.MODE_INSERT;
-                gk.currentPrimitiveClass = gk.primitives[$(this).val()];    
+                setMode(MODE_INSERT);
+                currentPrimitiveClass = gk.primitives[$(this).val()];    
             });    
         }
 
@@ -311,28 +328,28 @@ var gk = (function($, gk){
             $mapSelect.append("<option value='"+index+"'>"+gk.maps[index].displayName+"</option>");    
         }
         $mapSelect.on("change", function(event){
-            gk.currentMap = gk.maps[$mapSelect.val()];  
+            currentMap = gk.maps[$mapSelect.val()];  
             updateSelection();  
         }).change();
         
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
-            if(gk.currentMap.canMap(gk.selection)){
+            if(currentMap.canMap(gk.selection)){
                 var result;
                 if(gk.selection.transient){
                     var selectionClone = gk.selection.clone();
                     selectionClone.handleChildEvents();
-                    result = gk.currentMap.map(selectionClone);
+                    result = currentMap.map(selectionClone);
                 }else{
-                    result = gk.currentMap.map(gk.selection);
+                    result = currentMap.map(gk.selection);
                 }
                 var layer = new Layer({
-                    name: gk.currentMap.displayName
+                    name: currentMap.displayName
                   , linked: true
                   , collection: result
                 });
-                gk.currentStage.addLayer(layer);
-                gk.currentStage.selectLayer(layer);
+                currentStage.addLayer(layer);
+                currentStage.selectLayer(layer);
                 redrawCurrentStage();
             }
         });

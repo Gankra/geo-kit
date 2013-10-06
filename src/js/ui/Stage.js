@@ -4,6 +4,7 @@ var gk = (function(gk, _){
     var Line = gk.Line;
     var Layer = gk.Layer;
     var Set = gk.Set;
+    var input = gk.input;
     
     var DEFAULT_CANVAS_WIDTH = 650;
     var DEFAULT_CANVAS_HEIGHT = 450;
@@ -74,7 +75,7 @@ var gk = (function(gk, _){
         for(var i=0; i<this.layers.length; ++i){
             this.layers[i].draw(fullOptions);
         }  
-        this.drawCursor(fullOptions, gk.mouse);
+        this.drawCursor(fullOptions, input.mouse);
         this.drawSelectionArea(fullOptions, gk.selectionArea);
         
         this.ctx.restore();
@@ -187,12 +188,6 @@ var gk = (function(gk, _){
     
     Stage.prototype.deselect = function(){
         this.$canvas.removeClass("stage-selected");
-    }
-    
-    Stage.prototype.updateMouse = function(event, down){
-        gk.mouseLast = gk.mouse;
-        gk.mouse = this.relMouseCoords(event);   
-        gk.mouse.down = down === undefined ? gk.mouseLast.down : down;     
     }
     
     Stage.prototype.relMouseCoords = function(event){
