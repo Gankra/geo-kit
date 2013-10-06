@@ -1,11 +1,14 @@
 var gk = (function(gk){
+    var events = gk.events;
+    var Drawable = gk.Drawable;
+
     var abstract = function(){
         console.warn("Unimplemented abstract method of Collection");
     }
 
     function Collection(){}
     
-    Collection.prototype = new gk.Drawable();
+    Collection.prototype = new Drawable();
 
     Collection.prototype.add = abstract;
     Collection.prototype.remove = abstract;
@@ -16,32 +19,32 @@ var gk = (function(gk){
 
     Collection.prototype._registerAddition = function(item){
         if(!this._handlingChildEvents) return;
-        gk.registerListener(this, item);
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        events.registerListener(this, item);
+        events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
     }
 
     Collection.prototype._registerRemoval = function(item){
         if(!this._handlingChildEvents) return;
-        gk.unregisterListener(this, item);
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        events.unregisterListener(this, item);
+        events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
     }
     
     Collection.prototype._registerAdditions = function(items){
         if(!this._handlingChildEvents) return;
         var self = this;
         items.forEach(function(item){
-            gk.registerListener(self, item);
+            events.registerListener(self, item);
         });
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
     }
 
     Collection.prototype._registerRemovals = function(items){
         if(!this._handlingChildEvents) return;
         var self = this;
         items.forEach(function(item){
-            gk.unregisterListener(self, item);
+            events.unregisterListener(self, item);
         });
-        gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+        events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
     }
 
     Collection.prototype.replaceItems = function(collection, src){
@@ -149,13 +152,13 @@ var gk = (function(gk){
     Collection.prototype.registerMapping = function(parentCollection, parentMap){
         this.parentCollection = parentCollection;
         this.parentMap = parentMap;
-        gk.registerListener(this, parentCollection);
+        events.registerListener(this, parentCollection);
     }
 
     Collection.prototype.unregisterMapping = function(){
         if(!this.parentCollection) return;
         
-        gk.unregisterListener(this, this.parentCollection);
+        events.unregisterListener(this, this.parentCollection);
         delete this.parentCollection;
         delete this.parentMap;
     }
@@ -164,7 +167,7 @@ var gk = (function(gk){
         if(this.parentCollection && this.parentMap && obj==this.parentCollection){
             this.parentMap.manipulate(this.parentCollection, this, data);
         }else{
-            gk.emit(this, gk.getDefaultEvent(gk.EVENT_UPDATED));
+            events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
         }
     }
 
@@ -172,7 +175,7 @@ var gk = (function(gk){
         if(this._handlingChildEvents) return;
         var self = this;
         this.forEach(function(item){
-            gk.registerListener(self, item);
+            events.registerListener(self, item);
         });
         this._handlingChildEvents = true;
     }
@@ -181,7 +184,7 @@ var gk = (function(gk){
         if(!this._handlingChildEvents) return;
         var self = this;
         this.forEach(function(item){
-            gk.unregisterListener(self, item);
+            events.unregisterListener(self, item);
         });
         this._handlingChildEvents = false;
     }

@@ -7,6 +7,7 @@ var gk = (function($, gk){
     var Stage = gk.Stage;
     var Layer = gk.Layer;
     var input = gk.input;
+    var events = gk.events;
     
     var MODE_INSERT = "insert";
     var MODE_SELECT = "select";
@@ -136,7 +137,7 @@ var gk = (function($, gk){
         }
       , mousedrag: function(){
             inserting.updateMousePrimitive(input.mouseLast, input.mouse);
-            gk.emit(inserting, gk.getDefaultEvent(gk.EVENT_UPDATED)); 
+            events.emit(inserting, events.getDefaultEvent(gk.EVENT_UPDATED)); 
         }
     }
     modes[MODE_MOVE] = {
@@ -153,7 +154,7 @@ var gk = (function($, gk){
             while(it.hasNext()){
                 var item = it.next();
                 item.updateMouse(input.mouseLast, input.mouse);
-                gk.emit(item, gk.getDefaultEvent(gk.EVENT_UPDATED));
+                events.emit(item, events.getDefaultEvent(gk.EVENT_UPDATED));
             }
         }
     }

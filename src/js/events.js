@@ -1,12 +1,14 @@
 var gk = (function(gk){
 
-    gk.EVENT_REPLACED = "replaced";
-    gk.EVENT_UPDATED = "updated";
-    gk.EVENT_DELETED = "deleted";
+    var events = {};
+
+    events.EVENT_REPLACED = "replaced";
+    events.EVENT_UPDATED = "updated";
+    events.EVENT_DELETED = "deleted";
     
-    gk.listeners = {};
+    var listeners = {};
     
-    gk.registerListener = function(observer, observed){
+    events.registerListener = function(observer, observed){
         if(observed.iterator){
             if(observed.transient){
                 var it = observed.iterator();
@@ -21,7 +23,7 @@ var gk = (function(gk){
         }    
     }
 
-    gk.unregisterListener = function(observer, observed){
+    events.unregisterListener = function(observer, observed){
         if(observed.iterator){
             var it = observed.iterator();
             while(it.hasNext()){
@@ -34,24 +36,24 @@ var gk = (function(gk){
     }
     
     function registerListenerInternal(observed, observer){
-        if(!gk.listeners[observed.uid]){
-            gk.listeners[observed.uid] = [];    
+        if(!listeners[observed.uid]){
+            listeners[observed.uid] = [];    
         }
-        gk.listeners[observed.uid].push(observer);
+        listeners[observed.uid].push(observer);
     }
 
     function unregisterListenerInternal(observed, observer){
-        var listeners = gk.listeners[observed.uid];
-        if(listeners){
-            listeners.splice(listeners.indexOf(observer), 1);
-            if(listeners.length==0){
-                delete gk.listeners[observed.uid];
+        var observers = listeners[observed.uid];
+        if(observers){
+            observers.splice(observers.indexOf(observer), 1);
+            if(observers.length==0){
+                delete listeners[observed.uid];
             }
         }
     }
     
-    gk.emit = function(observed, data){
-        var observers = gk.listeners[observed.uid];
+    events.emit = function(observed, data){
+        var observers = listeners[observed.uid];
         if(observers){
             for(var i=0; i<observers.length; i++){
                 observers[i].handleEvent(observed, data);
@@ -59,9 +61,11 @@ var gk = (function(gk){
         }
     }
     
-    gk.getDefaultEvent = function(eventType){
+    events.getDefaultEvent = function(eventType){
         return {event: eventType};
     }
+
+    gk.events = events;
 
     return gk;
 })(gk || {});
