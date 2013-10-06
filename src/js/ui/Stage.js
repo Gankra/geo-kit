@@ -151,10 +151,14 @@ var gk = (function(gk, _){
     }
 
     Stage.prototype.selectLayer = function(layer){
-        this.selectedLayers = [];
+        if(!input.isMultiSelecting()){
+            this.selectedLayers = [];  
+            $(".layer").removeClass("selected");
+        }
         this.selectedLayers.push(layer);
         this.setLayer(this.layers.indexOf(layer));
         gk.select(layer.items, layer.linked);
+
         this.currentLayer.$html.addClass("selected");
     }
     

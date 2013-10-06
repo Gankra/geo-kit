@@ -39,9 +39,11 @@ var gk = (function($, gk){
     var stages = [];
     var currentStage = null;
 
-    gk.selection = new LinkedHashSet();
-    gk.selectionBox = new Set();
+    var selectedItems = new LinkedHashSet();
+    var selectedItemsBox = new Set();
     gk.selectionArea = null;
+    selectedItems.transient = true;
+
     var canManipulateSelection = true;
     var canManipulateSelectionBox = true;
     var inserting = null;
@@ -49,21 +51,26 @@ var gk = (function($, gk){
     var currentMap = null;
     var mode = MODE_INSERT;
     
-    gk.selection.transient = true;
+    var $stages;
+    var $menu;
+    var $globalMenu;
+    var $stageMenu;
+    var $document;
     
     $(function(){ 
-        gk.$stages = $("#gk-stages");
-        gk.$menu = $("#gk-menu");
-        gk.$globalMenu = $("#gk-global-menu");
-        gk.$stageMenu = $("#gk-stage-menu");
-        gk.addStage(new Stage());
+        $stages = $("#gk-stages");
+        $menu = $("#gk-menu");
+        $globalMenu = $("#gk-global-menu");
+        $stageMenu = $("#gk-stage-menu");
+        $document = $(document);
+
+        addStage(new Stage());
         
         createGlobalMenu();
         
-        var $document = $(document);
         
         $document.on("mousedown", ".stage", function(event){
-            selectCurrentStage(event.target);
+            selectStage(event.target);
             
             input.updateMouse(currentStage.relMouseCoords(event), true);
             
@@ -91,8 +98,8 @@ var gk = (function($, gk){
             input.updateMouse(currentStage.relMouseCoords(event), false);
             inserting = null;
             gk.selectionArea = null;
-            gk.selectBox(gk.selectionBox);
-            gk.selectionBox.clear();
+            gk.selectBox(selectedItemsBox);
+            selectedItemsBox.clear();
             redrawCurrentStage();
             gk.options.selection.snapSelected = true;
         });
@@ -109,11 +116,11 @@ var gk = (function($, gk){
         });
     });
 
-    function selectCurrentStage(canvasEl){
+    function selectStage(canvasEl){
         for(var i=0; i<stages.length; ++i){
             var stage = stages[i];
             if(stage.canvas == canvasEl){
-                gk.setCurrentStage(stage);
+                setCurrentStage(stage);
                 break;
             } 
         }
@@ -150,7 +157,7 @@ var gk = (function($, gk){
       , mousedrag: function(){
             if(!canManipulateSelection) return;
 
-            var it = gk.selection.iterator();
+            var it = selectedItems.iterator();
             while(it.hasNext()){
                 var item = it.next();
                 item.updateMouse(input.mouseLast, input.mouse);
@@ -174,11 +181,11 @@ var gk = (function($, gk){
             gk.selectionArea.updateMousePrimitive(input.mouseLast, input.mouse);
             var newSelectionBox = currentStage.getSelectionInBox(gk.selectionArea, gk.options.selection);
             canManipulateSelectionBox = !newSelectionBox.linked;
-            gk.selectionBox = newSelectionBox.items;
+            selectedItemsBox = newSelectionBox.items;
         }
     }
     
-    gk.setCurrentStage = function(stage){
+    function setCurrentStage (stage){
         if(stage == currentStage){
             return;
         }
@@ -190,26 +197,26 @@ var gk = (function($, gk){
         currentStage = stage;
         currentStage.select();
         
-        gk.$stageMenu.empty();
-        gk.$stageMenu.append(currentStage.$menu); 
+        $stageMenu.empty();
+        $stageMenu.append(currentStage.$menu); 
            
     }
     
-    gk.addStage = function(stage){
+    function addStage(stage){
         stages.push(stage);
-        gk.$stages.append(stage.$stage);
+        $stages.append(stage.$stage);
         if(stages.length==1){
-            gk.setCurrentStage(stages[0]);
+            setCurrentStage(stages[0]);
         } 
         stage.draw(gk.options.render);   
     }
     
     gk.select = function(selection, disallowManipulation){  
         if(selection.iterator){
-            gk.selection = selection;
+            selectedItems = selection;
         }else{
             var ctrl = isSelectionDeltaed();
-            if(!ctrl || !gk.selection.transient){
+            if(!ctrl || !selectedItems.transient){
                clearSelection();
             }
             if(ctrl && gk.isSelected(selection)){
@@ -234,7 +241,7 @@ var gk = (function($, gk){
     }
     
     gk.isSelected = function(item){
-        return gk.selection.contains(item) || gk.selectionBox.contains(item);
+        return selectedItems.contains(item) || selectedItemsBox.contains(item);
     }
 
     function isSelectionDeltaed(){
@@ -242,28 +249,28 @@ var gk = (function($, gk){
     }
     
     function addSelection(item){
-        gk.selection.add(item);
+        selectedItems.add(item);
         updateSelection();
     }
     
     function removeSelection(item){
-        gk.selection.remove(item);
+        selectedItems.remove(item);
         updateSelection();
     }
     
     function clearSelection(){
         canManipulateSelection = true;
-        if(gk.selection.transient){
-            gk.selection.clear();
+        if(selectedItems.transient){
+            selectedItems.clear();
         }else{
-            gk.selection = new LinkedHashSet();
-            gk.selection.transient = true;
+            selectedItems = new LinkedHashSet();
+            selectedItems.transient = true;
         }
         updateSelection();
     }
     
     function updateSelection(){
-        if(currentMap.canMap(gk.selection)){
+        if(currentMap.canMap(selectedItems)){
             $("#mapButton").removeAttr("disabled");
         }else{
             $("#mapButton").attr("disabled", "disabled");
@@ -271,7 +278,7 @@ var gk = (function($, gk){
     }
     
     function deleteSelection(){
-        currentStage.removeAll(gk.selection);
+        currentStage.removeAll(selectedItems);
         clearSelection();
         redrawCurrentStage();
     }
@@ -281,7 +288,6 @@ var gk = (function($, gk){
     }
     
     function createGlobalMenu(){
-        var $document = $(document);
         $document.on("click", ".unique-button-group button", function(event){
             $(this).parent().children().removeClass("pressed");
             $(this).addClass("pressed");
@@ -335,14 +341,14 @@ var gk = (function($, gk){
         
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
-            if(currentMap.canMap(gk.selection)){
+            if(currentMap.canMap(selectedItems)){
                 var result;
-                if(gk.selection.transient){
-                    var selectionClone = gk.selection.clone();
+                if(selectedItems.transient){
+                    var selectionClone = selectedItems.clone();
                     selectionClone.handleChildEvents();
                     result = currentMap.map(selectionClone);
                 }else{
-                    result = currentMap.map(gk.selection);
+                    result = currentMap.map(selectedItems);
                 }
                 var layer = new Layer({
                     name: currentMap.displayName
