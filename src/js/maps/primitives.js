@@ -11,14 +11,20 @@ var gk = (function(gk){
     var Point = gk.Point;
     var Line = gk.Line;
     var Ray = gk.Ray;
+    var Box = gk.Box;
     var LineSegment = gk.LineSegment;
     var Circle = gk.Circle;
 
-    function registerPrimitiveMap(name, description, fn, filter){
+    function registerPrimitiveMap(name, description, fn, filter, icon){
         var map = new Map(name, description);
         map.canMap = filter;
         map.doMap = fn;
         gk.registerMap(map);
+        $(function(){
+            gk.makeButton("gk-primitive-map-menu", function(){
+                gk.doMap(name);  
+            }, name, icon);
+        });
     }
 
     function makeSetOf(item){
@@ -35,6 +41,7 @@ var gk = (function(gk){
             return makeSetOf(new LineSegment(it.next().clone(), it.next().clone()));
         }
       , filters.all(filters.lengthEquals(2), filters.containsOnly(filters.isPoint))
+      , "points-to-edge"
     );
 
     registerPrimitiveMap(
@@ -45,6 +52,7 @@ var gk = (function(gk){
             return makeSetOf(new Ray(it.next().clone(), it.next().clone()));
         }
       , filters.all(filters.lengthEquals(2), filters.containsOnly(filters.isPoint))
+      , "points-to-ray"
     );
 
     registerPrimitiveMap(
@@ -55,6 +63,7 @@ var gk = (function(gk){
             return makeSetOf(new Line(it.next().clone(), it.next().clone()));
         }
       , filters.all(filters.lengthEquals(2), filters.containsOnly(filters.isPoint))
+      , "points-to-line"
     );
 
     registerPrimitiveMap(
@@ -65,6 +74,18 @@ var gk = (function(gk){
             return makeSetOf(new Circle(it.next().clone(), it.next().clone()));
         }
       , filters.all(filters.lengthEquals(2), filters.containsOnly(filters.isPoint))
+      , "points-to-circle"
+    );
+
+    registerPrimitiveMap(
+        "Box from Points"
+      , "Box with corners at the two given points" 
+      , function(collection){
+            var it = collection.iterator();
+            return makeSetOf(new Box(it.next().clone(), it.next().clone()));
+        }
+      , filters.all(filters.lengthEquals(2), filters.containsOnly(filters.isPoint))
+      , "points-to-box"
     );
 
     registerPrimitiveMap(
@@ -87,6 +108,7 @@ var gk = (function(gk){
             return result;
         }
       , filters.containsOnly(filters.isLineish)
+      , "intersection-points"
     );
 
     registerPrimitiveMap(
@@ -101,6 +123,7 @@ var gk = (function(gk){
             return result;
         }
       , filters.containsOnly(filters.isCircle)
+      , "circle-center-point"
     );
 
     registerPrimitiveMap(
@@ -129,6 +152,7 @@ var gk = (function(gk){
           , filters.containsAny(filters.isPoint)
           , filters.containsAny(filters.isLineish)
         )
+      , "projection-point"
     );
 
     return gk;

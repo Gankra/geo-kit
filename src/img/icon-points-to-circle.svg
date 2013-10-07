@@ -14,7 +14,7 @@
    id="svg2985"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="icon-points-to-edge.svg">
+   sodipodi:docname="icon-circle.svg">
   <defs
      id="defs2987" />
   <sodipodi:namedview
@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.8890873"
-     inkscape:cx="8.4310252"
-     inkscape:cy="42.38254"
+     inkscape:cx="-19.78364"
+     inkscape:cy="64.216518"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -53,9 +53,34 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <path
-       style="fill:#000000;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 13.454545,50.545455 50.727273,13.272727"
-       id="path3801"
-       inkscape:connector-curvature="0" />
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.29969759;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path3924"
+       sodipodi:cx="31.498392"
+       sodipodi:cy="34.301514"
+       sodipodi:rx="18.384777"
+       sodipodi:ry="18.384777"
+       d="m 49.883169,34.301514 a 18.384777,18.384777 0 1 1 -36.769554,0 18.384777,18.384777 0 1 1 36.769554,0 z"
+       transform="matrix(1.2122323,0,0,1.2122323,-6.1707171,-9.0797973)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(9.6584366,-17.066987)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036-7"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(-5.415793,-1.3177917)" />
   </g>
 </svg>

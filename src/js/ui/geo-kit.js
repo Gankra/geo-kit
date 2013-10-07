@@ -55,6 +55,7 @@ var gk = (function($, gk){
     var $menu;
     var $globalMenu;
     var $stageMenu;
+    var $topMenu;
     var $document;
     
     $(function(){ 
@@ -62,6 +63,7 @@ var gk = (function($, gk){
         $menu = $("#gk-menu");
         $globalMenu = $("#gk-global-menu");
         $stageMenu = $("#gk-stage-menu");
+        $topMenu = $("#gk-top-menu");
         $document = $(document);
 
         addStage(new Stage());
@@ -306,18 +308,12 @@ var gk = (function($, gk){
         var $firstBtn = null;
         for(var index in gk.primitives){
             var primitive = gk.primitives[index];
-            var $primitiveBtn = $("<button " 
-              + "value='"+index+"' "
-              + "class='icon-button' "
-              + "data-icon='"+primitive.icon+"' "
-              + "title='"+primitive.displayName+"' "
-              + ">");
-            $firstBtn = $firstBtn || $primitiveBtn;
-            $inputMenu.append($primitiveBtn);
-            $primitiveBtn.on("click", function(){
+            var $primitiveBtn = gk.makeButton("gk-input-menu", function(){
                 setMode(MODE_INSERT);
-                currentPrimitiveClass = gk.primitives[$(this).val()];    
-            });    
+                currentPrimitiveClass = gk.primitives[$(this).val()];
+            }, primitive.displayName, primitive.icon);
+            $primitiveBtn.attr("value", index);
+            $firstBtn = $firstBtn || $primitiveBtn; 
         }
 
         $firstBtn.click();
@@ -341,29 +337,58 @@ var gk = (function($, gk){
         
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
-            if(currentMap.canMap(selectedItems)){
-                var result;
-                if(selectedItems.transient){
-                    var selectionClone = selectedItems.clone();
-                    selectionClone.handleChildEvents();
-                    result = currentMap.map(selectionClone);
-                }else{
-                    result = currentMap.map(selectedItems);
-                }
-                var layer = new Layer({
-                    name: currentMap.displayName
-                  , linked: true
-                  , collection: result
-                });
-                currentStage.addLayer(layer);
-                currentStage.selectLayer(layer);
-                redrawCurrentStage();
-            }
+            gk.doMap(currentMap.displayName);
         });
 
+        updateIcons();
+    }
+
+    gk.makeButton = function(menuName, fn, title, icon){
+        var $menu = $("#"+menuName);
+        if(!$menu[0]){
+            $menu = $("<span id='"+menuName+"'>");
+            $topMenu.append("<span class='spacer'>");
+            $topMenu.append($menu);
+        }
+        var $btn = $("<button " 
+          + "class='icon-button' "
+          + "data-icon='"+icon+"' "
+          + "title='"+title+"' "
+          + ">");
+        $menu.append($btn);
+        $btn.on("click", fn);
+
+        updateIcons();
+
+        return $btn;
+    }
+
+    gk.doMap = function(mapName){
+        var map = gk.getMap(mapName);
+        if(map.canMap(selectedItems)){
+            var result;
+            if(selectedItems.transient){
+                var selectionClone = selectedItems.clone();
+                selectionClone.handleChildEvents();
+                result = map.map(selectionClone);
+            }else{
+                result = map.map(selectedItems);
+            }
+            var layer = new Layer({
+                name: map.displayName
+              , linked: true
+              , collection: result
+            });
+            currentStage.addLayer(layer);
+            currentStage.selectLayer(layer);
+            redrawCurrentStage();
+        }
+    }
+
+    function updateIcons(){
         $(".icon-button").each(function(index, btn){
             btn.style["background-image"] =  "url(src/img/icon-"+btn.dataset.icon+".svg)";
-        })
+        });
     }
     
     return gk;

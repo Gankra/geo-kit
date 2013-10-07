@@ -14,7 +14,7 @@
    id="svg2985"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="icon-points-to-edge.svg">
+   sodipodi:docname="icon-edge.svg">
   <defs
      id="defs2987" />
   <sodipodi:namedview
@@ -57,5 +57,25 @@
        d="M 13.454545,50.545455 50.727273,13.272727"
        id="path3801"
        inkscape:connector-curvature="0" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(14.286772,-21.181062)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036-7"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(-23.414875,15.9099)" />
   </g>
 </svg>

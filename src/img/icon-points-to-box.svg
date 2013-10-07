@@ -14,7 +14,7 @@
    id="svg2985"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="icon-points-to-edge.svg">
+   sodipodi:docname="icon-box.svg">
   <defs
      id="defs2987" />
   <sodipodi:namedview
@@ -25,15 +25,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.8890873"
-     inkscape:cx="8.4310252"
-     inkscape:cy="42.38254"
+     inkscape:cx="25.471194"
+     inkscape:cy="64.216518"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
      inkscape:window-width="1033"
      inkscape:window-height="971"
-     inkscape:window-x="1281"
+     inkscape:window-x="1668"
      inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <metadata
@@ -52,10 +52,32 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:4;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3945"
+       width="46.283352"
+       height="46.283352"
+       x="8.7424107"
+       y="9.4884958" />
     <path
-       style="fill:#000000;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 13.454545,50.545455 50.727273,13.272727"
-       id="path3801"
-       inkscape:connector-curvature="0" />
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(17.886588,-23.238101)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff0000;stroke:none"
+       id="path3036-7"
+       sodipodi:cx="37.476658"
+       sodipodi:cy="33.59441"
+       sodipodi:rx="6.3639612"
+       sodipodi:ry="6.3639612"
+       d="m 43.840619,33.59441 a 6.3639612,6.3639612 0 1 1 -12.727922,0 6.3639612,6.3639612 0 1 1 12.727922,0 z"
+       transform="translate(-28.557469,22.595274)" />
   </g>
 </svg>
