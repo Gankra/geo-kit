@@ -34,6 +34,7 @@ var gk = (function($, gk){
     }
     gk.options.misc = {
         insertLayersAbove: false
+      , showPrimitiveMaps: false
     }
 
     var stages = [];
@@ -325,20 +326,23 @@ var gk = (function($, gk){
         $("#snap-to-edges-button").on("click", function(){
             gk.options.selection.snapToEdges = !$(this).is(".pressed");        
         }).click();
-        
-        var $mapSelect = $("#mapSelect");
-        for(var index in gk.maps){
-            $mapSelect.append("<option value='"+index+"'>"+gk.maps[index].displayName+"</option>");    
-        }
-        $mapSelect.on("change", function(event){
+
+        $("#mapSelect").on("change", function(event){
             currentMap = gk.maps[$mapSelect.val()];  
             updateSelection();  
-        }).change();
-        
+        });
+
+        populateMapSelect();
+
         var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
             gk.doMap(currentMap.displayName);
         });
+
+        $("#show-primitives-check").on("change", function(){
+            gk.options.misc.showPrimitiveMaps = $(this).is(":checked");
+            populateMapSelect();
+        }).change();
 
         updateIcons();
     }
@@ -385,10 +389,22 @@ var gk = (function($, gk){
         }
     }
 
-    function updateIcons(){
+    var updateIcons = _.debounce(function(){
         $(".icon-button").each(function(index, btn){
             btn.style["background-image"] =  "url(src/img/icon-"+btn.dataset.icon+".svg)";
         });
+    }, 1);
+
+    function populateMapSelect(){
+        var $mapSelect = $("#mapSelect");
+        $mapSelect.empty();
+        for(var index in gk.maps){
+            var map = gk.maps[index];
+            if(!map.primitive || gk.options.misc.showPrimitiveMaps){
+                $mapSelect.append("<option value='"+index+"'>"+map.displayName+"</option>");    
+            }
+        }
+        $mapSelect.change();
     }
     
     return gk;

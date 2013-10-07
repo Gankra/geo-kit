@@ -83,6 +83,10 @@ var gk = (function(gk){
         console.warn("unimplemented clone");
         return this;
     }
+
+    Drawable.prototype.serialize = function(){
+        return "";
+    }
     
     //Utility methods//////////////////////////////////////////////////
     function getColor(options){

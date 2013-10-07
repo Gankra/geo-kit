@@ -19,6 +19,7 @@ var gk = (function(gk){
         var map = new Map(name, description);
         map.canMap = filter;
         map.doMap = fn;
+        map.primitive = true;
         gk.registerMap(map);
         $(function(){
             gk.makeButton("gk-primitive-map-menu", function(){
