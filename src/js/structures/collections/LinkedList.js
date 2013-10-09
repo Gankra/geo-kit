@@ -13,6 +13,8 @@ var gk = (function(gk){
     
     List.prototype = new gk.Collection();
 
+    List.prototype.displayName = "LinkedList";
+
     List.prototype.emptyInstance = function(){
         return new List();
     }
@@ -135,6 +137,7 @@ var gk = (function(gk){
 
     Stack.prototype = new List();
 
+    Stack.prototype.displayName = "Stack";
     Stack.prototype.push = List.prototype.pushBack;
     Stack.prototype.pop = List.prototype.popBack;
     Stack.prototype.peek = List.prototype.back;
@@ -149,6 +152,7 @@ var gk = (function(gk){
 
     Queue.prototype = new List();
 
+    Queue.prototype.displayName = "Queue";
     Queue.prototype.push = List.prototype.pushFront;
     Queue.prototype.pop = List.prototype.popBack;
     Queue.prototype.peek = List.prototype.back;

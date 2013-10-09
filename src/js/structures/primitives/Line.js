@@ -2,6 +2,7 @@ var gk = (function(gk){
     var Point = gk.Point;
     var Drawable = gk.Drawable;
     var utils = gk.utils;
+    var serialization = gk.serialization;
 
     var LINE_DRAW_LENGTH = 1000;
 
@@ -148,6 +149,26 @@ var gk = (function(gk){
     Line.prototype.hasProjection = function(pt){
         return true;
     }
+
+    Line.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        result.type = Line.displayName;
+        result.ptA = this.ptA.serialize();
+        result.ptB = this.ptB.serialize();
+        return result;
+    };
+
+    Line.prototype._deserialize = function(obj){
+        this.ptA = gk.serialization.deserialize(obj.ptA);
+        this.ptB = gk.serialization.deserialize(obj.ptB);
+        Drawable.prototype._deserialize.call(this);
+    }
+
+    gk.serialization.registerDeserializer(Line.displayName, function(obj){
+        var result = new Line();
+        result._deserialize(obj);
+        return result;
+    });
 
     Line.prototype.__defineGetter__("hashCode", function(){
         return this.ptA.hashCode+";"+this.ptB.hashCode;

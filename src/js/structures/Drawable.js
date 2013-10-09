@@ -85,7 +85,13 @@ var gk = (function(gk){
     }
 
     Drawable.prototype.serialize = function(){
-        return "";
+        return {
+            id: this.uid
+        };
+    }
+
+    Drawable.prototype._deserialize = function(obj){
+        this.id = obj.id;
     }
     
     //Utility methods//////////////////////////////////////////////////

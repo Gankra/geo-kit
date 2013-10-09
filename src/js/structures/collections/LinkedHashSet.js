@@ -12,6 +12,7 @@ var gk = (function(gk){
     
     LinkedHashSet.prototype = new gk.Collection();
 
+    LinkedHashSet.prototype.displayName = "LinkedHashSet";
     LinkedHashSet.prototype.keyName = "uid";
 
     LinkedHashSet.prototype._getHash = function(item){

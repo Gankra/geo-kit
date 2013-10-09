@@ -291,6 +291,28 @@ var gk = (function(gk, _){
         $layer.append($label);
         return $layer;
     }
+
+    Stage.prototype.serialize = function(){
+        var result =  {
+            type: "Stage"
+          , layers: []
+        }
+        for(var i=0; i<this.layers.length; ++i){
+            result.layers.push(this.layers[i].serialize());
+        }
+        return result;
+    }
+
+    gk.serialization.registerDeserializer("Stage", function(obj){
+        var result = new Stage();
+        var layers = [];
+        for(var i=0; i<obj.layers.length; ++i){
+            layers.push(gk.serialization.deserialize(obj.layers[i]));
+        }
+        result.layers = layers;
+        result.setLayer(0);
+        return result;
+    });
     
     gk.Stage = Stage;
 

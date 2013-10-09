@@ -331,7 +331,7 @@ var gk = (function($, gk){
         }).click();
 
         $("#mapSelect").on("change", function(event){
-            currentMap = gk.maps[$mapSelect.val()];  
+            currentMap = gk.maps[$(this).val()];  
             updateSelection();  
         });
 
@@ -406,6 +406,10 @@ var gk = (function($, gk){
             }
         }
         $mapSelect.change();
+    }
+
+    gk.getCurrentStage = function(){
+        return currentStage;
     }
     
     return gk;

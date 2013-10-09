@@ -142,6 +142,22 @@ var gk = (function(gk){
         return this.minX+","+this.minY+","+this.maxX+","+this.maxY;
     });
 
+    Box.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        result.type = Box.displayName;
+        result.ptA = this.ptA.serialize();
+        result.ptB = this.ptB.serialize();
+        return result;
+    };
+
+    gk.serialization.registerDeserializer(Box.displayName, function(obj){
+        var result = new Box();
+        result.ptA = gk.serialization.deserialize(obj.ptA);
+        result.ptB = gk.serialization.deserialize(obj.ptB);
+        Drawable.prototype._deserialize.call(this);
+        return result;
+    });
+
     gk.Box = Box;
 
     gk.registerPrimitive(Box);

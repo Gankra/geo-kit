@@ -84,6 +84,22 @@ var gk = (function(gk){
         return this.ptA.hashCode+";"+this.radius;
     });
 
+    Circle.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        result.type = Circle.displayName;
+        result.ptA = this.ptA.serialize();
+        result.ptB = this.ptB.serialize();
+        return result;
+    };
+
+    gk.serialization.registerDeserializer(Circle.displayName, function(obj){
+        var result = new Circle();
+        result.ptA = gk.serialization.deserialize(obj.ptA);
+        result.ptB = gk.serialization.deserialize(obj.ptB);
+        Drawable.prototype._deserialize.call(this);
+        return result;
+    });
+
     gk.Circle = Circle;
 
     gk.registerPrimitive(Circle);

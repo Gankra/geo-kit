@@ -107,6 +107,19 @@ var gk = (function(gk){
     Point.prototype.__defineGetter__("hashCode", function(){
         return this.x+","+this.y;
     });
+
+    Point.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        obj.type = Point.displayName;
+        obj.coords = self.coords;
+    };
+
+    gk.serialization.registerDeserializer(Point.displayName, function(obj){
+        var result = new Point();
+        result.coords = obj.coords;
+        result._deserialize(obj);
+        return result;
+    });
     
     gk.Point = Point;
     

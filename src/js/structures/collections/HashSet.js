@@ -10,6 +10,7 @@ var gk = (function(gk){
     
     Set.prototype = new gk.Collection();
 
+    Set.prototype.displayName = "HashSet";
     Set.prototype.keyName = "uid";
     
     Set.prototype.emptyInstance = function(){
@@ -78,6 +79,7 @@ var gk = (function(gk){
 
     StrictSet.prototype = new Set();
 
+    StrictSet.prototype.displayName = "StrictHashSet";
     StrictSet.prototype.keyName = "hashCode"
 
     StrictSet.prototype.getMatch = function(item){

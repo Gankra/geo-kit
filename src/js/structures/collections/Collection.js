@@ -189,6 +189,28 @@ var gk = (function(gk){
         this._handlingChildEvents = false;
     }
 
+    Collection.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        result.type = "Collection";
+        result.impl = this.displayName;
+        result.contents = this.toArray();
+        for(var i=0; i<result.contents.length; ++i){
+            result.contents[i] = result.contents[i].serialize();
+        }
+        return result;
+    };
+
+    gk.serialization.registerDeserializer("Collection", function(obj){
+        var result = new gk[obj.impl]();
+        var contents = [];
+        for(var i=0; i<obj.contents.length; ++i){
+            contents.push(gk.serialization.deserialize(obj.contents[i]));
+        }
+        result.addAll(contents);
+        Drawable.prototype._deserialize.call(this);
+        return result;
+    });
+
     gk.Collection = Collection;
 
     return gk;

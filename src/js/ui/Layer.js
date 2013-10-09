@@ -16,7 +16,7 @@ var gk = (function(gk){
         this.locked = args.locked;
         this.visible = args.visible;
         this.linked = args.linked;
-        this.id = layerNumberCounter++;
+        this.id = args.id || layerNumberCounter++;
         this.name = (args.name || "Layer")+this.id;
         this.items = args.collection || new Set();
         if(!this.linked){
@@ -115,6 +115,24 @@ var gk = (function(gk){
         this.items.unregisterMapping();
         this.items.handleChildEvents();
     }
+
+    Layer.prototype.serialize = function(){
+        return {
+            type: "Layer"
+          , collection: this.items.serialize()
+          , name: this.name
+          , id: this.id
+          , locked: this.locked
+          , linked: this.linked
+          , visible: this.visible
+          , color: this.color
+        }
+    }
+
+    gk.serialization.registerDeserializer("Layer", function(obj){
+        obj.collection = gk.serialization.deserialize(obj.collection);
+        return new Layer(obj);
+    });
     
     gk.Layer = Layer;
 

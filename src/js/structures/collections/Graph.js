@@ -17,6 +17,8 @@ var gk = (function(gk){
 
     Graph.prototype = new gk.Collection();
 
+    Graph.prototype.displayName = "Graph";
+
     Graph.prototype.emptyInstance = function(){
         return new Graph();
     }
