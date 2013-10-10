@@ -50,7 +50,7 @@ var gk = (function(gk){
     Collection.prototype.replaceItems = function(collection, src){
         var items = this.toArray();
         this._replaceItems(collection);
-        this._registerRemovals(items);
+        events.emit(this, events.getDefaultEvent(events.EVENT_UPDATED));
     }
 
     Collection.prototype.clear = function(){
