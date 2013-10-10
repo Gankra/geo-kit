@@ -17,7 +17,7 @@ GeoKit takes inspiration form Ipe and KSEG and tries to bring their ideas to gen
 GeoKit was not designed to by a high-performance system for benchmarking algorithms or powering enterprise systems. It's designed to make sketching out ideas on small inputs easier. While we don't purposefully implement the worst possible algorithm, we tend to lean towards the algorithms that are easiest to write and maintain.
 </p>
 <p>
-For instance, as of this writing we compute the MST of a set of points by simply computing their complete graph and then computing the MST of that. This is obviously wasteful, but also easy to write and verify the correctness of. Especially since we're dealing with exceptionally small inputs, where random constants will dominate any assymptotic performance. The only thing we really strive to obtain is <i>correctness</i> in out algorithms.
+For instance, as of this writing we compute the MST of a set of points by simply computing their complete graph and then computing the MST of that. This is obviously wasteful, but also easy to write and verify the correctness of. Especially since we're dealing with exceptionally small inputs, where random constants will dominate any assymptotic performance. The only thing we really strive to obtain is <i>correctness</i> in the algorithms.
 </p>
 
 <h3>GeoKit is not correct</h3>
