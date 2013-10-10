@@ -391,7 +391,7 @@ var gk = (function($, gk){
 
     var updateIcons = _.debounce(function(){
         $(".icon-button").each(function(index, btn){
-            btn.style["background-image"] =  "url(src/img/icon-"+btn.dataset.icon+".svg)";
+            $(btn).css("background-image", "url(src/img/icon-"+btn.dataset.icon+".svg)");
         });
     }, 1);
 
