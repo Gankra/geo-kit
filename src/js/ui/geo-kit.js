@@ -328,6 +328,7 @@ var gk = (function($, gk){
         }).click();
 
         $("#mapSelect").on("change", function(event){
+            var $mapSelect = $("#mapSelect");
             currentMap = gk.maps[$mapSelect.val()];  
             updateSelection();  
         });
