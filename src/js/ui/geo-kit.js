@@ -58,6 +58,9 @@ var gk = (function($, gk){
     var $stageMenu;
     var $topMenu;
     var $document;
+
+    var $mapSelect = $("#mapSelect");
+    var $mapButton = $("#mapButton");
     
     $(function(){ 
         $stages = $("#gk-stages");
@@ -274,9 +277,9 @@ var gk = (function($, gk){
     
     function updateSelection(){
         if(currentMap.canMap(selectedItems)){
-            $("#mapButton").removeAttr("disabled");
+            $mapButton.removeAttr("disabled");
         }else{
-            $("#mapButton").attr("disabled", "disabled");
+            $mapButton.attr("disabled", "disabled");
         }
     }
     
@@ -328,14 +331,12 @@ var gk = (function($, gk){
         }).click();
 
         $("#mapSelect").on("change", function(event){
-            var $mapSelect = $("#mapSelect");
             currentMap = gk.maps[$mapSelect.val()];  
             updateSelection();  
         });
 
         populateMapSelect();
 
-        var $mapButton = $("#mapButton");
         $mapButton.on("click", function(event){
             gk.doMap(currentMap.displayName);
         });
@@ -397,7 +398,6 @@ var gk = (function($, gk){
     }, 1);
 
     function populateMapSelect(){
-        var $mapSelect = $("#mapSelect");
         $mapSelect.empty();
         for(var index in gk.maps){
             var map = gk.maps[index];
