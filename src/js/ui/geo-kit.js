@@ -1,6 +1,7 @@
 //This file is a disgusting monolithic mess. Must consider a better way to do GUI
 var gk = (function($, gk){
     var Set = gk.Set;
+    var Supercollection = gk.Supercollection;
     var LinkedHashSet = gk.LinkedHashSet;
     var Point = gk.Point;
     var Box = gk.Box;
@@ -8,7 +9,7 @@ var gk = (function($, gk){
     var Layer = gk.Layer;
     var input = gk.input;
     var events = gk.events;
-    
+
     var MODE_INSERT = "insert";
     var MODE_SELECT = "select";
     var MODE_MOVE = "move";

@@ -60,7 +60,7 @@ var gk = (function(gk){
     }
     
     Drawable.prototype.__defineGetter__("uid", function(){
-        return this.id || this.generateNewId();    
+        return this._id || this.generateNewId();    
     });
 
     Drawable.prototype.__defineGetter__("hashCode", function(){
@@ -76,7 +76,7 @@ var gk = (function(gk){
     }
     
     Drawable.prototype.generateNewId = function(){
-        return this.id = ++base_id;
+        return this._id = ++base_id;
     }
 
     Drawable.prototype.clone = function(){
@@ -91,7 +91,10 @@ var gk = (function(gk){
     }
 
     Drawable.prototype._deserialize = function(obj){
-        this.id = obj.id;
+        this._id = obj.id;
+        if(obj.id >= base_id){
+            base_id = obj.id+1;
+        }
     }
     
     //Utility methods//////////////////////////////////////////////////

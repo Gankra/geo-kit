@@ -193,21 +193,65 @@ var gk = (function(gk){
         var result = Drawable.prototype.serialize.call(this);
         result.type = "Collection";
         result.impl = this.displayName;
+
+        if(this.transient) result.transient = true;
+
         result.contents = this.toArray();
         for(var i=0; i<result.contents.length; ++i){
-            result.contents[i] = result.contents[i].serialize();
+            if(this.transient){
+                result.contents[i] = result.contents[i].uid;
+            }else{
+                result.contents[i] = result.contents[i].serialize();
+            }
         }
+
+        if(this.parentMap){
+            result.parentMap = this.parentMap.displayName;
+        } 
+        if(this.parentCollection){
+            if(this.parentCollection.transient){
+                result.parentCollection = this.parentCollection.serialize();
+            }else{
+                result.parentCollecton = this.parentCollection.uid;
+            }
+        } 
+
         return result;
     };
 
     gk.serialization.registerDeserializer("Collection", function(obj){
         var result = new gk[obj.impl]();
+        result.transient = obj.transient;
+
         var contents = [];
         for(var i=0; i<obj.contents.length; ++i){
-            contents.push(gk.serialization.deserialize(obj.contents[i]));
+            if(obj.transient){
+                gk.serialization.registerListener(obj.contents[i], function(item){
+                    result.add(item);
+                });
+            }else{
+                contents.push(gk.serialization.deserialize(obj.contents[i]));
+            }
         }
         result.addAll(contents);
+
         Drawable.prototype._deserialize.call(this);
+
+        if(obj.parentMap && obj.parentCollection){
+            var parentMap = gk.getMap(obj.parentMap);
+            var self = this;
+            if(typeof obj.parentCollection == "string"){
+                //Our parent collection is concrete and defined elsewhere
+                gk.serialization.registerLoadListener(obj.parentCollection, function(parentCollection){
+                    self.registerMapping(parentCollection, parentMap); 
+                });
+            }else{
+                //Our parent collection is transient, and defined here
+                var parentCollection = gk.serialization.deserialize(obj.parentCollection);
+                parentCollection.transient = true;
+                self.registerMapping(parentCollection, parentMap);
+            }
+        } 
         return result;
     });
 

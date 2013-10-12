@@ -110,8 +110,9 @@ var gk = (function(gk){
 
     Point.prototype.serialize = function(){
         var result = Drawable.prototype.serialize.call(this);
-        obj.type = Point.displayName;
-        obj.coords = self.coords;
+        result.type = Point.displayName;
+        result.coords = this.coords;
+        return result;
     };
 
     gk.serialization.registerDeserializer(Point.displayName, function(obj){
