@@ -89,7 +89,7 @@ var gk = (function(gk){
     Collection.prototype.contains = function(item){
         var it = this.iterator();
         while(it.hasNext()){
-            if(it.next(equals(item))){
+            if(it.next().equals(item)){
                 return true;
             }
         }
@@ -188,6 +188,71 @@ var gk = (function(gk){
         });
         this._handlingChildEvents = false;
     }
+
+    Collection.prototype.serialize = function(){
+        var result = Drawable.prototype.serialize.call(this);
+        result.type = "Collection";
+        result.impl = this.displayName;
+
+        if(this.transient) result.transient = true;
+
+        result.contents = this.toArray();
+        for(var i=0; i<result.contents.length; ++i){
+            if(this.transient){
+                result.contents[i] = result.contents[i].uid;
+            }else{
+                result.contents[i] = result.contents[i].serialize();
+            }
+        }
+
+        if(this.parentMap){
+            result.parentMap = this.parentMap.displayName;
+        } 
+        if(this.parentCollection){
+            if(this.parentCollection.transient){
+                result.parentCollection = this.parentCollection.serialize();
+            }else{
+                result.parentCollecton = this.parentCollection.uid;
+            }
+        } 
+
+        return result;
+    };
+
+    gk.serialization.registerDeserializer("Collection", function(obj){
+        var result = new gk[obj.impl]();
+        result.transient = obj.transient;
+
+        var contents = [];
+        for(var i=0; i<obj.contents.length; ++i){
+            if(obj.transient){
+                gk.serialization.registerListener(obj.contents[i], function(item){
+                    result.add(item);
+                });
+            }else{
+                contents.push(gk.serialization.deserialize(obj.contents[i]));
+            }
+        }
+        result.addAll(contents);
+
+        Drawable.prototype._deserialize.call(result, obj);
+
+        if(obj.parentMap && obj.parentCollection){
+            var parentMap = gk.getMap(obj.parentMap);
+            if(typeof obj.parentCollection == "string"){
+                //Our parent collection is concrete and defined elsewhere
+                gk.serialization.registerLoadListener(obj.parentCollection, function(parentCollection){
+                    result.registerMapping(parentCollection, parentMap); 
+                });
+            }else{
+                //Our parent collection is transient, and defined here
+                var parentCollection = gk.serialization.deserialize(obj.parentCollection);
+                parentCollection.transient = true;
+                result.registerMapping(parentCollection, parentMap);
+            }
+        } 
+        return result;
+    });
 
     gk.Collection = Collection;
 

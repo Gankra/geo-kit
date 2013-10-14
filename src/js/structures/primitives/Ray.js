@@ -84,6 +84,18 @@ var gk = (function(gk, _){
         this.finishRender(options);   
     }
 
+    Ray.prototype.serialize = function(){
+        var result = Line.prototype.serialize.call(this);
+        result.type = Ray.displayName;
+        return result;
+    };
+
+    gk.serialization.registerDeserializer(Ray.displayName, function(obj){
+        var result = new Ray();
+        result._deserialize(obj);
+        return result;
+    });
+
     gk.Ray = Ray;
     
     gk.registerPrimitive(Ray);

@@ -7,20 +7,11 @@ var gk = (function(gk){
     events.EVENT_DELETED = "deleted";
     
     var listeners = {};
+
+    gk.test  = function(){ return listeners;}
     
     events.registerListener = function(observer, observed){
-        if(observed.iterator){
-            if(observed.transient){
-                var it = observed.iterator();
-                while(it.hasNext()){
-                    registerListenerInternal(it.next(), observer);
-                }
-            }else{
-               registerListenerInternal(observed, observer); 
-            }
-        }else{
-            registerListenerInternal(observed, observer);
-        }    
+        registerListenerInternal(observed, observer); 
     }
 
     events.unregisterListener = function(observer, observed){

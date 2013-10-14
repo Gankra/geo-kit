@@ -80,6 +80,18 @@ var gk = (function(gk, _){
         return this.ptA.distance(this.ptB);
     });
 
+    LineSegment.prototype.serialize = function(){
+        var result = Line.prototype.serialize.call(this);
+        result.type = LineSegment.displayName;
+        return result;
+    };
+
+    gk.serialization.registerDeserializer(LineSegment.displayName, function(obj){
+        var result = new LineSegment();
+        result._deserialize(obj);
+        return result;
+    });
+
     gk.LineSegment = LineSegment;
     
     gk.registerPrimitive(LineSegment);
