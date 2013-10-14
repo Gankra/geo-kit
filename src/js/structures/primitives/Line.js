@@ -161,7 +161,7 @@ var gk = (function(gk){
     Line.prototype._deserialize = function(obj){
         this.ptA = gk.serialization.deserialize(obj.ptA);
         this.ptB = gk.serialization.deserialize(obj.ptB);
-        Drawable.prototype._deserialize.call(this);
+        Drawable.prototype._deserialize.call(this, obj);
     }
 
     gk.serialization.registerDeserializer(Line.displayName, function(obj){

@@ -89,7 +89,7 @@ var gk = (function(gk){
     Collection.prototype.contains = function(item){
         var it = this.iterator();
         while(it.hasNext()){
-            if(it.next(equals(item))){
+            if(it.next().equals(item)){
                 return true;
             }
         }
@@ -235,21 +235,20 @@ var gk = (function(gk){
         }
         result.addAll(contents);
 
-        Drawable.prototype._deserialize.call(this);
+        Drawable.prototype._deserialize.call(result, obj);
 
         if(obj.parentMap && obj.parentCollection){
             var parentMap = gk.getMap(obj.parentMap);
-            var self = this;
             if(typeof obj.parentCollection == "string"){
                 //Our parent collection is concrete and defined elsewhere
                 gk.serialization.registerLoadListener(obj.parentCollection, function(parentCollection){
-                    self.registerMapping(parentCollection, parentMap); 
+                    result.registerMapping(parentCollection, parentMap); 
                 });
             }else{
                 //Our parent collection is transient, and defined here
                 var parentCollection = gk.serialization.deserialize(obj.parentCollection);
                 parentCollection.transient = true;
-                self.registerMapping(parentCollection, parentMap);
+                result.registerMapping(parentCollection, parentMap);
             }
         } 
         return result;

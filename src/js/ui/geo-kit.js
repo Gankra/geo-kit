@@ -41,13 +41,13 @@ var gk = (function($, gk){
     var stages = [];
     var currentStage = null;
 
-    var selectedItems = new LinkedHashSet();
+    var selectedItems = new Set();
     var selectedItemsBox = new Set();
     gk.selectionArea = null;
-    selectedItems.transient = true;
 
     var canManipulateSelection = true;
     var canManipulateSelectionBox = true;
+    var selectingLayers = true;
     var inserting = null;
     var currentPrimitiveClass = null;
     var currentMap = null;
@@ -71,14 +71,11 @@ var gk = (function($, gk){
         $topMenu = $("#gk-top-menu");
         $document = $(document);
 
-        addStage(new Stage());
-        
         createGlobalMenu();
+
+        gk.setStage(new Stage());
         
-        
-        $document.on("mousedown", ".stage", function(event){
-            selectStage(event.target);
-            
+        $document.on("mousedown", ".stage", function(event){    
             input.updateMouse(currentStage.relMouseCoords(event), true);
             
             getModeHandler().mousedown(event);
@@ -122,16 +119,6 @@ var gk = (function($, gk){
             }
         });
     });
-
-    function selectStage(canvasEl){
-        for(var i=0; i<stages.length; ++i){
-            var stage = stages[i];
-            if(stage.canvas == canvasEl){
-                setCurrentStage(stage);
-                break;
-            } 
-        }
-    }
 
     function setMode(newMode){
         mode = newMode;
@@ -192,38 +179,16 @@ var gk = (function($, gk){
         }
     }
     
-    function setCurrentStage (stage){
-        if(stage == currentStage){
-            return;
-        }
-
-        if(currentStage){
-            currentStage.deselect();
-        }
-
-        currentStage = stage;
-        currentStage.select();
-        
-        $stageMenu.empty();
-        $stageMenu.append(currentStage.$menu); 
-           
-    }
-    
-    function addStage(stage){
-        stages.push(stage);
-        $stages.append(stage.$stage);
-        if(stages.length==1){
-            setCurrentStage(stages[0]);
-        } 
-        stage.draw(gk.options.render);   
-    }
-    
     gk.select = function(selection, disallowManipulation){  
         if(selection.iterator){
-            selectedItems = selection;
+            if(!selectingLayers){
+                selectingLayers = true;
+                selectedItems = new Supercollection();
+            }
+            selectedItems.add(selection);
         }else{
             var ctrl = isSelectionDeltaed();
-            if(!ctrl || !selectedItems.transient){
+            if(!ctrl || selectingLayers){
                clearSelection();
             }
             if(ctrl && gk.isSelected(selection)){
@@ -267,12 +232,13 @@ var gk = (function($, gk){
     
     function clearSelection(){
         canManipulateSelection = true;
-        if(selectedItems.transient){
+        if(selectedItems && !selectingLayers){
             selectedItems.clear();
         }else{
             selectedItems = new LinkedHashSet();
             selectedItems.transient = true;
         }
+        selectingLayers = false;
         updateSelection();
     }
     
@@ -379,6 +345,8 @@ var gk = (function($, gk){
                 selectionClone.handleChildEvents();
                 result = map.map(selectionClone);
             }else{
+                //This is currently a dead code path. Staged for culling in the future
+                //Leaving this here now for maintenance reasons
                 result = map.map(selectedItems);
             }
             var layer = new Layer({
@@ -409,8 +377,31 @@ var gk = (function($, gk){
         $mapSelect.change();
     }
 
-    gk.getCurrentStage = function(){
+    gk.getStage = function(){
         return currentStage;
+    }
+
+    gk.setStage = function(stage){
+        if(stage == currentStage){
+            return;
+        }
+
+        if(currentStage){
+            currentStage.deselect();
+        }
+
+        currentStage = stage;
+        clearSelection();
+        currentStage.select();
+        
+        $stageMenu.empty();
+        $stageMenu.append(currentStage.$menu); 
+
+        $stages.empty();
+        $stages.append(stage.$stage);
+
+        
+        stage.draw(gk.options.render);  
     }
     
     return gk;

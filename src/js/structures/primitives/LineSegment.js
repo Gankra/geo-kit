@@ -82,7 +82,7 @@ var gk = (function(gk, _){
 
     LineSegment.prototype.serialize = function(){
         var result = Line.prototype.serialize.call(this);
-        obj.type = LineSegment.displayName;
+        result.type = LineSegment.displayName;
         return result;
     };
 

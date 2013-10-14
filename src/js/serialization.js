@@ -19,18 +19,28 @@ var gk = (function(gk){
         return result;
     }
 
-    serialization.serializeState = function(){
-        var obj = gk.getCurrentStage().serialize();
+    serialization.serializeState = function(raw){
+        var obj = gk.getStage().serialize();
         var result = JSON.stringify(obj);
+        if(!raw) result = LZString.compressToBase64(result);
         return result;
     }
 
-    serialization.loadState = function(string){
+    serialization.parseState = function(string, raw){
+        if(!raw) string = LZString.decompressFromBase64(string);
         var obj = JSON.parse(string);
         var result = serialization.deserialize(obj);
         deserializedItems = {};
-        //TODO: embed in gk;
+        gk.setStage(result);
         return result;
+    }
+
+    serialization.saveState = function(name){
+        localStorage.setItem(name, serialization.serializeState());
+    }
+
+    serialization.loadState = function(name){
+        serialization.parseState(localStorage.getItem(name));
     }
 
     serialization.registerLoadListener = function(id, fn){

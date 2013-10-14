@@ -17,7 +17,7 @@ var gk = (function(gk, _){
     
     
     
-    function Stage(){
+    function Stage(layers){
         var self = this;
         this.layers = [];
         this.selectedLayers = [];        
@@ -47,7 +47,14 @@ var gk = (function(gk, _){
         this.canvas.width = DEFAULT_CANVAS_WIDTH;
         this.canvas.height = DEFAULT_CANVAS_HEIGHT;
         this.ctx = this.canvas.getContext("2d");
-        this.addLayer();
+        
+        if(!layers || layers.length==0){
+            this.addLayer();
+        }else{
+            for(var i=0; i<layers.length; ++i){
+                this.addLayer(layers[i]);
+            }
+        }
         
         this.scaleX = 1;
         this.scaleY = -1;
@@ -158,7 +165,6 @@ var gk = (function(gk, _){
         this.selectedLayers.push(layer);
         this.setLayer(this.layers.indexOf(layer));
         gk.select(layer.items, layer.linked);
-
         this.currentLayer.$html.addClass("selected");
     }
     
@@ -304,13 +310,11 @@ var gk = (function(gk, _){
     }
 
     gk.serialization.registerDeserializer("Stage", function(obj){
-        var result = new Stage();
         var layers = [];
         for(var i=0; i<obj.layers.length; ++i){
             layers.push(gk.serialization.deserialize(obj.layers[i]));
         }
-        result.layers = layers;
-        result.setLayer(0);
+        var result = new Stage(layers);
         return result;
     });
     

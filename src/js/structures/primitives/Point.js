@@ -104,6 +104,14 @@ var gk = (function(gk){
         return new Point(this.x, this.y);
     }
 
+    Point.prototype.toArray = function(){
+        var result = [];
+        for(var i=0; i<this.coords.length; ++i){
+            result.push(this.coords[i]);
+        }
+        return result;
+    }
+
     Point.prototype.__defineGetter__("hashCode", function(){
         return this.x+","+this.y;
     });
@@ -111,7 +119,7 @@ var gk = (function(gk){
     Point.prototype.serialize = function(){
         var result = Drawable.prototype.serialize.call(this);
         result.type = Point.displayName;
-        result.coords = this.coords;
+        result.coords = this.toArray();
         return result;
     };
 

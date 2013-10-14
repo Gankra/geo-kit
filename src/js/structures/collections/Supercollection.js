@@ -9,13 +9,16 @@
 //has a Supercollection has the right to assume it is the only subscriber
 //and maintainer of the Supercollection. In addition, transient collections
 //are assumed to not be the owners of any of their contents.
+
+//Supercollection violates some implicit contracts of the Collection interface.
+//As such it is currently only suitable for internal use.
 var gk = (function (gk){
     var Collection = gk.Collection;
     var Set = gk.Set;
     var events = gk.events;
 
     function Supercollection(collection){
-        this.collection = new Set();
+        this._collection = new Set();
         if(collection){
             this.addAll(collection);
         }
@@ -27,17 +30,17 @@ var gk = (function (gk){
     Supercollection.displayName = "Supercollection";
 
     Supercollection.prototype.add = function(collection){
-        this.collection.add(collection);
-        events.registerListener(this, collection);
+        this._collection.add(collection);
+        this._registerAddition(collection);
     }
 
     Supercollection.prototype.remove = function(collection){
-        this.collection.remove(collection);
-        events.unregisterListener(this, collection);
+        this._collection.remove(collection);
+        events._unregisterAddition(collection);
     }
 
     Supercollection.prototype.iterator = function(){
-        var collections = this.collection.iterator();
+        var collections = this._iterator();
         var current = null;
         var next = collections.hasNext() && collections.next().iterator();
         return {
@@ -63,17 +66,58 @@ var gk = (function (gk){
     }
 
     Supercollection.prototype._replaceItems = function(collection){
-        this.collection = collection.collection;
+        this._collection = collection.collection;
+    }
+
+    Supercollection.prototype.clone = function(deep){
+        if(deep){
+            var result = new Set(this);
+            return result.clone(true);
+        }else{
+            return new Supercollection(this._collection);
+        }
     }
 
     Supercollection.prototype._clear = function(){
-        this.collection.clear();
+        this._collection.clear();
+    }
+
+    Supercollection.prototype._iterator = function(){
+        return this._collection.iterator();
+    }
+
+    Supercollection.prototype.__defineGetter__("length", function(){
+        var result = 0;
+        var collections = this._iterator();
+        while(collections.hasNext()){
+            result += collections.next().length;
+        }
+        return result;
+    });
+
+    Supercollection.prototype.handleChildEvents = function(){
+        if(this._handlingChildEvents) return;
+        var it = this._iterator();
+        while(it.hasNext()){
+            events.registerListener(this, it.next());
+        }
+        this._handlingChildEvents = true;
+    }
+
+    Supercollection.prototype.ignoreChildEvents = function(){
+        if(!this._handlingChildEvents) return;
+        var it = this._iterator();
+        while(it.hasNext()){
+            events.unregisterListener(this, it.next());
+        }
+        this._handlingChildEvents = false;
     }
 
     Supercollection.prototype.serialize = function(){
         var result = {
             type: Supercollection.displayName
-          , collection: this.collection.toArray()
+          , collection: this._collection.toArray()
+          , handlingChildEvents: this._handlingChildEvents
         };
 
         for(var i=0; i<result.collection.length; ++i){
@@ -90,6 +134,10 @@ var gk = (function (gk){
             gk.serialization.registerLoadListener(obj.collection[i], function(collection){
                 result.add(collection);
             });
+        }
+
+        if(obj.handlingChildEvents){
+            result.handleChildEvents();
         }
 
         return result;
